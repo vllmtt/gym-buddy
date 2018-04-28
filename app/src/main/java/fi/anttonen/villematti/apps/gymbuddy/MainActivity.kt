@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity(), GymEntriesRecyclerAdapter.OnItemClickL
     override fun onItemClick(view: View, position: Int, entry: GymEntry) {
         if (entry is WeightEntry) {
             val weightDetailIntent = Intent(this, WeightEntryDetail::class.java).apply {
-
+                putExtra(WeightEntryDetail.ENTRY_ID_KEY, entry.getEntryId())
             }
 
             val weightTextPair = Pair.create(view.weight_text as View, "tWeightText")

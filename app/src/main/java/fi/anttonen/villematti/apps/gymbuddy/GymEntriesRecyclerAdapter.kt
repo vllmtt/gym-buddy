@@ -19,11 +19,6 @@ import kotlinx.android.synthetic.main.weight_entry_row.view.*
  */
 class GymEntriesRecyclerAdapter()  : RecyclerView.Adapter<GymEntriesRecyclerAdapter.GymEntryHolder>() {
 
-    companion object {
-        const val ENTRY_KEY = "ENTRY_KEY"
-        const val GRAPH_SERIES_KEY = "GRAPH_SERIES"
-    }
-
     private val gymEntries = DATA_SOURCE.getGymEntries()
     private val filteredGymEntries = gymEntries
     private var filtering = false

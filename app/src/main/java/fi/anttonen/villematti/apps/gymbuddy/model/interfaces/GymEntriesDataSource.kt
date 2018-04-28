@@ -5,5 +5,6 @@ package fi.anttonen.villematti.apps.gymbuddy.model.interfaces
  */
 interface GymEntriesDataSource {
     fun getGymEntries(): List<GymEntry>
+    fun getGymEntry(id: String): GymEntry?
     fun getGymEntriesBefore(gymEntry: GymEntry, limit: Int, type: EntryType?) : List<GymEntry>
 }

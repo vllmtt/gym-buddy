@@ -28,6 +28,10 @@ class MockDataSource : GymEntriesDataSource {
         return gymEntries
     }
 
+    override fun getGymEntry(id: String): GymEntry? {
+        return gymEntries.find { entry -> entry.getEntryId() == id }
+    }
+
     override fun getGymEntriesBefore(gymEntry: GymEntry, limit: Int, entryType: EntryType?): List<GymEntry> {
         val high = gymEntries.indexOf(gymEntry)
         val low = minOf(high + limit, gymEntries.size)

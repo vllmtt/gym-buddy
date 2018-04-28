@@ -13,8 +13,6 @@ import kotlin.math.roundToInt
  */
 class WeightEntry(val id: String, var date: Date, private var _weight: Double) : GymEntry {
 
-
-
     var weight: Double
         get() = _weight.roundToDecimalPlaces(1)
         set(value) {

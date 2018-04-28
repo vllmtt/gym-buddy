@@ -28,7 +28,6 @@
 
         <TextView
             android:id="@+id/weight_text"
-            android:transitionName="tWeightText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
@@ -41,7 +40,6 @@
 
         <TextView
             android:id="@+id/weight_unit_text"
-            android:transitionName="tWeightUnitText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
@@ -54,7 +52,6 @@
 
         <com.jjoe64.graphview.GraphView
             android:id="@+id/weight_graph"
-            android:transitionName="tWeightGraph"
             android:layout_width="match_parent"
             android:layout_height="75dp"
             android:layout_marginBottom="24dp"
