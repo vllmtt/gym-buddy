@@ -31,6 +31,9 @@ class WeightEntry(val id: String, var date: Date, private var _weight: Double) :
 
     fun getUnitString(): String = "kg"
 
+    /**
+     *
+     */
     fun dataPointSeriesFrom(gymEntries: List<WeightEntry>): LineGraphSeries<DataPoint> {
         val reversed = gymEntries.asReversed()
         val datapoints = mutableListOf<DataPoint>()

@@ -32,16 +32,20 @@ class MainActivity : AppCompatActivity(), GymEntriesRecyclerAdapter.OnItemClickL
         supportActionBar?.title = getString(R.string.main_activity_title)
     }
 
+
+    /**
+     * Item click listener for gym entry recycler view
+     */
     override fun onItemClick(view: View, position: Int, entry: GymEntry) {
         if (entry is WeightEntry) {
             val weightDetailIntent = Intent(this, WeightEntryDetail::class.java).apply {
                 putExtra(WeightEntryDetail.ENTRY_ID_KEY, entry.getEntryId())
             }
 
-            val weightTextPair = Pair.create(view.weight_text as View, "tWeightText")
-            val weightUnitTextPair = Pair.create(view.weight_unit_text as View, "tWeightUnitText")
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this@MainActivity,
-                    weightTextPair, weightUnitTextPair)
+            //val weightTextPair = Pair.create(view.weight_text as View, "tWeightText")
+            //val weightUnitTextPair = Pair.create(view.weight_unit_text as View, "tWeightUnitText")
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this@MainActivity)//,
+            //        weightTextPair, weightUnitTextPair)
 
             ActivityCompat.startActivity(this@MainActivity, weightDetailIntent, options.toBundle())
         }

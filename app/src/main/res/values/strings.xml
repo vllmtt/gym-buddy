@@ -2,4 +2,6 @@
     <string name="app_name">Gym Buddy</string>
     <string name="main_activity_title">Entries</string>
     <string name="weight_entry_detail_title">Weight</string>
+    <string name="weight">Weight</string>
+    <string name="date">Date</string>
 </resources>

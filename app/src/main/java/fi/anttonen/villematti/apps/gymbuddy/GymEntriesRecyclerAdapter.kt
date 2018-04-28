@@ -49,9 +49,6 @@ class GymEntriesRecyclerAdapter()  : RecyclerView.Adapter<GymEntriesRecyclerAdap
         return if (filtering)  filteredGymEntries[position].getEntryType().ordinal else gymEntries[position].getEntryType().ordinal
     }
 
-    fun setOnItemClickListener(itemClickListener: OnItemClickListener) {
-        this.itemClickListener = itemClickListener
-    }
 
     fun getListItemAtPosition(position: Int) = if (filtering) filteredGymEntries[position] else gymEntries[position]
 
@@ -66,36 +63,52 @@ class GymEntriesRecyclerAdapter()  : RecyclerView.Adapter<GymEntriesRecyclerAdap
             v.setOnClickListener(this)
         }
 
+
         override fun onClick(view: View) = itemClickListener.onItemClick(itemView, adapterPosition, getListItemAtPosition(adapterPosition))
 
+
+        /**
+         * Binds an entry to the view holder
+         */
         fun bindEntry(gymEntry: GymEntry) {
             view.entry_type.text = gymEntry.getEntryType().displayName
             if (gymEntry is WeightEntry) {
-                view.weight_text.text = gymEntry.weight.toString()
-                view.weight_unit_text.text = gymEntry.getUnitString()
-                view.weight_graph.removeAllSeries()
-
-                val data = DATA_SOURCE.getGymEntriesBefore(gymEntry, 5, EntryType.WEIGHT) as List<WeightEntry>
-                if (data.size > 1) {
-                    view.weight_graph.visibility = View.VISIBLE
-                    val series = gymEntry.dataPointSeriesFrom(data)
-                    series.color =  ContextCompat.getColor(view.context, R.color.colorAccent)
-                    series.isDrawDataPoints = false
-                    series.thickness = 4
-                    view.weight_graph.addSeries(series)
-                } else {
-                    view.weight_graph.visibility = View.GONE
-                }
-
-                // TODO weight graph styling to onCreateViewHolder()
-                view.weight_graph.gridLabelRenderer.isHorizontalLabelsVisible = false
-                view.weight_graph.gridLabelRenderer.isVerticalLabelsVisible = false
-                view.weight_graph.gridLabelRenderer.gridStyle = GridLabelRenderer.GridStyle.NONE
+                bindWeightEntry(gymEntry)
             }
+        }
+
+
+        /**
+         * Binds a weight entry to the view holder
+         */
+        private fun bindWeightEntry(gymEntry: WeightEntry) {
+            view.weight_text.text = gymEntry.weight.toString()
+            view.weight_unit_text.text = gymEntry.getUnitString()
+            view.weight_graph.removeAllSeries()
+
+            val data = DATA_SOURCE.getGymEntriesBefore(gymEntry, 5, EntryType.WEIGHT) as List<WeightEntry>
+            if (data.size > 1) {
+                view.weight_graph.visibility = View.VISIBLE
+                val series = gymEntry.dataPointSeriesFrom(data)
+                series.color = ContextCompat.getColor(view.context, R.color.colorAccent)
+                series.isDrawDataPoints = false
+                series.thickness = 4
+                view.weight_graph.addSeries(series)
+            } else {
+                view.weight_graph.visibility = View.GONE
+            }
+
+            // TODO weight graph styling to onCreateViewHolder()
+            view.weight_graph.gridLabelRenderer.isHorizontalLabelsVisible = false
+            view.weight_graph.gridLabelRenderer.isVerticalLabelsVisible = false
+            view.weight_graph.gridLabelRenderer.gridStyle = GridLabelRenderer.GridStyle.NONE
         }
 
     }
 
+    /**
+     * Click interface
+     */
     interface OnItemClickListener {
         fun onItemClick(view: View, position: Int, entry: GymEntry)
     }
