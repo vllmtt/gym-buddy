@@ -37,7 +37,7 @@ class WeightEntryDetail : AppCompatActivity() {
         entry = DataSource.DATA_SOURCE.getGymEntry(id) as WeightEntry
         clone = entry.clone()
 
-        date_text.text = getDateString(clone.date)
+        date_text.text = clone.getHumanReadableDate()
         setupWeightEditText()
         setupWeightGraph()
 
@@ -80,9 +80,6 @@ class WeightEntryDetail : AppCompatActivity() {
         return true
     }
 
-
-
-    private fun getDateString(date: Date): String? = DateFormat.getDateInstance(DateFormat.MEDIUM).format(date)
 
 
     /**
