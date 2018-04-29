@@ -17,12 +17,18 @@ import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.EntryType
 import kotlinx.android.synthetic.main.activity_weight_entry_detail.*
 import java.text.DateFormat
 import java.util.*
+import android.app.Activity
+import android.content.Intent
+
+
 
 
 class WeightEntryDetail : AppCompatActivity() {
 
     companion object {
         const val ENTRY_ID_KEY = "ENTRY_KEY"
+        const val CHANGED_KEY = "CHANGED"
+        const val DELETED_KEY = "DELETED"
     }
 
     private lateinit var entry: WeightEntry
@@ -111,22 +117,49 @@ class WeightEntryDetail : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         val id = item?.itemId
         if (id == android.R.id.home) {
+
+            val intent = Intent()
+            setResult(Activity.RESULT_CANCELED, intent)
+
             finish()
             return true
         }
         if (id == R.id.menu_item_done) {
             save()
+
+            val intent = Intent()
+            intent.putExtra(ENTRY_ID_KEY, clone.id)
+            intent.putExtra(CHANGED_KEY, true)
+            setResult(Activity.RESULT_OK, intent)
+
             finish()
             return true
         }
+
+        if (id == R.id.menu_item_delete) {
+            val intent = Intent()
+            intent.putExtra(ENTRY_ID_KEY, clone.id)
+            intent.putExtra(DELETED_KEY, true)
+            setResult(Activity.RESULT_OK, intent)
+
+            delete()
+
+            finish()
+            return true
+        }
+
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun delete() {
+        DataSource.DATA_SOURCE.delete(entry)
     }
 
     private fun save() {
         if (clone != entry) {
             Log.i(this.localClassName, "Saving")
             entry.updateValuesFrom(clone)
-            //TODO: DATA_SOURCE.saveEntry(entry)
+            DataSource.DATA_SOURCE.update(entry)
         }
     }
 }

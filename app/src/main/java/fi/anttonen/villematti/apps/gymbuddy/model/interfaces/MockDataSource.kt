@@ -45,6 +45,20 @@ class MockDataSource : GymEntriesDataSource {
         return sublist
     }
 
+    override fun delete(gymEntry: GymEntry) {
+        val entry = gymEntries.find { e -> e.getEntryId() == gymEntry.getEntryId() }
+        gymEntries.remove(entry)
+    }
+
+    override fun update(gymEntry: GymEntry) {
+        val entry = gymEntries.find { e -> e.getEntryId() == gymEntry.getEntryId() }
+        entry!!.updateValuesFrom(gymEntry)
+    }
+
+    override fun add(gymEntry: GymEntry) {
+        gymEntries.add(gymEntry)
+    }
+
     private fun randomDoubleBetween(min: Double, max: Double): Double {
         val r = Random()
         return min + (max - min) * r.nextDouble()

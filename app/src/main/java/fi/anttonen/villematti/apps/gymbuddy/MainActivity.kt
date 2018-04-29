@@ -1,5 +1,6 @@
 package fi.anttonen.villematti.apps.gymbuddy
 
+import android.app.Activity
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -14,6 +15,10 @@ import kotlinx.android.synthetic.main.weight_entry_row.view.*
 import android.support.v4.util.Pair
 
 class MainActivity : AppCompatActivity(), GymEntriesRecyclerAdapter.OnItemClickListener {
+
+    companion object {
+        private const val UPDATE_REQUEST = 1
+    }
 
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var adapter: GymEntriesRecyclerAdapter
@@ -47,7 +52,20 @@ class MainActivity : AppCompatActivity(), GymEntriesRecyclerAdapter.OnItemClickL
             val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this@MainActivity)//,
             //        weightTextPair, weightUnitTextPair)
 
-            ActivityCompat.startActivity(this@MainActivity, weightDetailIntent, options.toBundle())
+            ActivityCompat.startActivityForResult(this@MainActivity, weightDetailIntent, UPDATE_REQUEST, options.toBundle())
+        }
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == UPDATE_REQUEST && resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                val changed = data.getBooleanExtra(WeightEntryDetail.CHANGED_KEY, false)
+                val deleted = data.getBooleanExtra(WeightEntryDetail.DELETED_KEY, false)
+                if (changed || deleted) {
+                    adapter.notifyDataSetChanged()
+                }
+            }
         }
     }
 }
