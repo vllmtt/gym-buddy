@@ -14,7 +14,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <com.jjoe64.graphview.GraphView
@@ -31,6 +31,16 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/date_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                tools:text="TextView" />
 
             <RelativeLayout
                 android:id="@+id/relativeLayout"
@@ -66,28 +76,9 @@
                     android:layout_centerInParent="true"
                     android:paddingBottom="12dp"
                     android:paddingRight="8dp"
-                    tools:text="kg" />
+                    tools:text="kg"
+                    android:layout_alignParentEnd="true" />
             </RelativeLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:hint="@string/date"
-                app:errorEnabled="true">
-
-                <android.support.v7.widget.AppCompatEditText
-                    android:id="@+id/date_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:focusable="false"
-                    android:inputType="numberDecimal"
-                    android:onClick="dateTextViewClicked" />
-            </android.support.design.widget.TextInputLayout>
         </LinearLayout>
     </ScrollView>
 

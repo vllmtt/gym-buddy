@@ -21,21 +21,28 @@ class MockDataSource : GymEntriesDataSource {
                 gymEntries.add(WeightEntry("Entry $i", newDate(i), weightData[i]))
             }
             initialized = true
-            
-            gymEntries.sortWith(kotlin.Comparator { e1, e2 -> e1.getEntryDate().compareTo(e2.getEntryDate()) })
+
+            sortByDateDescending()
         }
 
         return gymEntries
+    }
+
+    private fun sortByDateDescending() {
+        gymEntries.sortWith(kotlin.Comparator { e1, e2 -> e2.getEntryDate().compareTo(e1.getEntryDate()) })
     }
 
     override fun getGymEntry(id: String): GymEntry? {
         return gymEntries.find { entry -> entry.getEntryId() == id }
     }
 
-    override fun getGymEntriesBefore(gymEntry: GymEntry, limit: Int, entryType: EntryType?): List<GymEntry> {
-        val high = gymEntries.indexOf(gymEntry)
+    override fun getGymEntriesBefore(gymEntry: GymEntry, limit: Int, entryType: EntryType?): MutableList<GymEntry> {
+        val entry = gymEntries.find { e -> e.getEntryId() == gymEntry.getEntryId() }
+        val high = gymEntries.indexOf(entry)
         val low = minOf(high + limit, gymEntries.size)
-        return gymEntries.subList(high, low)
+        val sublist = mutableListOf<GymEntry>()
+        sublist.addAll(gymEntries.subList(high, low))
+        return sublist
     }
 
     private fun randomDoubleBetween(min: Double, max: Double): Double {

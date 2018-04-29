@@ -6,12 +6,15 @@ import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.EntryType
 import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymEntry
 import java.math.BigDecimal
 import java.util.*
+import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 /**
  * Created by vma on 25/04/2018.
  */
 class WeightEntry(val id: String, var date: Date, private var _weight: Double) : GymEntry {
+
+    var mood: String? = null
 
     var weight: Double
         get() = _weight.roundToDecimalPlaces(1)
@@ -27,6 +30,30 @@ class WeightEntry(val id: String, var date: Date, private var _weight: Double) :
 
     override fun getEntryDate(): Date {
         return date
+    }
+
+    override fun getEntryMood(): String? {
+        return mood
+    }
+
+    override fun updateValuesFrom(entry: GymEntry) {
+        if (entry is WeightEntry) {
+            this.weight = entry.weight
+            this.date.time = entry.date.time
+        }
+    }
+
+    override fun clone(): WeightEntry = WeightEntry(this.id, Date(this.date.time), this.weight)
+
+    override fun equals(other: Any?): Boolean {
+        if (other != null && other is WeightEntry) {
+            return other.id == this.id && other.weight == this.weight && other.date.time == this.date.time
+        }
+        return false
+    }
+
+    override fun toString(): String {
+        return "Entry: $id, Weight: $weight, date: $date, Mood: $mood"
     }
 
     fun getUnitString(): String = "kg"
