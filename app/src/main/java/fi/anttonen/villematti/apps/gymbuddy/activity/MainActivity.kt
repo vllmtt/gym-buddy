@@ -7,14 +7,20 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
+import android.view.Menu
 import android.view.View
+import com.github.sundeepk.compactcalendarview.CompactCalendarView
 import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymEntry
 import kotlinx.android.synthetic.main.activity_main.*
 import fi.anttonen.villematti.apps.gymbuddy.control.GymEntriesRecyclerAdapter
 import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.model.WeightEntry
+import kotlinx.android.synthetic.main.activity_main.view.*
+import java.text.SimpleDateFormat
+import java.util.*
 
-class MainActivity : AppCompatActivity(), GymEntriesRecyclerAdapter.OnItemClickListener {
+class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarViewListener, GymEntriesRecyclerAdapter.OnItemClickListener {
 
     companion object {
         private const val UPDATE_REQUEST = 1
@@ -34,7 +40,23 @@ class MainActivity : AppCompatActivity(), GymEntriesRecyclerAdapter.OnItemClickL
         adapter.itemClickListener = this
         gymEntriesRecyclerView.adapter = adapter
 
-        supportActionBar?.title = getString(R.string.main_activity_title)
+        setupCalendar()
+
+        supportActionBar?.title = getMainTitle(null)
+    }
+
+    private fun setupCalendar() {
+        calendar_view.shouldSelectFirstDayOfMonthOnScroll(false)
+        calendar_view.setListener(this)
+    }
+
+
+    override fun onDayClick(dateClicked: Date?) {
+
+    }
+
+    override fun onMonthScroll(firstDayOfNewMonth: Date?) {
+        supportActionBar?.title = getMainTitle(firstDayOfNewMonth)
     }
 
 
@@ -67,5 +89,12 @@ class MainActivity : AppCompatActivity(), GymEntriesRecyclerAdapter.OnItemClickL
                 }
             }
         }
+    }
+
+    private fun getMainTitle(date: Date?): String {
+        val cal = Calendar.getInstance()
+        if (date != null) cal.time = date
+        val f = SimpleDateFormat("MMMM yyyy")
+        return f.format(cal.time)
     }
 }

@@ -13,6 +13,7 @@ interface GymEntry : Cloneable {
         val target = Calendar.getInstance()
         target.time = getEntryDate()
 
+        //TODO bug when the month changes 1.5. == Today, 30.4. == 30.4. should be yesterday
         if (now.get(Calendar.YEAR) == target.get(Calendar.YEAR)) {
             if (now.get(Calendar.MONTH) == target.get(Calendar.MONTH)) {
                 if (now.get(Calendar.DAY_OF_MONTH) == target.get(Calendar.DAY_OF_MONTH)) {
