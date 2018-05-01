@@ -23,7 +23,7 @@ import kotlinx.android.synthetic.main.activity_main.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 import android.animation.Animator
-
+import android.animation.AnimatorListenerAdapter
 
 
 class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarViewListener, GymEntriesRecyclerAdapter.OnItemClickListener {
@@ -107,12 +107,20 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
         val id = item?.itemId
         if (id == R.id.menu_item_toggle_calendar) {
             if (!calHidden) {
-                calendar_view.animate().translationY(-calendar_view.height.toFloat())
-                gymEntriesRecyclerView.animate().translationY(-calendar_view.height.toFloat())
+                calendar_view.animate().translationY(-calendar_view.height.toFloat()).setListener(object: AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator?) {
+                        super.onAnimationEnd(animation)
+                        calendar_view.visibility = View.GONE
+                    }
+                })
                 calHidden = true
             } else {
-                calendar_view.animate().translationY(0.toFloat())
-                gymEntriesRecyclerView.animate().translationY(0.toFloat())
+                calendar_view.animate().translationY(0f).setListener(object: AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator?) {
+                        super.onAnimationEnd(animation)
+                        calendar_view.visibility = View.VISIBLE
+                    }
+                })
                 calHidden = false
             }
         }
