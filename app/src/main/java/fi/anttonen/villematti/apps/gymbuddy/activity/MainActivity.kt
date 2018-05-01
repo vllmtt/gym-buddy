@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var adapter: GymEntriesRecyclerAdapter
-    private var calHidden = false
+    private var currentlySelectedDate: Date? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,11 +55,14 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
     private fun setupCalendar() {
         calendar_view.shouldSelectFirstDayOfMonthOnScroll(false)
         calendar_view.setListener(this)
+        currentlySelectedDate = Date()
+        calendar_view.setCurrentDate(currentlySelectedDate)
     }
 
 
     override fun onDayClick(dateClicked: Date?) {
-
+        currentlySelectedDate = dateClicked
+        supportActionBar?.title = getMainTitle(currentlySelectedDate)
     }
 
     override fun onMonthScroll(firstDayOfNewMonth: Date?) {
@@ -76,11 +79,7 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
                 putExtra(WeightEntryDetail.ENTRY_ID_KEY, entry.getEntryId())
             }
 
-            //val weightTextPair = Pair.create(view.weight_text as View, "tWeightText")
-            //val weightUnitTextPair = Pair.create(view.weight_unit_text as View, "tWeightUnitText")
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this@MainActivity)//,
-            //        weightTextPair, weightUnitTextPair)
-
+            val options = ActivityOptionsCompat.makeBasic()
             ActivityCompat.startActivityForResult(this@MainActivity, weightDetailIntent, UPDATE_REQUEST, options.toBundle())
         }
     }
@@ -106,23 +105,8 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         val id = item?.itemId
         if (id == R.id.menu_item_toggle_calendar) {
-            if (!calHidden) {
-                calendar_view.animate().translationY(-calendar_view.height.toFloat()).setListener(object: AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: Animator?) {
-                        super.onAnimationEnd(animation)
-                        calendar_view.visibility = View.GONE
-                    }
-                })
-                calHidden = true
-            } else {
-                calendar_view.animate().translationY(0f).setListener(object: AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: Animator?) {
-                        super.onAnimationEnd(animation)
-                        calendar_view.visibility = View.VISIBLE
-                    }
-                })
-                calHidden = false
-            }
+            calendar_view.visibility = if (calendar_view.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+            supportActionBar?.title = getMainTitle(currentlySelectedDate)
         }
         return super.onOptionsItemSelected(item)
     }
@@ -130,7 +114,8 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
     private fun getMainTitle(date: Date?): String {
         val cal = Calendar.getInstance()
         if (date != null) cal.time = date
-        val f = SimpleDateFormat("MMMM yyyy")
+        val pattern = if (calendar_view.visibility == View.VISIBLE) "MMMM yyyy" else "MMMM d, yyyy"
+        val f = SimpleDateFormat(pattern)
         return f.format(cal.time)
     }
 
