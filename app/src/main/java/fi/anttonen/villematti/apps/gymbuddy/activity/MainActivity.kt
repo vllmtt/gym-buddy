@@ -7,33 +7,27 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import com.github.sundeepk.compactcalendarview.AnimationListener
-import com.github.sundeepk.compactcalendarview.AnimatorListener
 import com.github.sundeepk.compactcalendarview.CompactCalendarView
 import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymEntry
 import kotlinx.android.synthetic.main.activity_main.*
-import fi.anttonen.villematti.apps.gymbuddy.control.GymEntriesRecyclerAdapter
 import fi.anttonen.villematti.apps.gymbuddy.R
+import fi.anttonen.villematti.apps.gymbuddy.control.CalendarGymEntriesRecyclerAdapter
 import fi.anttonen.villematti.apps.gymbuddy.model.WeightEntry
-import kotlinx.android.synthetic.main.activity_main.view.*
 import java.text.SimpleDateFormat
 import java.util.*
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 
 
-class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarViewListener, GymEntriesRecyclerAdapter.OnItemClickListener {
+class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarViewListener, CalendarGymEntriesRecyclerAdapter.OnItemClickListener {
 
     companion object {
         private const val UPDATE_REQUEST = 1
     }
 
     private lateinit var linearLayoutManager: LinearLayoutManager
-    private lateinit var adapter: GymEntriesRecyclerAdapter
+    private lateinit var adapter: CalendarGymEntriesRecyclerAdapter
     private var currentlySelectedDate: Date? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +37,7 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
         linearLayoutManager = LinearLayoutManager(this)
         gymEntriesRecyclerView.layoutManager = linearLayoutManager
 
-        adapter = GymEntriesRecyclerAdapter()
+        adapter = CalendarGymEntriesRecyclerAdapter()
         adapter.itemClickListener = this
         gymEntriesRecyclerView.adapter = adapter
 
@@ -57,12 +51,14 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
         calendar_view.setListener(this)
         currentlySelectedDate = Date()
         calendar_view.setCurrentDate(currentlySelectedDate)
+        adapter.updateGymEntries(currentlySelectedDate)
     }
 
 
     override fun onDayClick(dateClicked: Date?) {
         currentlySelectedDate = dateClicked
         supportActionBar?.title = getMainTitle(currentlySelectedDate)
+        adapter.updateGymEntries(currentlySelectedDate)
     }
 
     override fun onMonthScroll(firstDayOfNewMonth: Date?) {

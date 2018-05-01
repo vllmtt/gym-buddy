@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.weight_entry_row.view.*
 /**
  * Created by vma on 25/04/2018.
  */
-class GymEntriesRecyclerAdapter()  : RecyclerView.Adapter<GymEntriesRecyclerAdapter.GymEntryHolder>() {
+class SearchGymEntriesRecyclerAdapter()  : RecyclerView.Adapter<SearchGymEntriesRecyclerAdapter.GymEntryHolder>() {
 
     private val gymEntries = DataSource.DATA_SOURCE.getGymEntries()
     private val filteredGymEntries = gymEntries

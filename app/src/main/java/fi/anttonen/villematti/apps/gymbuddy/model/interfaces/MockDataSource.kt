@@ -27,6 +27,11 @@ class MockDataSource : GymEntriesDataSource {
         return gymEntries
     }
 
+    override fun getGymEntries(date: Date): List<GymEntry> {
+        if (!initialized) getGymEntries()
+        return gymEntries.filter { entry -> entry.getEntryDate().time == date.time }
+    }
+
     private fun sortByDateDescending() {
         gymEntries.sortWith(kotlin.Comparator { e1, e2 -> e2.getEntryDate().compareTo(e1.getEntryDate()) })
     }
@@ -56,11 +61,6 @@ class MockDataSource : GymEntriesDataSource {
 
     override fun add(gymEntry: GymEntry) {
         gymEntries.add(gymEntry)
-    }
-
-    private fun randomDoubleBetween(min: Double, max: Double): Double {
-        val r = Random()
-        return min + (max - min) * r.nextDouble()
     }
 
     private fun newDate(daysBeforeToday: Int): Date {
