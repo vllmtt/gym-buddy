@@ -9,7 +9,10 @@ import android.support.v4.app.ActivityOptionsCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import com.github.sundeepk.compactcalendarview.AnimationListener
+import com.github.sundeepk.compactcalendarview.AnimatorListener
 import com.github.sundeepk.compactcalendarview.CompactCalendarView
 import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymEntry
 import kotlinx.android.synthetic.main.activity_main.*
@@ -19,6 +22,9 @@ import fi.anttonen.villematti.apps.gymbuddy.model.WeightEntry
 import kotlinx.android.synthetic.main.activity_main.view.*
 import java.text.SimpleDateFormat
 import java.util.*
+import android.animation.Animator
+
+
 
 class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarViewListener, GymEntriesRecyclerAdapter.OnItemClickListener {
 
@@ -28,6 +34,7 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var adapter: GymEntriesRecyclerAdapter
+    private var calHidden = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,10 +98,32 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.main_activity_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        val id = item?.itemId
+        if (id == R.id.menu_item_toggle_calendar) {
+            if (!calHidden) {
+                calendar_view.animate().translationY(-calendar_view.height.toFloat())
+                gymEntriesRecyclerView.animate().translationY(-calendar_view.height.toFloat())
+                calHidden = true
+            } else {
+                calendar_view.animate().translationY(0.toFloat())
+                gymEntriesRecyclerView.animate().translationY(0.toFloat())
+                calHidden = false
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     private fun getMainTitle(date: Date?): String {
         val cal = Calendar.getInstance()
         if (date != null) cal.time = date
         val f = SimpleDateFormat("MMMM yyyy")
         return f.format(cal.time)
     }
+
 }
