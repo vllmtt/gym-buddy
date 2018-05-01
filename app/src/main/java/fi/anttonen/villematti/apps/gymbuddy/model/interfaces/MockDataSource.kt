@@ -1,7 +1,6 @@
 package fi.anttonen.villematti.apps.gymbuddy.model.interfaces
 
-import android.util.Log
-import fi.anttonen.villematti.apps.gymbuddy.WeightEntry
+import fi.anttonen.villematti.apps.gymbuddy.model.WeightEntry
 import java.util.*
 
 

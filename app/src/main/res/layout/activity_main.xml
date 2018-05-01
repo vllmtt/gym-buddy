@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/AppTheme"
-    tools:context="fi.anttonen.villematti.apps.gymbuddy.MainActivity">
+    tools:context="fi.anttonen.villematti.apps.gymbuddy.activity.MainActivity">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/gymEntriesRecyclerView"

@@ -1,7 +1,5 @@
 package fi.anttonen.villematti.apps.gymbuddy.model.interfaces
 
-import fi.anttonen.villematti.apps.gymbuddy.WeightEntry
-
 /**
  * Created by vma on 25/04/2018.
  */

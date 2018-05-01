@@ -1,16 +1,16 @@
-package fi.anttonen.villematti.apps.gymbuddy
+package fi.anttonen.villematti.apps.gymbuddy.control
 
-import android.content.Context
-import android.content.Intent
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.jjoe64.graphview.GridLabelRenderer
-import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.DataSource.DATA_SOURCE
+import fi.anttonen.villematti.apps.gymbuddy.R
+import fi.anttonen.villematti.apps.gymbuddy.model.WeightEntry
+import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.DataSource
+
 import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.EntryType
-import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymEntriesDataSource
 import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymEntry
 import kotlinx.android.synthetic.main.weight_entry_row.view.*
 
@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.weight_entry_row.view.*
  */
 class GymEntriesRecyclerAdapter()  : RecyclerView.Adapter<GymEntriesRecyclerAdapter.GymEntryHolder>() {
 
-    private val gymEntries = DATA_SOURCE.getGymEntries()
+    private val gymEntries = DataSource.DATA_SOURCE.getGymEntries()
     private val filteredGymEntries = gymEntries
     private var filtering = false
     lateinit var itemClickListener: OnItemClickListener
@@ -31,9 +31,8 @@ class GymEntriesRecyclerAdapter()  : RecyclerView.Adapter<GymEntriesRecyclerAdap
             EntryType.WEIGHT.ordinal -> layoutInflater.inflate(R.layout.weight_entry_row, parent, false)
             else -> layoutInflater.inflate(R.layout.weight_entry_row, parent, false) //TODO implement other entry types
         }
-        val holder = GymEntryHolder(inflatedView)
 
-        return holder
+        return GymEntryHolder(inflatedView)
     }
 
     override fun getItemCount(): Int {
@@ -50,10 +49,14 @@ class GymEntriesRecyclerAdapter()  : RecyclerView.Adapter<GymEntriesRecyclerAdap
     }
 
 
+    /**
+     * Gets entry at a position either from filtered or unfiltered list
+     */
     fun getListItemAtPosition(position: Int) = if (filtering) filteredGymEntries[position] else gymEntries[position]
 
+
     /**
-     *
+     * Gym entry view holder
      */
     inner class GymEntryHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
 
@@ -86,7 +89,7 @@ class GymEntriesRecyclerAdapter()  : RecyclerView.Adapter<GymEntriesRecyclerAdap
             view.weight_unit_text.text = gymEntry.getUnitString()
             view.weight_graph.removeAllSeries()
 
-            val data = DATA_SOURCE.getGymEntriesBefore(gymEntry, 5, EntryType.WEIGHT) as List<WeightEntry>
+            val data = DataSource.DATA_SOURCE.getGymEntriesBefore(gymEntry, 5, EntryType.WEIGHT) as List<WeightEntry>
             if (data.size > 1) {
                 view.weight_graph.visibility = View.VISIBLE
                 val series = gymEntry.dataPointSeriesFrom(data)

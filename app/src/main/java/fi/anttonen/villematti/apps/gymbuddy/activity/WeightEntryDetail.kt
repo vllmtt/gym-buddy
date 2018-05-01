@@ -1,4 +1,4 @@
-package fi.anttonen.villematti.apps.gymbuddy
+package fi.anttonen.villematti.apps.gymbuddy.activity
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -8,19 +8,14 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.Menu
-import android.view.View
 import com.jjoe64.graphview.GridLabelRenderer
-import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
-import fi.anttonen.villematti.apps.gymbuddy.R.id.weight_graph
 import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.DataSource
 import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.EntryType
 import kotlinx.android.synthetic.main.activity_weight_entry_detail.*
-import java.text.DateFormat
-import java.util.*
 import android.app.Activity
 import android.content.Intent
-
-
+import fi.anttonen.villematti.apps.gymbuddy.R
+import fi.anttonen.villematti.apps.gymbuddy.model.WeightEntry
 
 
 class WeightEntryDetail : AppCompatActivity() {

@@ -1,4 +1,4 @@
-package fi.anttonen.villematti.apps.gymbuddy
+package fi.anttonen.villematti.apps.gymbuddy.model
 
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
@@ -6,8 +6,6 @@ import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.EntryType
 import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymEntry
 import java.math.BigDecimal
 import java.util.*
-import kotlin.math.absoluteValue
-import kotlin.math.roundToInt
 
 /**
  * Created by vma on 25/04/2018.
@@ -62,6 +60,7 @@ class WeightEntry(val id: String, var date: Date, private var _weight: Double) :
      *
      */
     fun dataPointSeriesFrom(gymEntries: List<WeightEntry>): LineGraphSeries<DataPoint> {
+        //TODO: use date as x axis
         val reversed = gymEntries.asReversed()
         val datapoints = mutableListOf<DataPoint>()
         for (i in 0 until reversed.size) {

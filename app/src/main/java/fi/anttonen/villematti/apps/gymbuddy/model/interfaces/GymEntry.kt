@@ -1,9 +1,7 @@
 package fi.anttonen.villematti.apps.gymbuddy.model.interfaces
 
-import fi.anttonen.villematti.apps.gymbuddy.R.string.date
-import fi.anttonen.villematti.apps.gymbuddy.WeightEntry
+import fi.anttonen.villematti.apps.gymbuddy.model.WeightEntry
 import java.text.DateFormat
-import java.text.SimpleDateFormat
 import java.util.*
 
 /**

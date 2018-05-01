@@ -1,4 +1,4 @@
-package fi.anttonen.villematti.apps.gymbuddy
+package fi.anttonen.villematti.apps.gymbuddy.activity
 
 import android.app.Activity
 import android.content.Intent
@@ -8,11 +8,11 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import fi.anttonen.villematti.apps.gymbuddy.R.id.gymEntriesRecyclerView
 import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymEntry
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.weight_entry_row.view.*
-import android.support.v4.util.Pair
+import fi.anttonen.villematti.apps.gymbuddy.control.GymEntriesRecyclerAdapter
+import fi.anttonen.villematti.apps.gymbuddy.R
+import fi.anttonen.villematti.apps.gymbuddy.model.WeightEntry
 
 class MainActivity : AppCompatActivity(), GymEntriesRecyclerAdapter.OnItemClickListener {
 
