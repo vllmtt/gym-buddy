@@ -11,6 +11,7 @@ import fi.anttonen.villematti.apps.gymbuddy.model.WeightEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.DataSource
 import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.EntryType
 import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymEntry
+import kotlinx.android.synthetic.main.activity_weight_entry_detail.*
 import kotlinx.android.synthetic.main.weight_entry_row.view.*
 import org.joda.time.LocalDate
 import java.util.*
@@ -110,6 +111,11 @@ class CalendarGymEntriesRecyclerAdapter: RecyclerView.Adapter<CalendarGymEntries
             view.weight_graph.gridLabelRenderer.isHorizontalLabelsVisible = false
             view.weight_graph.gridLabelRenderer.isVerticalLabelsVisible = false
             view.weight_graph.gridLabelRenderer.gridStyle = GridLabelRenderer.GridStyle.NONE
+
+            view.weight_graph.viewport.setMinX(LocalDate(data.last().date).toDate().time.toDouble())
+            view.weight_graph.viewport.setMaxX(LocalDate(data.first().date).toDate().time.toDouble())
+            view.weight_graph.viewport.isXAxisBoundsManual = true
+            view.weight_graph.gridLabelRenderer.setHumanRounding(false)
         }
 
     }

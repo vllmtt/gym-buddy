@@ -16,6 +16,7 @@ import android.app.Activity
 import android.content.Intent
 import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.model.WeightEntry
+import org.joda.time.LocalDate
 
 
 class WeightEntryDetail : AppCompatActivity() {
@@ -88,10 +89,8 @@ class WeightEntryDetail : AppCompatActivity() {
      */
     private fun setupWeightGraph() {
         val data = DataSource.DATA_SOURCE.getGymEntriesBefore(clone, 5, EntryType.WEIGHT) as MutableList<WeightEntry>
-        Log.i(this.localClassName, "Data before editing $data")
         data.removeAt(0)
         data.add(0, clone)
-        Log.i(this.localClassName, "Data after editing $data")
         if (data.size > 1) {
             val series = clone.dataPointSeriesFrom(data)
             series.color = ContextCompat.getColor(this, R.color.colorAccent)
@@ -105,6 +104,11 @@ class WeightEntryDetail : AppCompatActivity() {
             weight_graph.gridLabelRenderer.isVerticalLabelsVisible = true
             weight_graph.gridLabelRenderer.gridStyle = GridLabelRenderer.GridStyle.HORIZONTAL
             weight_graph.gridLabelRenderer.horizontalAxisTitle = " "
+
+            weight_graph.viewport.setMinX(LocalDate(data.last().date).toDate().time.toDouble())
+            weight_graph.viewport.setMaxX(LocalDate(data.first().date).toDate().time.toDouble())
+            weight_graph.viewport.isXAxisBoundsManual = true
+            weight_graph.gridLabelRenderer.setHumanRounding(false)
         }
     }
 

@@ -65,7 +65,7 @@ class WeightEntry(val id: String, var date: LocalDate, private var _weight: Doub
         val reversed = gymEntries.asReversed()
         val datapoints = mutableListOf<DataPoint>()
         for (i in 0 until reversed.size) {
-            datapoints.add(DataPoint((i).toDouble(), reversed[i].weight))
+            datapoints.add(DataPoint(reversed[i].date.toDate(), reversed[i].weight))
         }
         return LineGraphSeries(datapoints.toTypedArray())
     }
