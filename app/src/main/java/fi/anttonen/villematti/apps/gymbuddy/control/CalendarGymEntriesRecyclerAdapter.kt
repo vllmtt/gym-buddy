@@ -1,6 +1,7 @@
 package fi.anttonen.villematti.apps.gymbuddy.control
 
 import android.support.v4.content.ContextCompat
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -22,13 +23,9 @@ class CalendarGymEntriesRecyclerAdapter : RecyclerView.Adapter<CalendarGymEntrie
     lateinit var itemClickListener: OnItemClickListener
 
     fun updateGymEntries(date: LocalDate?) {
-        if (date == null) {
-            gymEntries = listOf()
-            notifyDataSetChanged()
-            return
-        }
-        gymEntries = DataSource.DATA_SOURCE.getGymEntries(date)
-        notifyDataSetChanged()
+        val newData = if (date == null) listOf() else DataSource.DATA_SOURCE.getGymEntries(date)
+        DiffUtil.calculateDiff(EntryRowDiffCallback(newData, gymEntries), false).dispatchUpdatesTo(this)
+        gymEntries = newData
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CalendarGymEntryHolder {
@@ -121,6 +118,25 @@ class CalendarGymEntriesRecyclerAdapter : RecyclerView.Adapter<CalendarGymEntrie
             } else {
                 view.weight_graph.visibility = View.GONE
             }
+        }
+
+    }
+
+    inner class EntryRowDiffCallback(private val newRows: List<GymEntry>, private val oldRows: List<GymEntry>) : DiffUtil.Callback() {
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val oldRow = oldRows[oldItemPosition]
+            val newRow = newRows[newItemPosition]
+            return oldRow.getEntryType() == newRow.getEntryType()
+        }
+
+        override fun getOldListSize(): Int = oldRows.size
+
+        override fun getNewListSize(): Int = newRows.size
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            val oldRow = oldRows[oldItemPosition]
+            val newRow = newRows[newItemPosition]
+            return oldRow == newRow
         }
 
     }
