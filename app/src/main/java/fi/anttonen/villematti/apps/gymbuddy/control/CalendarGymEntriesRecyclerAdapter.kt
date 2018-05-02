@@ -12,6 +12,7 @@ import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.DataSource
 import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.EntryType
 import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymEntry
 import kotlinx.android.synthetic.main.weight_entry_row.view.*
+import org.joda.time.LocalDate
 import java.util.*
 
 class CalendarGymEntriesRecyclerAdapter: RecyclerView.Adapter<CalendarGymEntriesRecyclerAdapter.CalendarGymEntryHolder>() {
@@ -19,7 +20,7 @@ class CalendarGymEntriesRecyclerAdapter: RecyclerView.Adapter<CalendarGymEntries
     private var gymEntries: List<GymEntry> = listOf()
     lateinit var itemClickListener: OnItemClickListener
 
-    fun updateGymEntries(date: Date?) {
+    fun updateGymEntries(date: LocalDate?) {
         if (date == null) {
             gymEntries = listOf()
             notifyDataSetChanged()

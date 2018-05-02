@@ -16,6 +16,10 @@ import kotlinx.android.synthetic.main.activity_main.*
 import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.control.CalendarGymEntriesRecyclerAdapter
 import fi.anttonen.villematti.apps.gymbuddy.model.WeightEntry
+import net.danlew.android.joda.JodaTimeAndroid
+import org.joda.time.LocalDate
+import org.joda.time.format.DateTimeFormat
+import org.joda.time.format.DateTimeFormatter
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -28,11 +32,13 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var adapter: CalendarGymEntriesRecyclerAdapter
-    private var currentlySelectedDate: Date? = null
+    private var currentlySelectedDate: LocalDate? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        JodaTimeAndroid.init(this);
 
         linearLayoutManager = LinearLayoutManager(this)
         gymEntriesRecyclerView.layoutManager = linearLayoutManager
@@ -49,20 +55,20 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
     private fun setupCalendar() {
         calendar_view.shouldSelectFirstDayOfMonthOnScroll(false)
         calendar_view.setListener(this)
-        currentlySelectedDate = Date()
-        calendar_view.setCurrentDate(currentlySelectedDate)
+        currentlySelectedDate = LocalDate()
+        calendar_view.setCurrentDate(currentlySelectedDate?.toDate())
         adapter.updateGymEntries(currentlySelectedDate)
     }
 
 
     override fun onDayClick(dateClicked: Date?) {
-        currentlySelectedDate = dateClicked
+        currentlySelectedDate = LocalDate(dateClicked)
         supportActionBar?.title = getMainTitle(currentlySelectedDate)
         adapter.updateGymEntries(currentlySelectedDate)
     }
 
     override fun onMonthScroll(firstDayOfNewMonth: Date?) {
-        supportActionBar?.title = getMainTitle(firstDayOfNewMonth)
+        supportActionBar?.title = getMainTitle(LocalDate.fromDateFields(firstDayOfNewMonth))
     }
 
 
@@ -107,12 +113,10 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
         return super.onOptionsItemSelected(item)
     }
 
-    private fun getMainTitle(date: Date?): String {
-        val cal = Calendar.getInstance()
-        if (date != null) cal.time = date
+    private fun getMainTitle(date: LocalDate?): String {
         val pattern = if (calendar_view.visibility == View.VISIBLE) "MMMM yyyy" else "MMMM d, yyyy"
-        val f = SimpleDateFormat(pattern)
-        return f.format(cal.time)
+        val f = DateTimeFormat.forPattern(pattern)
+        return date?.toString(f) ?: LocalDate.now().toString(f)
     }
 
 }

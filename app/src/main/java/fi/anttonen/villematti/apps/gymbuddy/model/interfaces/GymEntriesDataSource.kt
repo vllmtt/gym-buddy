@@ -1,5 +1,6 @@
 package fi.anttonen.villematti.apps.gymbuddy.model.interfaces
 
+import org.joda.time.LocalDate
 import java.util.*
 
 /**
@@ -7,7 +8,7 @@ import java.util.*
  */
 interface GymEntriesDataSource {
     fun getGymEntries(): List<GymEntry>
-    fun getGymEntries(date: Date): List<GymEntry>
+    fun getGymEntries(date: LocalDate): List<GymEntry>
     fun getGymEntry(id: String): GymEntry?
     fun getGymEntriesBefore(gymEntry: GymEntry, limit: Int, type: EntryType?) : MutableList<GymEntry>
     fun delete(gymEntry: GymEntry)

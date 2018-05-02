@@ -38,7 +38,7 @@ class WeightEntryDetail : AppCompatActivity() {
         entry = DataSource.DATA_SOURCE.getGymEntry(id) as WeightEntry
         clone = entry.clone()
 
-        date_text.text = clone.getHumanReadableDate()
+        date_text.text = clone.getHumanReadableDate(this)
         setupWeightEditText()
         setupWeightGraph()
 

@@ -1,6 +1,7 @@
 package fi.anttonen.villematti.apps.gymbuddy.model.interfaces
 
 import fi.anttonen.villematti.apps.gymbuddy.model.WeightEntry
+import org.joda.time.LocalDate
 import java.util.*
 
 
@@ -8,7 +9,7 @@ import java.util.*
 class MockDataSource : GymEntriesDataSource {
 
     private lateinit var gymEntries:  MutableList<GymEntry>
-    var initialized = false
+    private var initialized = false
 
     override fun getGymEntries(): List<GymEntry> {
         if (!initialized) {
@@ -27,9 +28,9 @@ class MockDataSource : GymEntriesDataSource {
         return gymEntries
     }
 
-    override fun getGymEntries(date: Date): List<GymEntry> {
+    override fun getGymEntries(date: LocalDate): List<GymEntry> {
         if (!initialized) getGymEntries()
-        return gymEntries.filter { entry -> entry.getEntryDate().time == date.time }
+        return gymEntries.filter { entry -> entry.getEntryDate() == date }
     }
 
     private fun sortByDateDescending() {
@@ -40,7 +41,7 @@ class MockDataSource : GymEntriesDataSource {
         return gymEntries.find { entry -> entry.getEntryId() == id }
     }
 
-    override fun getGymEntriesBefore(gymEntry: GymEntry, limit: Int, entryType: EntryType?): MutableList<GymEntry> {
+    override fun getGymEntriesBefore(gymEntry: GymEntry, limit: Int, type: EntryType?): MutableList<GymEntry> {
         val entry = gymEntries.find { e -> e.getEntryId() == gymEntry.getEntryId() }
         val high = gymEntries.indexOf(entry)
         val low = minOf(high + limit, gymEntries.size)
@@ -63,9 +64,9 @@ class MockDataSource : GymEntriesDataSource {
         gymEntries.add(gymEntry)
     }
 
-    private fun newDate(daysBeforeToday: Int): Date {
-        val cal = Calendar.getInstance()
-        cal.add(Calendar.DATE, -daysBeforeToday)
-        return cal.time
+    private fun newDate(daysBeforeToday: Int): LocalDate {
+        var date = LocalDate()
+        date = date.minusDays(daysBeforeToday)
+        return date
     }
 }
