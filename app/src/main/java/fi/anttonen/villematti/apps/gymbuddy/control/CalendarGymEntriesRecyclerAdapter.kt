@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.weight_entry_row.view.*
 import org.joda.time.LocalDate
 import java.util.*
 
-class CalendarGymEntriesRecyclerAdapter: RecyclerView.Adapter<CalendarGymEntriesRecyclerAdapter.CalendarGymEntryHolder>() {
+class CalendarGymEntriesRecyclerAdapter : RecyclerView.Adapter<CalendarGymEntriesRecyclerAdapter.CalendarGymEntryHolder>() {
 
     private var gymEntries: List<GymEntry> = listOf()
     lateinit var itemClickListener: OnItemClickListener
@@ -103,19 +103,24 @@ class CalendarGymEntriesRecyclerAdapter: RecyclerView.Adapter<CalendarGymEntries
                 series.isDrawDataPoints = false
                 series.thickness = 4
                 view.weight_graph.addSeries(series)
+
+                // TODO weight graph styling to onCreateViewHolder()
+                view.weight_graph.gridLabelRenderer.isHorizontalLabelsVisible = false
+                view.weight_graph.gridLabelRenderer.isVerticalLabelsVisible = false
+                view.weight_graph.gridLabelRenderer.gridStyle = GridLabelRenderer.GridStyle.NONE
+
+                view.weight_graph.viewport.setMinX(LocalDate(data.last().date).toDate().time.toDouble())
+                view.weight_graph.viewport.setMaxX(LocalDate(data.first().date).toDate().time.toDouble())
+                view.weight_graph.viewport.isXAxisBoundsManual = true
+
+                view.weight_graph.viewport.setMinY(series.lowestValueY)
+                view.weight_graph.viewport.setMaxY(series.highestValueY)
+                view.weight_graph.viewport.isYAxisBoundsManual = true
+
+                view.weight_graph.gridLabelRenderer.setHumanRounding(false)
             } else {
                 view.weight_graph.visibility = View.GONE
             }
-
-            // TODO weight graph styling to onCreateViewHolder()
-            view.weight_graph.gridLabelRenderer.isHorizontalLabelsVisible = false
-            view.weight_graph.gridLabelRenderer.isVerticalLabelsVisible = false
-            view.weight_graph.gridLabelRenderer.gridStyle = GridLabelRenderer.GridStyle.NONE
-
-            view.weight_graph.viewport.setMinX(LocalDate(data.last().date).toDate().time.toDouble())
-            view.weight_graph.viewport.setMaxX(LocalDate(data.first().date).toDate().time.toDouble())
-            view.weight_graph.viewport.isXAxisBoundsManual = true
-            view.weight_graph.gridLabelRenderer.setHumanRounding(false)
         }
 
     }
