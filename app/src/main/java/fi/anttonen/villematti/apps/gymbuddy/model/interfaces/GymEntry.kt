@@ -6,6 +6,7 @@ import android.util.Log
 import fi.anttonen.villematti.apps.gymbuddy.R.string.date
 import fi.anttonen.villematti.apps.gymbuddy.model.WeightEntry
 import org.joda.time.DateTime
+import org.joda.time.Duration
 import org.joda.time.Instant
 import org.joda.time.LocalDate
 import org.joda.time.format.DateTimeFormat
@@ -16,6 +17,7 @@ import java.text.DateFormat
  */
 interface GymEntry : Cloneable {
     fun getHumanReadableDate(context: Context): String {
+        //TODO
         return DateFormat.getDateInstance(DateFormat.MEDIUM).format(getEntryDate().toDate())
     }
 
