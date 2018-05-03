@@ -35,8 +35,8 @@ class WeightEntryDetail : AppCompatActivity() {
         setContentView(R.layout.activity_weight_entry_detail)
 
 
-        val id = intent.getStringExtra(ENTRY_ID_KEY)
-        entry = DataSource.DATA_SOURCE.getGymEntry(id) as WeightEntry
+        val id = intent.getLongExtra(ENTRY_ID_KEY, -1)
+        entry = DataSource.DATA_SOURCE!!.getGymEntry(id) as WeightEntry
         clone = entry.clone()
 
         date_text.text = clone.getHumanReadableDate(this)
@@ -88,7 +88,7 @@ class WeightEntryDetail : AppCompatActivity() {
      * Initializes the weight history graph
      */
     private fun setupWeightGraph() {
-        val data = DataSource.DATA_SOURCE.getGymEntriesBefore(clone, 5, EntryType.WEIGHT) as MutableList<WeightEntry>
+        val data = DataSource.DATA_SOURCE!!.getGymEntriesBefore(clone, 5, EntryType.WEIGHT) as MutableList<WeightEntry>
         data.removeAt(0)
         data.add(0, clone)
         if (data.size > 1) {
@@ -156,14 +156,14 @@ class WeightEntryDetail : AppCompatActivity() {
     }
 
     private fun delete() {
-        DataSource.DATA_SOURCE.delete(entry)
+        DataSource.DATA_SOURCE!!.delete(entry)
     }
 
     private fun save() {
         if (clone != entry) {
             Log.i(this.localClassName, "Saving")
             entry.updateValuesFrom(clone)
-            DataSource.DATA_SOURCE.update(entry)
+            DataSource.DATA_SOURCE!!.update(entry)
         }
     }
 }

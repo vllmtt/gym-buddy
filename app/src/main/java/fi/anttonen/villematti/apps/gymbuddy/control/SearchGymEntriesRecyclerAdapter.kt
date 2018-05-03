@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.weight_entry_row.view.*
  */
 class SearchGymEntriesRecyclerAdapter()  : RecyclerView.Adapter<SearchGymEntriesRecyclerAdapter.GymEntryHolder>() {
 
-    private val gymEntries = DataSource.DATA_SOURCE.getGymEntries()
+    private val gymEntries = DataSource.DATA_SOURCE!!.getGymEntries()
     private val filteredGymEntries = gymEntries
     private var filtering = false
     lateinit var itemClickListener: OnItemClickListener
@@ -89,7 +89,7 @@ class SearchGymEntriesRecyclerAdapter()  : RecyclerView.Adapter<SearchGymEntries
             view.weight_unit_text.text = gymEntry.getUnitString()
             view.weight_graph.removeAllSeries()
 
-            val data = DataSource.DATA_SOURCE.getGymEntriesBefore(gymEntry, 5, EntryType.WEIGHT) as List<WeightEntry>
+            val data = DataSource.DATA_SOURCE!!.getGymEntriesBefore(gymEntry, 5, EntryType.WEIGHT) as List<WeightEntry>
             if (data.size > 1) {
                 view.weight_graph.visibility = View.VISIBLE
                 val series = gymEntry.dataPointSeriesFrom(data)

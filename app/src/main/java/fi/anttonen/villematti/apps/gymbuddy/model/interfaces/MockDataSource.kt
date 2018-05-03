@@ -18,7 +18,7 @@ class MockDataSource : GymEntriesDataSource {
             val weightData = arrayListOf(79.1, 79.1, 79.2, 79.1, 79.0, 78.8, 78.1, 78.9, 79.3, 79.7, 79.4, 79.6, 79.2, 79.4, 78.7, 78.9, 78.7, 79.7, 79.7, 79.4)
 
             for (i in 0 until 20) {
-                gymEntries.add(WeightEntry("Entry $i", newDate(i), weightData[i]))
+                gymEntries.add(WeightEntry(i.toLong(), newDate(i), weightData[i]))
             }
             initialized = true
 
@@ -37,7 +37,7 @@ class MockDataSource : GymEntriesDataSource {
         gymEntries.sortWith(kotlin.Comparator { e1, e2 -> e2.getEntryDate().compareTo(e1.getEntryDate()) })
     }
 
-    override fun getGymEntry(id: String): GymEntry? {
+    override fun getGymEntry(id: Long): GymEntry? {
         return gymEntries.find { entry -> entry.getEntryId() == id }
     }
 

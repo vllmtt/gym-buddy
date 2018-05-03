@@ -1,5 +1,8 @@
 package fi.anttonen.villematti.apps.gymbuddy.model
 
+import android.arch.persistence.room.ColumnInfo
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
 import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.EntryType
@@ -11,8 +14,12 @@ import java.util.*
 /**
  * Created by vma on 25/04/2018.
  */
-class WeightEntry(val id: String, var date: LocalDate, private var _weight: Double) : GymEntry {
+@Entity(tableName = "weight_entry")
+class WeightEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val id: Long,
+                  @ColumnInfo(name = "date") var date: LocalDate,
+                  @ColumnInfo(name = "weight") private var _weight: Double) : GymEntry {
 
+    @ColumnInfo(name = "mood")
     var mood: String? = null
 
     var weight: Double
@@ -23,7 +30,7 @@ class WeightEntry(val id: String, var date: LocalDate, private var _weight: Doub
 
     override fun getEntryType(): EntryType = EntryType.WEIGHT
 
-    override fun getEntryId(): String {
+    override fun getEntryId(): Long {
         return id
     }
 

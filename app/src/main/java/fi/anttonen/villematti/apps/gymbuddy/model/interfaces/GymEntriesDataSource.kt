@@ -9,7 +9,7 @@ import java.util.*
 interface GymEntriesDataSource {
     fun getGymEntries(): List<GymEntry>
     fun getGymEntries(date: LocalDate): List<GymEntry>
-    fun getGymEntry(id: String): GymEntry?
+    fun getGymEntry(id: Long): GymEntry?
     fun getGymEntriesBefore(gymEntry: GymEntry, limit: Int, type: EntryType?) : MutableList<GymEntry>
     fun delete(gymEntry: GymEntry)
     fun update(gymEntry: GymEntry)

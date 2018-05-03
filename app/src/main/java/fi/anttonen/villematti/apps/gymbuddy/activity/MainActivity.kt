@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.control.CalendarGymEntriesRecyclerAdapter
 import fi.anttonen.villematti.apps.gymbuddy.model.WeightEntry
+import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.DataSource
 import net.danlew.android.joda.JodaTimeAndroid
 import org.joda.time.LocalDate
 import org.joda.time.format.DateTimeFormat
@@ -36,6 +37,10 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        ///////////// INIT DATABASE //////////////
+        DataSource.initDatabse(applicationContext)
+
         setContentView(R.layout.activity_main)
 
         JodaTimeAndroid.init(this);

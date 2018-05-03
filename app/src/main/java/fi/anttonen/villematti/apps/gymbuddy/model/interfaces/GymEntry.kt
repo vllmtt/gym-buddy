@@ -21,7 +21,7 @@ interface GymEntry : Cloneable {
         return DateFormat.getDateInstance(DateFormat.MEDIUM).format(getEntryDate().toDate())
     }
 
-    fun getEntryId(): String
+    fun getEntryId(): Long
     fun getEntryDate(): LocalDate
     fun getEntryType(): EntryType
     fun getEntryMood(): String?
@@ -35,4 +35,6 @@ enum class EntryType(val displayName: String) {
     WEIGHT("Weight"),
     CARDIO("Cardio"),
     STRENGTH("Strength"),
+    MEASUREMENT("Measurement"),
+    FOOD("Food")
 }

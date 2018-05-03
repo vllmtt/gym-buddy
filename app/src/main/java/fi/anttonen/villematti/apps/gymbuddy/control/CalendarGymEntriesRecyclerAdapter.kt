@@ -23,7 +23,7 @@ class CalendarGymEntriesRecyclerAdapter : RecyclerView.Adapter<CalendarGymEntrie
     lateinit var itemClickListener: OnItemClickListener
 
     fun updateGymEntries(date: LocalDate?) {
-        val newData = if (date == null) listOf() else DataSource.DATA_SOURCE.getGymEntries(date)
+        val newData = if (date == null) listOf() else DataSource.DATA_SOURCE!!.getGymEntries(date)
         DiffUtil.calculateDiff(EntryRowDiffCallback(newData, gymEntries), false).dispatchUpdatesTo(this)
         gymEntries = newData
     }
@@ -92,7 +92,7 @@ class CalendarGymEntriesRecyclerAdapter : RecyclerView.Adapter<CalendarGymEntrie
             view.weight_unit_text.text = gymEntry.getUnitString()
             view.weight_graph.removeAllSeries()
 
-            val data = DataSource.DATA_SOURCE.getGymEntriesBefore(gymEntry, 5, EntryType.WEIGHT) as List<WeightEntry>
+            val data = DataSource.DATA_SOURCE!!.getGymEntriesBefore(gymEntry, 5, EntryType.WEIGHT) as List<WeightEntry>
             if (data.size > 1) {
                 view.weight_graph.visibility = View.VISIBLE
                 val series = gymEntry.dataPointSeriesFrom(data)
