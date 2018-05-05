@@ -3,20 +3,19 @@ package fi.anttonen.villematti.apps.gymbuddy.model.interfaces
 import android.arch.persistence.room.Room
 import android.content.Context
 import fi.anttonen.villematti.apps.gymbuddy.model.AppDatabase
-import fi.anttonen.villematti.apps.gymbuddy.model.GymEntryDao
-import fi.anttonen.villematti.apps.gymbuddy.model.entity.GymEntry
+import fi.anttonen.villematti.apps.gymbuddy.model.WeightEntryDao
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
 import org.joda.time.LocalDate
 
 object GymBuddyRoomDataBase {
 
     var db: AppDatabase? = null
-    lateinit var gymEntryDao: GymEntryDao
+    lateinit var weightEntryDao: WeightEntryDao
 
     fun initIfNull(applicationContext: Context) {
         if (db == null) {
             db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "gym-database").build()
-            gymEntryDao = db!!.gymEntryDao()
+            weightEntryDao = db!!.gymEntryDao()
         }
     }
 
@@ -28,6 +27,6 @@ object GymBuddyRoomDataBase {
             date = date.minusDays(i)
             weightEntries.add(WeightEntry(i.toLong(), date, weightData[i]))
         }
-        gymEntryDao.insertAll(*weightEntries.toTypedArray())
+        weightEntryDao.insertAll(*weightEntries.toTypedArray())
     }
 }

@@ -8,5 +8,5 @@ import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
 @Database(entities = [(WeightEntry::class)], version = 1)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun gymEntryDao(): GymEntryDao
+    abstract fun gymEntryDao(): WeightEntryDao
 }

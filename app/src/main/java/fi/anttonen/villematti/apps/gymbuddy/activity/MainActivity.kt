@@ -7,6 +7,7 @@ import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -38,8 +39,15 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        setContentView(R.layout.activity_main)
+
         JodaTimeAndroid.init(this)
-        currentlySelectedDate = LocalDate()
+        setupCalendar()
+
+        linearLayoutManager = LinearLayoutManager(this)
+        gymEntriesRecyclerView.layoutManager = linearLayoutManager
+
+        supportActionBar?.title = getMainTitle(null)
 
         ////////////// INIT DATABASE //////////////
         GymBuddyRoomDataBase.initIfNull(applicationContext)
@@ -52,28 +60,22 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
         val viewModel = ViewModelProviders.of(this).get(CalendarGymEntriesViewModel::class.java)
         viewModel.setDateFilter(currentlySelectedDate)
-        viewModel.getWeightEntriesForDate().observe(this, android.arch.lifecycle.Observer {
+        viewModel.getWeightEntriesForDate().observe(this, android.arch.lifecycle.Observer { weightEntries ->
             if (gymEntriesRecyclerView.adapter == null) {
-                adapter = CalendarGymEntriesRecyclerAdapter(it)
+                adapter = CalendarGymEntriesRecyclerAdapter(weightEntries)
                 gymEntriesRecyclerView.adapter = adapter
                 adapter?.itemClickListener = this
             } else {
-                adapter?.updateGymEntries(it)
+                adapter?.updateGymEntries(weightEntries)
+            }
+        })
+        viewModel.getWeightEntryHistoryForDate().observe(this, android.arch.lifecycle.Observer { history ->
+            if (gymEntriesRecyclerView.adapter != null) {
+                Log.i(this.localClassName, "Observing ${history?.size} historical entries")
             }
         })
 
-        setContentView(R.layout.activity_main)
 
-
-        linearLayoutManager = LinearLayoutManager(this)
-        gymEntriesRecyclerView.layoutManager = linearLayoutManager
-
-        //adapter = CalendarGymEntriesRecyclerAdapter()
-        gymEntriesRecyclerView.adapter = adapter
-
-        setupCalendar()
-
-        supportActionBar?.title = getMainTitle(null)
     }
 
     private fun setupCalendar() {
@@ -81,14 +83,12 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
         calendar_view.setListener(this)
         currentlySelectedDate = LocalDate()
         calendar_view.setCurrentDate(currentlySelectedDate.toDate())
-        //adapter.updateGymEntries(currentlySelectedDate)
     }
 
 
     override fun onDayClick(dateClicked: Date?) {
         currentlySelectedDate = LocalDate(dateClicked)
         supportActionBar?.title = getMainTitle(currentlySelectedDate)
-        //adapter.updateGymEntries(currentlySelectedDate)
         ViewModelProviders.of(this).get(CalendarGymEntriesViewModel::class.java).setDateFilter(currentlySelectedDate)
     }
 

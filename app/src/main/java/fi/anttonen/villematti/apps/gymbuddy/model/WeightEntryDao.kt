@@ -9,7 +9,7 @@ import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
 import org.joda.time.LocalDate
 
 @Dao
-interface GymEntryDao {
+interface WeightEntryDao {
 
     @Query("SELECT * FROM weight_entry")
     fun getAll(): LiveData<List<WeightEntry>>
@@ -19,6 +19,9 @@ interface GymEntryDao {
 
     @Query("SELECT * FROM weight_entry WHERE weight_entry.id = :id")
     fun get(id: Long): LiveData<WeightEntry>
+
+    @Query("SELECT * FROM weight_entry WHERE weight_entry.date < :date ORDER BY weight_entry.date LIMIT :limit")
+    fun getHistory(date: LocalDate, limit: Int): LiveData<List<WeightEntry>>?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg weightEntries: WeightEntry)
