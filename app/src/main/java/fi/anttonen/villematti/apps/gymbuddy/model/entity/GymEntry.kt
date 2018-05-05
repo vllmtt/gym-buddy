@@ -1,15 +1,7 @@
-package fi.anttonen.villematti.apps.gymbuddy.model.interfaces
+package fi.anttonen.villematti.apps.gymbuddy.model.entity
 
 import android.content.Context
-import android.text.format.DateUtils
-import android.util.Log
-import fi.anttonen.villematti.apps.gymbuddy.R.string.date
-import fi.anttonen.villematti.apps.gymbuddy.model.WeightEntry
-import org.joda.time.DateTime
-import org.joda.time.Duration
-import org.joda.time.Instant
 import org.joda.time.LocalDate
-import org.joda.time.format.DateTimeFormat
 import java.text.DateFormat
 
 /**

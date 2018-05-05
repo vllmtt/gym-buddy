@@ -1,15 +1,12 @@
-package fi.anttonen.villematti.apps.gymbuddy.model
+package fi.anttonen.villematti.apps.gymbuddy.model.entity
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
-import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.EntryType
-import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymEntry
 import org.joda.time.LocalDate
 import java.math.BigDecimal
-import java.util.*
 
 /**
  * Created by vma on 25/04/2018.

@@ -1,3 +1,4 @@
+/*
 package fi.anttonen.villematti.apps.gymbuddy.activity
 
 import android.support.v7.app.AppCompatActivity
@@ -10,12 +11,12 @@ import android.util.Log
 import android.view.Menu
 import com.jjoe64.graphview.GridLabelRenderer
 import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.DataSource
-import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.EntryType
+import fi.anttonen.villematti.apps.gymbuddy.model.entity.EntryType
 import kotlinx.android.synthetic.main.activity_weight_entry_detail.*
 import android.app.Activity
 import android.content.Intent
 import fi.anttonen.villematti.apps.gymbuddy.R
-import fi.anttonen.villematti.apps.gymbuddy.model.WeightEntry
+import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
 import org.joda.time.LocalDate
 
 
@@ -167,3 +168,4 @@ class WeightEntryDetail : AppCompatActivity() {
         }
     }
 }
+*/

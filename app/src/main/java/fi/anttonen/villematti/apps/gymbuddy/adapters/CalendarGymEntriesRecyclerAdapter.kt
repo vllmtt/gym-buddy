@@ -1,4 +1,4 @@
-package fi.anttonen.villematti.apps.gymbuddy.control
+package fi.anttonen.villematti.apps.gymbuddy.adapters
 
 import android.support.v4.content.ContextCompat
 import android.support.v7.util.DiffUtil
@@ -8,22 +8,18 @@ import android.view.View
 import android.view.ViewGroup
 import com.jjoe64.graphview.GridLabelRenderer
 import fi.anttonen.villematti.apps.gymbuddy.R
-import fi.anttonen.villematti.apps.gymbuddy.model.WeightEntry
-import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.DataSource
-import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.EntryType
-import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymEntry
-import kotlinx.android.synthetic.main.activity_weight_entry_detail.*
+import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
+import fi.anttonen.villematti.apps.gymbuddy.model.entity.EntryType
+import fi.anttonen.villematti.apps.gymbuddy.model.entity.GymEntry
 import kotlinx.android.synthetic.main.weight_entry_row.view.*
 import org.joda.time.LocalDate
-import java.util.*
 
-class CalendarGymEntriesRecyclerAdapter : RecyclerView.Adapter<CalendarGymEntriesRecyclerAdapter.CalendarGymEntryHolder>() {
+class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?) : RecyclerView.Adapter<CalendarGymEntriesRecyclerAdapter.CalendarGymEntryHolder>() {
 
-    private var gymEntries: List<GymEntry> = listOf()
+
     lateinit var itemClickListener: OnItemClickListener
 
-    fun updateGymEntries(date: LocalDate?) {
-        val newData = if (date == null) listOf() else DataSource.DATA_SOURCE!!.getGymEntries(date)
+    fun updateGymEntries(newData: List<GymEntry>?) {
         DiffUtil.calculateDiff(EntryRowDiffCallback(newData, gymEntries), false).dispatchUpdatesTo(this)
         gymEntries = newData
     }
@@ -39,23 +35,23 @@ class CalendarGymEntriesRecyclerAdapter : RecyclerView.Adapter<CalendarGymEntrie
     }
 
     override fun getItemCount(): Int {
-        return gymEntries.size
+        return gymEntries?.size ?: 0
     }
 
     override fun onBindViewHolder(holder: CalendarGymEntryHolder, position: Int) {
-        val gymEntry = gymEntries[position]
+        val gymEntry = gymEntries?.get(position)
         holder.bindEntry(gymEntry)
     }
 
     override fun getItemViewType(position: Int): Int {
-        return gymEntries[position].getEntryType().ordinal
+        return gymEntries?.get(position)?.getEntryType()?.ordinal ?: -1
     }
 
 
     /**
      * Gets entry at a position either from filtered or unfiltered list
      */
-    fun getListItemAtPosition(position: Int) = gymEntries[position]
+    fun getListItemAtPosition(position: Int) = gymEntries?.get(position)
 
 
     /**
@@ -76,8 +72,8 @@ class CalendarGymEntriesRecyclerAdapter : RecyclerView.Adapter<CalendarGymEntrie
         /**
          * Binds an entry to the view holder
          */
-        fun bindEntry(gymEntry: GymEntry) {
-            view.entry_type.text = gymEntry.getEntryType().displayName
+        fun bindEntry(gymEntry: GymEntry?) {
+            view.entry_type.text = gymEntry?.getEntryType()?.displayName
             if (gymEntry is WeightEntry) {
                 bindWeightEntry(gymEntry)
             }
@@ -92,6 +88,7 @@ class CalendarGymEntriesRecyclerAdapter : RecyclerView.Adapter<CalendarGymEntrie
             view.weight_unit_text.text = gymEntry.getUnitString()
             view.weight_graph.removeAllSeries()
 
+            /*
             val data = DataSource.DATA_SOURCE!!.getGymEntriesBefore(gymEntry, 5, EntryType.WEIGHT) as List<WeightEntry>
             if (data.size > 1) {
                 view.weight_graph.visibility = View.VISIBLE
@@ -118,24 +115,25 @@ class CalendarGymEntriesRecyclerAdapter : RecyclerView.Adapter<CalendarGymEntrie
             } else {
                 view.weight_graph.visibility = View.GONE
             }
+            */
         }
 
     }
 
-    inner class EntryRowDiffCallback(private val newRows: List<GymEntry>, private val oldRows: List<GymEntry>) : DiffUtil.Callback() {
+    inner class EntryRowDiffCallback(private val newRows: List<GymEntry>?, private val oldRows: List<GymEntry>?) : DiffUtil.Callback() {
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            val oldRow = oldRows[oldItemPosition]
-            val newRow = newRows[newItemPosition]
-            return oldRow.getEntryType() == newRow.getEntryType()
+            val oldRow = oldRows?.get(oldItemPosition)
+            val newRow = newRows?.get(newItemPosition)
+            return oldRow?.getEntryType() == newRow?.getEntryType()
         }
 
-        override fun getOldListSize(): Int = oldRows.size
+        override fun getOldListSize(): Int = oldRows?.size ?: 0
 
-        override fun getNewListSize(): Int = newRows.size
+        override fun getNewListSize(): Int = newRows?.size ?: 0
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            val oldRow = oldRows[oldItemPosition]
-            val newRow = newRows[newItemPosition]
+            val oldRow = oldRows?.get(oldItemPosition)
+            val newRow = newRows?.get(newItemPosition)
             return oldRow == newRow
         }
 
@@ -145,6 +143,6 @@ class CalendarGymEntriesRecyclerAdapter : RecyclerView.Adapter<CalendarGymEntrie
      * Click interface
      */
     interface OnItemClickListener {
-        fun onItemClick(view: View, position: Int, entry: GymEntry)
+        fun onItemClick(view: View, position: Int, entry: GymEntry?)
     }
 }

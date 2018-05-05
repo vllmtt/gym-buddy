@@ -1,27 +1,25 @@
 package fi.anttonen.villematti.apps.gymbuddy.activity
 
 import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.ActivityOptionsCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import com.github.sundeepk.compactcalendarview.CompactCalendarView
-import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymEntry
-import kotlinx.android.synthetic.main.activity_main.*
+import fi.anttonen.villematti.apps.gymbuddy.model.entity.GymEntry
 import fi.anttonen.villematti.apps.gymbuddy.R
-import fi.anttonen.villematti.apps.gymbuddy.control.CalendarGymEntriesRecyclerAdapter
-import fi.anttonen.villematti.apps.gymbuddy.model.WeightEntry
-import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.DataSource
+import fi.anttonen.villematti.apps.gymbuddy.adapters.CalendarGymEntriesRecyclerAdapter
+import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
+import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
+import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymBuddyRoomDataBase
+import kotlinx.android.synthetic.main.activity_main.*
 import net.danlew.android.joda.JodaTimeAndroid
 import org.joda.time.LocalDate
 import org.joda.time.format.DateTimeFormat
-import org.joda.time.format.DateTimeFormatter
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -32,24 +30,35 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
     }
 
     private lateinit var linearLayoutManager: LinearLayoutManager
-    private lateinit var adapter: CalendarGymEntriesRecyclerAdapter
-    private var currentlySelectedDate: LocalDate? = null
+    private var adapter: CalendarGymEntriesRecyclerAdapter? = null
+    private lateinit var currentlySelectedDate: LocalDate
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        ///////////// INIT DATABASE //////////////
-        DataSource.initDatabse(applicationContext)
+        JodaTimeAndroid.init(this)
+        currentlySelectedDate = LocalDate()
+
+        ////////////// INIT DATABASE //////////////
+        GymBuddyRoomDataBase.initIfNull(applicationContext)
+        val gymEntryDao = GymBuddyRoomDataBase.db!!.gymEntryDao()
+        ViewModelProviders.of(this).get(CalendarGymEntriesViewModel::class.java).getWeightEntries(currentlySelectedDate, gymEntryDao).observe(this, android.arch.lifecycle.Observer {
+            if (gymEntriesRecyclerView.adapter == null) {
+                adapter = CalendarGymEntriesRecyclerAdapter(it)
+                gymEntriesRecyclerView.adapter = adapter
+                adapter?.itemClickListener = this
+            } else {
+                adapter?.updateGymEntries(it)
+            }
+        })
 
         setContentView(R.layout.activity_main)
 
-        JodaTimeAndroid.init(this);
 
         linearLayoutManager = LinearLayoutManager(this)
         gymEntriesRecyclerView.layoutManager = linearLayoutManager
 
-        adapter = CalendarGymEntriesRecyclerAdapter()
-        adapter.itemClickListener = this
+        //adapter = CalendarGymEntriesRecyclerAdapter()
         gymEntriesRecyclerView.adapter = adapter
 
         setupCalendar()
@@ -61,15 +70,15 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
         calendar_view.shouldSelectFirstDayOfMonthOnScroll(false)
         calendar_view.setListener(this)
         currentlySelectedDate = LocalDate()
-        calendar_view.setCurrentDate(currentlySelectedDate?.toDate())
-        adapter.updateGymEntries(currentlySelectedDate)
+        calendar_view.setCurrentDate(currentlySelectedDate.toDate())
+        //adapter.updateGymEntries(currentlySelectedDate)
     }
 
 
     override fun onDayClick(dateClicked: Date?) {
         currentlySelectedDate = LocalDate(dateClicked)
         supportActionBar?.title = getMainTitle(currentlySelectedDate)
-        adapter.updateGymEntries(currentlySelectedDate)
+        //adapter.updateGymEntries(currentlySelectedDate)
     }
 
     override fun onMonthScroll(firstDayOfNewMonth: Date?) {
@@ -80,27 +89,31 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
     /**
      * Item click listener for gym entry recycler view
      */
-    override fun onItemClick(view: View, position: Int, entry: GymEntry) {
+    override fun onItemClick(view: View, position: Int, entry: GymEntry?) {
         if (entry is WeightEntry) {
+            /*
             val weightDetailIntent = Intent(this, WeightEntryDetail::class.java).apply {
                 putExtra(WeightEntryDetail.ENTRY_ID_KEY, entry.getEntryId())
             }
 
             val options = ActivityOptionsCompat.makeBasic()
             ActivityCompat.startActivityForResult(this@MainActivity, weightDetailIntent, UPDATE_REQUEST, options.toBundle())
+            */
         }
     }
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == UPDATE_REQUEST && resultCode == Activity.RESULT_OK) {
+            /*
             if (data != null) {
                 val changed = data.getBooleanExtra(WeightEntryDetail.CHANGED_KEY, false)
                 val deleted = data.getBooleanExtra(WeightEntryDetail.DELETED_KEY, false)
                 if (changed || deleted) {
-                    adapter.notifyDataSetChanged()
+                    adapter?.notifyDataSetChanged()
                 }
             }
+            */
         }
     }
 
