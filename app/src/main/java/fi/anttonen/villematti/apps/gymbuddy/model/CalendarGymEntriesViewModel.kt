@@ -1,9 +1,8 @@
 package fi.anttonen.villematti.apps.gymbuddy.model
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Transformations
-import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.*
+import fi.anttonen.villematti.apps.gymbuddy.R.string.date
+import fi.anttonen.villematti.apps.gymbuddy.model.entity.GymEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymBuddyRoomDataBase
 import org.joda.time.LocalDate
@@ -25,6 +24,32 @@ class CalendarGymEntriesViewModel : ViewModel() {
             }
         }
         return weightEntryLiveData!!
+    }
+
+    fun getGymEntriesForDate(): MediatorLiveData<List<GymEntry>> {
+        if (weightEntryLiveData == null) {
+            weightEntryLiveData = Transformations.switchMap(dateFilterLiveData) { date ->
+                GymBuddyRoomDataBase.weightEntryDao.getAll(date)
+            }
+        }
+
+        return MediatorLiveData<List<GymEntry>>().apply {
+            var weightEntries: List<WeightEntry>? = null
+
+            fun update() {
+                val localWeightEntries = weightEntries
+                if (localWeightEntries != null) {
+                    val gymEntries = mutableListOf<GymEntry>()
+                    gymEntries.addAll(localWeightEntries)
+                    this.value = gymEntries
+                }
+            }
+
+            addSource(weightEntryLiveData!!) {
+                weightEntries = it
+                update()
+            }
+        }
     }
 
     fun getWeightEntryHistoryForDate(): LiveData<List<WeightEntry>> {

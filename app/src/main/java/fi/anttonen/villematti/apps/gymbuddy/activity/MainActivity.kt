@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
         val viewModel = ViewModelProviders.of(this).get(CalendarGymEntriesViewModel::class.java)
         viewModel.setDateFilter(currentlySelectedDate)
+        /*
         viewModel.getWeightEntriesForDate().observe(this, android.arch.lifecycle.Observer { weightEntries ->
             if (gymEntriesRecyclerView.adapter == null) {
                 adapter = CalendarGymEntriesRecyclerAdapter(weightEntries)
@@ -74,8 +75,17 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
                 Log.i(this.localClassName, "Observing ${history?.size} historical entries")
             }
         })
+        */
 
-
+        viewModel.getGymEntriesForDate().observe(this, android.arch.lifecycle.Observer { entries ->
+            if (gymEntriesRecyclerView.adapter == null) {
+                adapter = CalendarGymEntriesRecyclerAdapter(entries)
+                gymEntriesRecyclerView.adapter = adapter
+                adapter?.itemClickListener = this
+            } else {
+                adapter?.updateGymEntries(entries)
+            }
+        })
     }
 
     private fun setupCalendar() {
