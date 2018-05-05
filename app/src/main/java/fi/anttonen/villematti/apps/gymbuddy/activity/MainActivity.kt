@@ -3,6 +3,7 @@ package fi.anttonen.villematti.apps.gymbuddy.activity
 import android.app.Activity
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -12,6 +13,7 @@ import android.view.View
 import com.github.sundeepk.compactcalendarview.CompactCalendarView
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.GymEntry
 import fi.anttonen.villematti.apps.gymbuddy.R
+import fi.anttonen.villematti.apps.gymbuddy.R.id.calendar_view
 import fi.anttonen.villematti.apps.gymbuddy.adapters.CalendarGymEntriesRecyclerAdapter
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
@@ -41,8 +43,16 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
         ////////////// INIT DATABASE //////////////
         GymBuddyRoomDataBase.initIfNull(applicationContext)
-        val gymEntryDao = GymBuddyRoomDataBase.db!!.gymEntryDao()
-        ViewModelProviders.of(this).get(CalendarGymEntriesViewModel::class.java).getWeightEntries(currentlySelectedDate, gymEntryDao).observe(this, android.arch.lifecycle.Observer {
+
+        /*
+        AsyncTask.execute {
+                GymBuddyRoomDataBase.initTestData()
+        }
+        */
+
+        val viewModel = ViewModelProviders.of(this).get(CalendarGymEntriesViewModel::class.java)
+        viewModel.setDateFilter(currentlySelectedDate)
+        viewModel.getWeightEntriesForDate().observe(this, android.arch.lifecycle.Observer {
             if (gymEntriesRecyclerView.adapter == null) {
                 adapter = CalendarGymEntriesRecyclerAdapter(it)
                 gymEntriesRecyclerView.adapter = adapter
@@ -79,6 +89,7 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
         currentlySelectedDate = LocalDate(dateClicked)
         supportActionBar?.title = getMainTitle(currentlySelectedDate)
         //adapter.updateGymEntries(currentlySelectedDate)
+        ViewModelProviders.of(this).get(CalendarGymEntriesViewModel::class.java).setDateFilter(currentlySelectedDate)
     }
 
     override fun onMonthScroll(firstDayOfNewMonth: Date?) {
