@@ -11,13 +11,13 @@ import org.joda.time.LocalDate
 
 class CalendarGymEntriesViewModel : ViewModel() {
     companion object {
-        const val WEIGHT_HISTORY_LIMIT = 5
+        const val WEIGHT_HISTORY_LIMIT = 7
     }
 
     private var weightEntryLiveData: LiveData<List<WeightEntry>>? = null
     private var cardioEntryLiveData: LiveData<List<CardioEntry>>? = null
 
-    private var historyWeightEntryLiveData: LiveData<List<WeightEntry>>? = null
+    private var historyWeightEntryData: List<WeightEntry>? = null
 
     private val dateFilterLiveData: MutableLiveData<LocalDate> = MutableLiveData()
 
@@ -66,16 +66,15 @@ class CalendarGymEntriesViewModel : ViewModel() {
         }
     }
 
-    fun getWeightEntryHistoryForDate(): LiveData<List<WeightEntry>> {
-        if (historyWeightEntryLiveData == null) {
-            historyWeightEntryLiveData = Transformations.switchMap(dateFilterLiveData) { date ->
-                GymBuddyRoomDataBase.weightEntryDao.getHistory(date, WEIGHT_HISTORY_LIMIT)
-            }
+    fun getWeightEntryHistoryForDate(date: LocalDate): List<WeightEntry> {
+        if (historyWeightEntryData == null) {
+            historyWeightEntryData = GymBuddyRoomDataBase.weightEntryDao.getHistory(date, WEIGHT_HISTORY_LIMIT)
         }
-        return historyWeightEntryLiveData!!
+        return historyWeightEntryData!!
     }
 
     fun setDateFilter(date: LocalDate?) {
         dateFilterLiveData.value = date
+        historyWeightEntryData = null
     }
 }

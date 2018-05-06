@@ -1,5 +1,6 @@
 package fi.anttonen.villematti.apps.gymbuddy.adapters
 
+import android.os.AsyncTask
 import android.support.v4.content.ContextCompat
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.jjoe64.graphview.GridLabelRenderer
 import fi.anttonen.villematti.apps.gymbuddy.R
+import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.EntryType
@@ -17,24 +19,13 @@ import kotlinx.android.synthetic.main.weight_entry_row.view.*
 import org.joda.time.LocalDate
 import javax.sql.DataSource
 
-class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?) : RecyclerView.Adapter<CalendarGymEntriesRecyclerAdapter.CalendarGymEntryHolder>() {
+class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val viewModel: CalendarGymEntriesViewModel) : RecyclerView.Adapter<CalendarGymEntriesRecyclerAdapter.CalendarGymEntryHolder>() {
 
     lateinit var itemClickListener: OnItemClickListener
-
-    var weightHistory: List<WeightEntry>? = null
 
     fun updateGymEntries(newData: List<GymEntry>?) {
         DiffUtil.calculateDiff(EntryRowDiffCallback(newData, gymEntries), false).dispatchUpdatesTo(this)
         gymEntries = newData
-    }
-
-    fun updateWeightHistory(newData: List<WeightEntry>?) {
-        weightHistory = newData
-        if (gymEntries != null) {
-            for (entry in gymEntries!!) {
-                if (entry is WeightEntry) notifyItemChanged(gymEntries!!.indexOf(entry))
-            }
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CalendarGymEntryHolder {
@@ -112,33 +103,37 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?) : Recyc
             view.weight_unit_text.text = gymEntry.getUnitString()
             view.weight_graph.removeAllSeries()
 
+            view.weight_graph.gridLabelRenderer.isHorizontalLabelsVisible = false
+            view.weight_graph.gridLabelRenderer.isVerticalLabelsVisible = false
+            view.weight_graph.gridLabelRenderer.gridStyle = GridLabelRenderer.GridStyle.NONE
 
-            val data = weightHistory
-            if (data != null && data.size > 1) {
-                view.weight_graph.visibility = View.VISIBLE
-                val series = gymEntry.dataPointSeriesFrom(data)
-                series.color = ContextCompat.getColor(view.context, R.color.colorAccent)
-                series.isDrawDataPoints = false
-                series.thickness = 4
-                view.weight_graph.addSeries(series)
+            AsyncTask.execute({
+                val data = viewModel.getWeightEntryHistoryForDate(gymEntry.date)
 
-                // TODO weight graph styling to onCreateViewHolder()
-                view.weight_graph.gridLabelRenderer.isHorizontalLabelsVisible = false
-                view.weight_graph.gridLabelRenderer.isVerticalLabelsVisible = false
-                view.weight_graph.gridLabelRenderer.gridStyle = GridLabelRenderer.GridStyle.NONE
+                if (data.size > 1) {
+                    view.weight_graph.visibility = View.VISIBLE
+                    val series = gymEntry.dataPointSeriesFrom(data)
+                    series.color = ContextCompat.getColor(view.context, R.color.colorAccent)
+                    series.isDrawDataPoints = false
+                    series.thickness = 4
+                    view.weight_graph.addSeries(series)
 
-                view.weight_graph.viewport.setMinX(LocalDate(data.last().date).toDate().time.toDouble())
-                view.weight_graph.viewport.setMaxX(LocalDate(data.first().date).toDate().time.toDouble())
-                view.weight_graph.viewport.isXAxisBoundsManual = true
+                    // TODO weight graph styling to onCreateViewHolder()
 
-                view.weight_graph.viewport.setMinY(series.lowestValueY)
-                view.weight_graph.viewport.setMaxY(series.highestValueY)
-                view.weight_graph.viewport.isYAxisBoundsManual = true
+                    view.weight_graph.viewport.setMinX(LocalDate(data.last().date).toDate().time.toDouble())
+                    view.weight_graph.viewport.setMaxX(LocalDate(data.first().date).toDate().time.toDouble())
+                    view.weight_graph.viewport.isXAxisBoundsManual = true
 
-                view.weight_graph.gridLabelRenderer.setHumanRounding(false)
-            } else {
-                view.weight_graph.visibility = View.GONE
-            }
+                    view.weight_graph.viewport.setMinY(series.lowestValueY)
+                    view.weight_graph.viewport.setMaxY(series.highestValueY)
+                    view.weight_graph.viewport.isYAxisBoundsManual = true
+
+                    view.weight_graph.gridLabelRenderer.setHumanRounding(false)
+                } else {
+                    //view.weight_graph.visibility = View.GONE
+                }
+            })
+
         }
 
     }

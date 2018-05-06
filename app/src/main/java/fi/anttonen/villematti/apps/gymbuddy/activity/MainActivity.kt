@@ -65,20 +65,13 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
         viewModel.getGymEntriesForDate().observe(this, android.arch.lifecycle.Observer { entries ->
             if (gymEntriesRecyclerView.adapter == null) {
-                adapter = CalendarGymEntriesRecyclerAdapter(entries)
+                adapter = CalendarGymEntriesRecyclerAdapter(entries, viewModel)
                 gymEntriesRecyclerView.adapter = adapter
                 adapter?.itemClickListener = this
             } else {
                 adapter?.updateGymEntries(entries)
             }
         })
-
-        viewModel.getWeightEntryHistoryForDate().observe(this, android.arch.lifecycle.Observer { history ->
-            if (gymEntriesRecyclerView.adapter != null) {
-                adapter?.updateWeightHistory(history)
-            }
-        })
-
 
     }
 
