@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
         viewModel.getWeightEntryHistoryForDate().observe(this, android.arch.lifecycle.Observer { history ->
             if (gymEntriesRecyclerView.adapter != null) {
-                Log.i(this.localClassName, "Observing ${history?.size} historical entries")
+                adapter?.updateWeightHistory(history)
             }
         })
 

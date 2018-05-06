@@ -10,17 +10,11 @@ import org.joda.time.LocalDate
 @Entity(tableName = "cardio_entry")
 class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val id: Long,
                   @ColumnInfo(name = "date") var date: LocalDate,
-                  @ColumnInfo(name = "distance") private var _distance: Double,
+                  @ColumnInfo(name = "distance") var distance: Int,
                   @ColumnInfo(name = "duration") var duration: Duration)  : GymEntry {
 
     @ColumnInfo(name = "mood")
     var mood: String? = null
-
-    var distance: Double
-        get() = _distance.roundToDecimalPlaces(1)
-        set(value) {
-            _distance = value
-        }
 
     override fun getEntryType(): EntryType = EntryType.CARDIO
 
@@ -51,4 +45,33 @@ class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
         clone.mood = this.mood
         return clone
     }
+
+    fun getDayUnitString() = "d"
+    fun getHourUnitString() = "h"
+    fun getMinuteUnitString() = "min"
+    fun getSecondsUnitString() = "s"
+
+    fun getHumanReadableDuration(): String {
+        val d = duration.standardDays
+        val h = duration.standardHours - d * 24
+        val m = duration.standardMinutes - d * 24 * 60 - h * 60
+        val s = duration.standardSeconds - d * 24 * 60 - h * 60 * 60 - m * 60
+        //val ms = duration.millis - s * 1000
+
+        val sb = StringBuilder()
+        if (d > 0) sb.append("$d${getDayUnitString()} ")
+        if (d > 0 || h > 0) sb.append("$h${getHourUnitString()} ")
+        if (d > 0 || h > 0 || m > 0) sb.append("$m${getMinuteUnitString()} ")
+        sb.append("$s${getSecondsUnitString()}")
+
+        return sb.toString()
+    }
+
+    fun getMainDistanceUnitString() = "km"
+    fun getSecondaryDistanceUnitString() = "m"
+
+    fun getHumanReadableDistance(): String {
+        return "$distance${getSecondaryDistanceUnitString()}"
+    }
+
 }

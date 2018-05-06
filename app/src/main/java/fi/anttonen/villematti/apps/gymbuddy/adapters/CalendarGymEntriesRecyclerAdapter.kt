@@ -15,14 +15,26 @@ import fi.anttonen.villematti.apps.gymbuddy.model.entity.GymEntry
 import kotlinx.android.synthetic.main.cardio_entry_row.view.*
 import kotlinx.android.synthetic.main.weight_entry_row.view.*
 import org.joda.time.LocalDate
+import javax.sql.DataSource
 
 class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?) : RecyclerView.Adapter<CalendarGymEntriesRecyclerAdapter.CalendarGymEntryHolder>() {
 
     lateinit var itemClickListener: OnItemClickListener
 
+    var weightHistory: List<WeightEntry>? = null
+
     fun updateGymEntries(newData: List<GymEntry>?) {
         DiffUtil.calculateDiff(EntryRowDiffCallback(newData, gymEntries), false).dispatchUpdatesTo(this)
         gymEntries = newData
+    }
+
+    fun updateWeightHistory(newData: List<WeightEntry>?) {
+        weightHistory = newData
+        if (gymEntries != null) {
+            for (entry in gymEntries!!) {
+                if (entry is WeightEntry) notifyItemChanged(gymEntries!!.indexOf(entry))
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CalendarGymEntryHolder {
@@ -87,8 +99,8 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?) : Recyc
 
 
         private fun bindCardioEntry(cardioEntry: CardioEntry) {
-            view.distance_text.text = cardioEntry.distance.toString()
-            view.duration_text.text = cardioEntry.duration.toString()
+            view.distance_text.text = cardioEntry.getHumanReadableDistance()
+            view.duration_text.text = cardioEntry.getHumanReadableDuration()
         }
 
 
@@ -100,9 +112,9 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?) : Recyc
             view.weight_unit_text.text = gymEntry.getUnitString()
             view.weight_graph.removeAllSeries()
 
-            /*
-            val data = DataSource.DATA_SOURCE!!.getGymEntriesBefore(gymEntry, 5, EntryType.WEIGHT) as List<WeightEntry>
-            if (data.size > 1) {
+
+            val data = weightHistory
+            if (data != null && data.size > 1) {
                 view.weight_graph.visibility = View.VISIBLE
                 val series = gymEntry.dataPointSeriesFrom(data)
                 series.color = ContextCompat.getColor(view.context, R.color.colorAccent)
@@ -127,7 +139,6 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?) : Recyc
             } else {
                 view.weight_graph.visibility = View.GONE
             }
-            */
         }
 
     }

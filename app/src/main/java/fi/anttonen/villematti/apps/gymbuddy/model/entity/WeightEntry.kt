@@ -65,7 +65,6 @@ class WeightEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
      *
      */
     fun dataPointSeriesFrom(gymEntries: List<WeightEntry>): LineGraphSeries<DataPoint> {
-        //TODO: use date as x axis
         val reversed = gymEntries.asReversed()
         val datapoints = mutableListOf<DataPoint>()
         for (i in 0 until reversed.size) {
