@@ -1,7 +1,9 @@
 package fi.anttonen.villematti.apps.gymbuddy.model
 
 import android.arch.lifecycle.*
+import android.util.Log
 import fi.anttonen.villematti.apps.gymbuddy.R.string.date
+import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.GymEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymBuddyRoomDataBase
@@ -13,18 +15,11 @@ class CalendarGymEntriesViewModel : ViewModel() {
     }
 
     private var weightEntryLiveData: LiveData<List<WeightEntry>>? = null
+    private var cardioEntryLiveData: LiveData<List<CardioEntry>>? = null
+
     private var historyWeightEntryLiveData: LiveData<List<WeightEntry>>? = null
 
     private val dateFilterLiveData: MutableLiveData<LocalDate> = MutableLiveData()
-
-    fun getWeightEntriesForDate(): LiveData<List<WeightEntry>> {
-        if (weightEntryLiveData == null) {
-            weightEntryLiveData = Transformations.switchMap(dateFilterLiveData) { date ->
-                GymBuddyRoomDataBase.weightEntryDao.getAll(date)
-            }
-        }
-        return weightEntryLiveData!!
-    }
 
     fun getGymEntriesForDate(): MediatorLiveData<List<GymEntry>> {
         if (weightEntryLiveData == null) {
@@ -32,21 +27,40 @@ class CalendarGymEntriesViewModel : ViewModel() {
                 GymBuddyRoomDataBase.weightEntryDao.getAll(date)
             }
         }
+        if (cardioEntryLiveData == null) {
+            cardioEntryLiveData = Transformations.switchMap(dateFilterLiveData) { date ->
+                GymBuddyRoomDataBase.cardioEntryDao.getAll(date)
+            }
+        }
+
 
         return MediatorLiveData<List<GymEntry>>().apply {
             var weightEntries: List<WeightEntry>? = null
+            var cardioEntries: List<CardioEntry>? = null
+            Log.i("LIVE DATA", "Marking everything null")
 
             fun update() {
+                Log.i("LIVE DATA", "Entering update")
                 val localWeightEntries = weightEntries
-                if (localWeightEntries != null) {
+                val localCardioEntries = cardioEntries
+
+                if (localWeightEntries != null && localCardioEntries != null) {
                     val gymEntries = mutableListOf<GymEntry>()
                     gymEntries.addAll(localWeightEntries)
+                    gymEntries.addAll(localCardioEntries)
                     this.value = gymEntries
+                    Log.i("LIVE DATA", "All done!")
                 }
             }
 
             addSource(weightEntryLiveData!!) {
                 weightEntries = it
+                Log.i("LIVE DATA", "Going to update from weight entry")
+                update()
+            }
+            addSource(cardioEntryLiveData!!) {
+                cardioEntries = it
+                Log.i("LIVE DATA", "Going to update from cardio entry")
                 update()
             }
         }

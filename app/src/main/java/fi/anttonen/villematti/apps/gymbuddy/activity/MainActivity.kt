@@ -52,30 +52,16 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
         ////////////// INIT DATABASE //////////////
         GymBuddyRoomDataBase.initIfNull(applicationContext)
 
-        /*
-        AsyncTask.execute {
+
+        if (false) {
+            AsyncTask.execute {
                 GymBuddyRoomDataBase.initTestData()
+            }
         }
-        */
+
 
         val viewModel = ViewModelProviders.of(this).get(CalendarGymEntriesViewModel::class.java)
         viewModel.setDateFilter(currentlySelectedDate)
-        /*
-        viewModel.getWeightEntriesForDate().observe(this, android.arch.lifecycle.Observer { weightEntries ->
-            if (gymEntriesRecyclerView.adapter == null) {
-                adapter = CalendarGymEntriesRecyclerAdapter(weightEntries)
-                gymEntriesRecyclerView.adapter = adapter
-                adapter?.itemClickListener = this
-            } else {
-                adapter?.updateGymEntries(weightEntries)
-            }
-        })
-        viewModel.getWeightEntryHistoryForDate().observe(this, android.arch.lifecycle.Observer { history ->
-            if (gymEntriesRecyclerView.adapter != null) {
-                Log.i(this.localClassName, "Observing ${history?.size} historical entries")
-            }
-        })
-        */
 
         viewModel.getGymEntriesForDate().observe(this, android.arch.lifecycle.Observer { entries ->
             if (gymEntriesRecyclerView.adapter == null) {
@@ -86,6 +72,14 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
                 adapter?.updateGymEntries(entries)
             }
         })
+
+        viewModel.getWeightEntryHistoryForDate().observe(this, android.arch.lifecycle.Observer { history ->
+            if (gymEntriesRecyclerView.adapter != null) {
+                Log.i(this.localClassName, "Observing ${history?.size} historical entries")
+            }
+        })
+
+
     }
 
     private fun setupCalendar() {

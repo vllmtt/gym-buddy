@@ -5,6 +5,7 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
+import fi.anttonen.villematti.apps.gymbuddy.misc.roundToDecimalPlaces
 import org.joda.time.LocalDate
 import java.math.BigDecimal
 
@@ -27,30 +28,29 @@ class WeightEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
 
     override fun getEntryType(): EntryType = EntryType.WEIGHT
 
-    override fun getEntryId(): Long {
-        return id
-    }
+    override fun getEntryId(): Long = id
 
-    override fun getEntryDate(): LocalDate {
-        return date
-    }
+    override fun getEntryDate(): LocalDate = date
 
-    override fun getEntryMood(): String? {
-        return mood
-    }
+    override fun getEntryMood(): String? = mood
 
     override fun updateValuesFrom(entry: GymEntry) {
         if (entry is WeightEntry) {
             this.weight = entry.weight
             this.date = LocalDate(entry.date)
+            this.mood = entry.mood
         }
     }
 
-    override fun clone(): WeightEntry = WeightEntry(this.id, LocalDate(this.date), this.weight)
+    override fun clone(): GymEntry {
+        val clone = WeightEntry(this.id, LocalDate(this.date), this.weight)
+        clone.mood = this.mood
+        return clone
+    }
 
     override fun equals(other: Any?): Boolean {
         if (other != null && other is WeightEntry) {
-            return other.id == this.id && other.weight == this.weight && other.date == this.date
+            return other.id == this.id && other.weight == this.weight && other.date == this.date && this.mood == other.mood
         }
         return false
     }
@@ -73,7 +73,4 @@ class WeightEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
         }
         return LineGraphSeries(datapoints.toTypedArray())
     }
-
-    private fun Double.roundToDecimalPlaces(decimals: Int) =
-            BigDecimal(this).setScale(decimals, BigDecimal.ROUND_HALF_UP).toDouble()
 }

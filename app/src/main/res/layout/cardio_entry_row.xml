@@ -15,7 +15,7 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/weight_entry_type"
+            android:id="@+id/cardio_entry_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
@@ -27,43 +27,28 @@
             tools:text="Entry type" />
 
         <TextView
-            android:id="@+id/weight_text"
+            android:id="@+id/distance_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display3"
-            card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toBottomOf="@+id/weight_entry_type"
-            tools:text="79.6" />
-
-        <TextView
-            android:id="@+id/weight_unit_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-            card_view:layout_constraintStart_toEndOf="@+id/weight_text"
-            card_view:layout_constraintTop_toTopOf="@+id/weight_text"
-            tools:text="kg" />
-
-        <com.jjoe64.graphview.GraphView
-            android:id="@+id/weight_graph"
-            android:layout_width="match_parent"
-            android:layout_height="75dp"
-            android:layout_marginBottom="24dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            card_view:layout_constraintBottom_toBottomOf="parent"
-            card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toBottomOf="@+id/weight_text" />
+            card_view:layout_constraintTop_toBottomOf="@+id/cardio_entry_type"
+            tools:text="128.50km" />
+
+        <TextView
+            android:id="@+id/duration_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="8dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintStart_toStartOf="@+id/distance_text"
+            card_view:layout_constraintTop_toBottomOf="@+id/distance_text"
+            tools:text="10h 58min 46s" />
 
     </android.support.constraint.ConstraintLayout>
 

@@ -20,7 +20,7 @@ interface GymEntry : Cloneable {
 
     fun updateValuesFrom(entry: GymEntry)
     override fun equals(other: Any?): Boolean
-    public override fun clone(): WeightEntry
+    public override fun clone(): GymEntry
 }
 
 enum class EntryType(val displayName: String) {

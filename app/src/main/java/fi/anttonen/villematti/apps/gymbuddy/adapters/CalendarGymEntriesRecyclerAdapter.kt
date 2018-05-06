@@ -8,14 +8,15 @@ import android.view.View
 import android.view.ViewGroup
 import com.jjoe64.graphview.GridLabelRenderer
 import fi.anttonen.villematti.apps.gymbuddy.R
+import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.EntryType
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.GymEntry
+import kotlinx.android.synthetic.main.cardio_entry_row.view.*
 import kotlinx.android.synthetic.main.weight_entry_row.view.*
 import org.joda.time.LocalDate
 
 class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?) : RecyclerView.Adapter<CalendarGymEntriesRecyclerAdapter.CalendarGymEntryHolder>() {
-
 
     lateinit var itemClickListener: OnItemClickListener
 
@@ -28,6 +29,7 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?) : Recyc
         val layoutInflater = LayoutInflater.from(parent.context)
         val inflatedView: View = when (viewType) {
             EntryType.WEIGHT.ordinal -> layoutInflater.inflate(R.layout.weight_entry_row, parent, false)
+            EntryType.CARDIO.ordinal -> layoutInflater.inflate(R.layout.cardio_entry_row, parent, false)
             else -> layoutInflater.inflate(R.layout.weight_entry_row, parent, false) //TODO implement other entry types
         }
 
@@ -73,10 +75,20 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?) : Recyc
          * Binds an entry to the view holder
          */
         fun bindEntry(gymEntry: GymEntry?) {
-            view.entry_type.text = gymEntry?.getEntryType()?.displayName
             if (gymEntry is WeightEntry) {
+                view.weight_entry_type.text = gymEntry.getEntryType().displayName
                 bindWeightEntry(gymEntry)
             }
+            if (gymEntry is CardioEntry) {
+                view.cardio_entry_type.text = gymEntry.getEntryType().displayName
+                bindCardioEntry(gymEntry)
+            }
+        }
+
+
+        private fun bindCardioEntry(cardioEntry: CardioEntry) {
+            view.distance_text.text = cardioEntry.distance.toString()
+            view.duration_text.text = cardioEntry.duration.toString()
         }
 
 
