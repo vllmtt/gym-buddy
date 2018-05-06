@@ -1,4 +1,3 @@
-/*
 package fi.anttonen.villematti.apps.gymbuddy.activity
 
 import android.support.v7.app.AppCompatActivity
@@ -10,14 +9,18 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.Menu
 import com.jjoe64.graphview.GridLabelRenderer
-import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.DataSource
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.EntryType
 import kotlinx.android.synthetic.main.activity_weight_entry_detail.*
 import android.app.Activity
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.os.AsyncTask
 import fi.anttonen.villematti.apps.gymbuddy.R
+import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
+import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymBuddyRoomDataBase
 import org.joda.time.LocalDate
+import javax.sql.DataSource
 
 
 class WeightEntryDetail : AppCompatActivity() {
@@ -31,18 +34,24 @@ class WeightEntryDetail : AppCompatActivity() {
     private lateinit var entry: WeightEntry
     private lateinit var clone: WeightEntry
 
+    private lateinit var calendarGymEntriesViewModel: CalendarGymEntriesViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_weight_entry_detail)
 
-
+        calendarGymEntriesViewModel = ViewModelProviders.of(this).get(CalendarGymEntriesViewModel::class.java)
         val id = intent.getLongExtra(ENTRY_ID_KEY, -1)
-        entry = DataSource.DATA_SOURCE!!.getGymEntry(id) as WeightEntry
-        clone = entry.clone()
+        AsyncTask.execute {
+            entry = calendarGymEntriesViewModel.getWeightEntry(id)!!
+            runOnUiThread {
+                clone = entry.clone() as WeightEntry
 
-        date_text.text = clone.getHumanReadableDate(this)
-        setupWeightEditText()
-        setupWeightGraph()
+                date_text.text = clone.getHumanReadableDate(this)
+                setupWeightEditText()
+                setupWeightGraph()
+            }
+        }
 
         supportActionBar?.title = getString(R.string.weight_entry_detail_title)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -84,37 +93,42 @@ class WeightEntryDetail : AppCompatActivity() {
     }
 
 
-
     /**
      * Initializes the weight history graph
      */
     private fun setupWeightGraph() {
-        val data = DataSource.DATA_SOURCE!!.getGymEntriesBefore(clone, 5, EntryType.WEIGHT) as MutableList<WeightEntry>
-        data.removeAt(0)
-        data.add(0, clone)
-        if (data.size > 1) {
-            val series = clone.dataPointSeriesFrom(data)
-            series.color = ContextCompat.getColor(this, R.color.colorAccent)
-            series.isDrawDataPoints = true
-            series.dataPointsRadius = 6.toFloat()
-            series.thickness = 4
-            weight_graph.removeAllSeries()
-            weight_graph.addSeries(series)
+        AsyncTask.execute{
+            val data = mutableListOf(*calendarGymEntriesViewModel.getWeightEntryHistoryForDate(entry.date).toTypedArray())
 
-            weight_graph.gridLabelRenderer.isHorizontalLabelsVisible = false
-            weight_graph.gridLabelRenderer.isVerticalLabelsVisible = true
-            weight_graph.gridLabelRenderer.gridStyle = GridLabelRenderer.GridStyle.HORIZONTAL
-            weight_graph.gridLabelRenderer.horizontalAxisTitle = " "
+            data.removeAt(0)
+            data.add(0, clone)
 
-            weight_graph.viewport.setMinX(LocalDate(data.last().date).toDate().time.toDouble())
-            weight_graph.viewport.setMaxX(LocalDate(data.first().date).toDate().time.toDouble())
-            weight_graph.viewport.isXAxisBoundsManual = true
+            runOnUiThread {
+                if (data.size > 1) {
+                    val series = clone.dataPointSeriesFrom(data)
+                    series.color = ContextCompat.getColor(this, R.color.colorAccent)
+                    series.isDrawDataPoints = true
+                    series.dataPointsRadius = 6.toFloat()
+                    series.thickness = 4
+                    weight_graph.removeAllSeries()
+                    weight_graph.addSeries(series)
 
-            //weight_graph.viewport.setMinY(series.lowestValueY)
-            //weight_graph.viewport.setMaxY(series.highestValueY)
-            //weight_graph.viewport.isYAxisBoundsManual = false
+                    weight_graph.gridLabelRenderer.isHorizontalLabelsVisible = false
+                    weight_graph.gridLabelRenderer.isVerticalLabelsVisible = true
+                    weight_graph.gridLabelRenderer.gridStyle = GridLabelRenderer.GridStyle.HORIZONTAL
+                    weight_graph.gridLabelRenderer.horizontalAxisTitle = " "
 
-            weight_graph.gridLabelRenderer.setHumanRounding(true)
+                    weight_graph.viewport.setMinX(LocalDate(data.last().date).toDate().time.toDouble())
+                    weight_graph.viewport.setMaxX(LocalDate(data.first().date).toDate().time.toDouble())
+                    weight_graph.viewport.isXAxisBoundsManual = true
+
+                    //weight_graph.viewport.setMinY(series.lowestValueY)
+                    //weight_graph.viewport.setMaxY(series.highestValueY)
+                    //weight_graph.viewport.isYAxisBoundsManual = false
+
+                    weight_graph.gridLabelRenderer.setHumanRounding(true)
+                }
+            }
         }
     }
 
@@ -157,15 +171,14 @@ class WeightEntryDetail : AppCompatActivity() {
     }
 
     private fun delete() {
-        DataSource.DATA_SOURCE!!.delete(entry)
+
     }
 
     private fun save() {
-        if (clone != entry) {
-            Log.i(this.localClassName, "Saving")
-            entry.updateValuesFrom(clone)
-            DataSource.DATA_SOURCE!!.update(entry)
+        entry.updateValuesFrom(clone)
+        AsyncTask.execute {
+            calendarGymEntriesViewModel.updateAll(entry)
         }
     }
 }
-*/
+

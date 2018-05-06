@@ -6,6 +6,8 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
+import android.support.v4.app.ActivityOptionsCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.Menu
@@ -59,7 +61,6 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
             }
         }
 
-
         val viewModel = ViewModelProviders.of(this).get(CalendarGymEntriesViewModel::class.java)
         viewModel.setDateFilter(currentlySelectedDate)
 
@@ -99,21 +100,26 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
      */
     override fun onItemClick(view: View, position: Int, entry: GymEntry?) {
         if (entry is WeightEntry) {
-            /*
             val weightDetailIntent = Intent(this, WeightEntryDetail::class.java).apply {
                 putExtra(WeightEntryDetail.ENTRY_ID_KEY, entry.getEntryId())
             }
 
             val options = ActivityOptionsCompat.makeBasic()
             ActivityCompat.startActivityForResult(this@MainActivity, weightDetailIntent, UPDATE_REQUEST, options.toBundle())
-            */
         }
     }
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        Log.i("ASYNC TASK main", "Back in main")
+        /*
+        AsyncTask.execute {
+            ViewModelProviders.of(this).get(CalendarGymEntriesViewModel::class.java).getWeightEntryHistoryForDate()
+        }
+        */
+        //calendar_view.refreshDrawableState()
+        /*
         if (requestCode == UPDATE_REQUEST && resultCode == Activity.RESULT_OK) {
-            /*
             if (data != null) {
                 val changed = data.getBooleanExtra(WeightEntryDetail.CHANGED_KEY, false)
                 val deleted = data.getBooleanExtra(WeightEntryDetail.DELETED_KEY, false)
@@ -121,8 +127,8 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
                     adapter?.notifyDataSetChanged()
                 }
             }
-            */
         }
+        */
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

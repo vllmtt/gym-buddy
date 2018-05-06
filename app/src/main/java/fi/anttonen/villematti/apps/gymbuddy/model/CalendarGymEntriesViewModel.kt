@@ -37,10 +37,8 @@ class CalendarGymEntriesViewModel : ViewModel() {
         return MediatorLiveData<List<GymEntry>>().apply {
             var weightEntries: List<WeightEntry>? = null
             var cardioEntries: List<CardioEntry>? = null
-            Log.i("LIVE DATA", "Marking everything null")
 
             fun update() {
-                Log.i("LIVE DATA", "Entering update")
                 val localWeightEntries = weightEntries
                 val localCardioEntries = cardioEntries
 
@@ -49,28 +47,34 @@ class CalendarGymEntriesViewModel : ViewModel() {
                     gymEntries.addAll(localWeightEntries)
                     gymEntries.addAll(localCardioEntries)
                     this.value = gymEntries
-                    Log.i("LIVE DATA", "All done!")
                 }
             }
 
             addSource(weightEntryLiveData!!) {
                 weightEntries = it
-                Log.i("LIVE DATA", "Going to update from weight entry")
                 update()
             }
             addSource(cardioEntryLiveData!!) {
                 cardioEntries = it
-                Log.i("LIVE DATA", "Going to update from cardio entry")
                 update()
             }
         }
     }
 
     fun getWeightEntryHistoryForDate(date: LocalDate): List<WeightEntry> {
-        if (historyWeightEntryData == null) {
+        //if (historyWeightEntryData == null) {
             historyWeightEntryData = GymBuddyRoomDataBase.weightEntryDao.getHistory(date, WEIGHT_HISTORY_LIMIT)
-        }
+        //}
         return historyWeightEntryData!!
+    }
+
+    fun updateAll(vararg weightEntries: WeightEntry) {
+        GymBuddyRoomDataBase.weightEntryDao.updateAll(*weightEntries)
+        historyWeightEntryData = null
+    }
+
+    fun getWeightEntry(id: Long): WeightEntry? {
+        return GymBuddyRoomDataBase.weightEntryDao.get(id)
     }
 
     fun setDateFilter(date: LocalDate?) {

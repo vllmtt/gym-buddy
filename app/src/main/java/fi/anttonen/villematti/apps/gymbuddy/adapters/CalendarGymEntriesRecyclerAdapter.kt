@@ -4,11 +4,13 @@ import android.os.AsyncTask
 import android.support.v4.content.ContextCompat
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.jjoe64.graphview.GridLabelRenderer
 import fi.anttonen.villematti.apps.gymbuddy.R
+import fi.anttonen.villematti.apps.gymbuddy.R.string.date
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
@@ -62,7 +64,7 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
     /**
      * Gym entry view holder
      */
-    inner class CalendarGymEntryHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
+    inner class CalendarGymEntryHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener, TaskCallback {
 
         private var view: View = v
 
@@ -107,36 +109,58 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
             view.weight_graph.gridLabelRenderer.isVerticalLabelsVisible = false
             view.weight_graph.gridLabelRenderer.gridStyle = GridLabelRenderer.GridStyle.NONE
 
-            AsyncTask.execute({
-                val data = viewModel.getWeightEntryHistoryForDate(gymEntry.date)
-
-                if (data.size > 1) {
-                    view.weight_graph.visibility = View.VISIBLE
-                    val series = gymEntry.dataPointSeriesFrom(data)
-                    series.color = ContextCompat.getColor(view.context, R.color.colorAccent)
-                    series.isDrawDataPoints = false
-                    series.thickness = 4
-                    view.weight_graph.addSeries(series)
-
-                    // TODO weight graph styling to onCreateViewHolder()
-
-                    view.weight_graph.viewport.setMinX(LocalDate(data.last().date).toDate().time.toDouble())
-                    view.weight_graph.viewport.setMaxX(LocalDate(data.first().date).toDate().time.toDouble())
-                    view.weight_graph.viewport.isXAxisBoundsManual = true
-
-                    view.weight_graph.viewport.setMinY(series.lowestValueY)
-                    view.weight_graph.viewport.setMaxY(series.highestValueY)
-                    view.weight_graph.viewport.isYAxisBoundsManual = true
-
-                    view.weight_graph.gridLabelRenderer.setHumanRounding(false)
-                } else {
-                    //view.weight_graph.visibility = View.GONE
-                }
-            })
+            LoadHistoryTask(gymEntry, viewModel, this).execute(gymEntry.date)
 
         }
 
+        /**
+         * TaskCallback override to get execution back on UI thread when database query has benn done
+         */
+        override fun completed(gymEntry: WeightEntry, data: List<WeightEntry>?) {
+            if (data != null && data.size > 1) {
+                Log.i("ASYNC TASK", "Updating weight graph")
+
+                view.weight_graph.visibility = View.VISIBLE
+                val series = gymEntry.dataPointSeriesFrom(data)
+                series.color = ContextCompat.getColor(view.context, R.color.colorAccent)
+                series.isDrawDataPoints = false
+                series.thickness = 4
+                view.weight_graph.addSeries(series)
+
+                // TODO weight graph styling to onCreateViewHolder()
+
+                view.weight_graph.viewport.setMinX(LocalDate(data.last().date).toDate().time.toDouble())
+                view.weight_graph.viewport.setMaxX(LocalDate(data.first().date).toDate().time.toDouble())
+                view.weight_graph.viewport.isXAxisBoundsManual = true
+
+                view.weight_graph.viewport.setMinY(series.lowestValueY)
+                view.weight_graph.viewport.setMaxY(series.highestValueY)
+                view.weight_graph.viewport.isYAxisBoundsManual = true
+
+                view.weight_graph.gridLabelRenderer.setHumanRounding(false)
+            } else {
+                //view.weight_graph.visibility = View.GONE
+            }
+        }
     }
+
+    class LoadHistoryTask(private val entry: WeightEntry, private val viewModel: CalendarGymEntriesViewModel, private val callback: TaskCallback) : AsyncTask<LocalDate, Int, List<WeightEntry>>() {
+        override fun doInBackground(vararg date: LocalDate?): List<WeightEntry> {
+            if (date.isEmpty() || date.first() == null) return emptyList()
+            Log.i("ASYNC TASK", "Fetching history")
+            return viewModel.getWeightEntryHistoryForDate(date.first()!!)
+        }
+
+        override fun onPostExecute(result: List<WeightEntry>?) {
+            super.onPostExecute(result)
+            callback.completed(entry, result)
+        }
+    }
+
+    interface TaskCallback {
+        fun completed(gymEntry: WeightEntry, result: List<WeightEntry>?)
+    }
+
 
     inner class EntryRowDiffCallback(private val newRows: List<GymEntry>?, private val oldRows: List<GymEntry>?) : DiffUtil.Callback() {
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
@@ -156,6 +180,7 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
         }
 
     }
+
 
     /**
      * Click interface
