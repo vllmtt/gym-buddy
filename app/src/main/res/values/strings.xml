@@ -5,4 +5,8 @@
     <string name="weight">Weight</string>
     <string name="date">Date</string>
     <string name="delete">Delete</string>
+    <string name="cardio">Cardio</string>
+    <string name="strength_exercise">Strength exercise</string>
+    <string name="measurement">Measurement</string>
+    <string name="calories">Calories</string>
 </resources>

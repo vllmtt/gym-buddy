@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/new_weight_entry"
+        android:title="@string/weight"
+        android:icon="@drawable/ic_add_white_24px"/>
+
+    <item android:id="@+id/new_cardio_entry"
+        android:title="@string/cardio"
+        android:icon="@drawable/ic_add_white_24px"/>
+
+    <item android:id="@+id/new_strength_entry"
+        android:title="@string/strength_exercise"
+        android:icon="@drawable/ic_add_white_24px"/>
+
+    <item android:id="@+id/new_measurement_entry"
+        android:title="@string/measurement"
+        android:icon="@drawable/ic_add_white_24px"/>
+
+    <item android:id="@+id/new_food_entry"
+        android:title="@string/calories"
+        android:icon="@drawable/ic_add_white_24px"/>
+</menu>

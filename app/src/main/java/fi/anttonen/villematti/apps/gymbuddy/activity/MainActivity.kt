@@ -17,6 +17,7 @@ import com.github.sundeepk.compactcalendarview.CompactCalendarView
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.GymEntry
 import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.R.id.calendar_view
+import fi.anttonen.villematti.apps.gymbuddy.R.id.new_weight_entry
 import fi.anttonen.villematti.apps.gymbuddy.adapters.CalendarGymEntriesRecyclerAdapter
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
@@ -51,6 +52,8 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
         supportActionBar?.title = getMainTitle(null)
 
+        setupSpeedDial()
+
         ////////////// INIT DATABASE //////////////
         GymBuddyRoomDataBase.initIfNull(applicationContext)
 
@@ -74,6 +77,21 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
             }
         })
 
+    }
+
+    private fun setupSpeedDial() {
+        speedDial.inflate(R.menu.speed_dial_menu)
+        speedDial.setOnActionSelectedListener {
+            when(it.id) {
+                new_weight_entry -> showNewWeightEntryDialog()
+                else -> false
+            }
+        }
+    }
+
+    private fun showNewWeightEntryDialog(): Boolean {
+
+        return false
     }
 
     private fun setupCalendar() {
