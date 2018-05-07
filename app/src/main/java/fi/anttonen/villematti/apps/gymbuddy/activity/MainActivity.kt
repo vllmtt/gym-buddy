@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
     companion object {
         private const val UPDATE_REQUEST = 1
+        private const val ADD_ENTRY = 1
     }
 
     private lateinit var linearLayoutManager: LinearLayoutManager
@@ -82,7 +83,7 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
     private fun setupSpeedDial() {
         speedDial.inflate(R.menu.speed_dial_menu)
         speedDial.setOnActionSelectedListener {
-            when(it.id) {
+            when (it.id) {
                 new_weight_entry -> showNewWeightEntryDialog()
                 else -> false
             }
@@ -90,7 +91,10 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
     }
 
     private fun showNewWeightEntryDialog(): Boolean {
-
+        val addWeightIntent = Intent(this, AddWeightEntry::class.java).apply {
+            putExtra(AddWeightEntry.DATE_KEY, currentlySelectedDate.toString())
+        }
+        ActivityCompat.startActivityForResult(this, addWeightIntent, ADD_ENTRY, null)
         return false
     }
 
@@ -129,23 +133,21 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        /*
-        AsyncTask.execute {
-            ViewModelProviders.of(this).get(CalendarGymEntriesViewModel::class.java).getWeightEntryHistoryForDate()
-        }
-        */
-        //calendar_view.refreshDrawableState()
-        /*
-        if (requestCode == UPDATE_REQUEST && resultCode == Activity.RESULT_OK) {
+        if (requestCode == ADD_ENTRY && resultCode == Activity.RESULT_OK) {
             if (data != null) {
-                val changed = data.getBooleanExtra(WeightEntryDetail.CHANGED_KEY, false)
-                val deleted = data.getBooleanExtra(WeightEntryDetail.DELETED_KEY, false)
-                if (changed || deleted) {
-                    adapter?.notifyDataSetChanged()
+                val stringExtra = data.getStringExtra(AddWeightEntry.DATE_KEY)
+                if (stringExtra != null) {
+                    val dateWhereAdditionTookPlace = LocalDate.parse(stringExtra)
+                    if (dateWhereAdditionTookPlace != null) {
+                        calendar_view.setCurrentDate(dateWhereAdditionTookPlace.toDate())
+
+                        currentlySelectedDate = dateWhereAdditionTookPlace
+                        supportActionBar?.title = getMainTitle(currentlySelectedDate)
+                    }
                 }
             }
+
         }
-        */
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
