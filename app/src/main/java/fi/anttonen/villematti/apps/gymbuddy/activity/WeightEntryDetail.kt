@@ -73,6 +73,7 @@ class WeightEntryDetail : AppCompatActivity() {
                     val n = weight_text.text.toString().toDouble()
                     if (n < 0) {
                         weight_text_layout.error = "Weight must be positive"
+                        clone.weight = 0.0
                     }
                     clone.weight = n
                     weight_text_layout.error = null
@@ -80,6 +81,7 @@ class WeightEntryDetail : AppCompatActivity() {
                     setupWeightGraph()
                 } catch (e: NumberFormatException) {
                     weight_text_layout.error = "Weight is missing"
+                    clone.weight = 0.0
                 }
             }
 
