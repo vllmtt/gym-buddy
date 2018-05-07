@@ -25,4 +25,7 @@ interface WeightEntryDao {
 
     @Update
     fun updateAll(vararg weightEntries: WeightEntry)
+
+    @Delete
+    fun deleteAll(vararg weightEntries: WeightEntry)
 }

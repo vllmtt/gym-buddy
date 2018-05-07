@@ -111,7 +111,6 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Log.i("ASYNC TASK main", "Back in main")
         /*
         AsyncTask.execute {
             ViewModelProviders.of(this).get(CalendarGymEntriesViewModel::class.java).getWeightEntryHistoryForDate()

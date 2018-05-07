@@ -17,8 +17,6 @@ class CalendarGymEntriesViewModel : ViewModel() {
     private var weightEntryLiveData: LiveData<List<WeightEntry>>? = null
     private var cardioEntryLiveData: LiveData<List<CardioEntry>>? = null
 
-    private var historyWeightEntryData: List<WeightEntry>? = null
-
     private val dateFilterLiveData: MutableLiveData<LocalDate> = MutableLiveData()
 
     fun getGymEntriesForDate(): MediatorLiveData<List<GymEntry>> {
@@ -62,15 +60,15 @@ class CalendarGymEntriesViewModel : ViewModel() {
     }
 
     fun getWeightEntryHistoryForDate(date: LocalDate): List<WeightEntry> {
-        //if (historyWeightEntryData == null) {
-            historyWeightEntryData = GymBuddyRoomDataBase.weightEntryDao.getHistory(date, WEIGHT_HISTORY_LIMIT)
-        //}
-        return historyWeightEntryData!!
+        return GymBuddyRoomDataBase.weightEntryDao.getHistory(date, WEIGHT_HISTORY_LIMIT) ?: listOf()
     }
 
     fun updateAll(vararg weightEntries: WeightEntry) {
         GymBuddyRoomDataBase.weightEntryDao.updateAll(*weightEntries)
-        historyWeightEntryData = null
+    }
+
+    fun deleteAll(vararg weightEntries: WeightEntry) {
+        GymBuddyRoomDataBase.weightEntryDao.deleteAll(*weightEntries)
     }
 
     fun getWeightEntry(id: Long): WeightEntry? {
@@ -79,6 +77,5 @@ class CalendarGymEntriesViewModel : ViewModel() {
 
     fun setDateFilter(date: LocalDate?) {
         dateFilterLiveData.value = date
-        historyWeightEntryData = null
     }
 }

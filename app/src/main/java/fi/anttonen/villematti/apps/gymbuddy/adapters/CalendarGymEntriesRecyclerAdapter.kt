@@ -118,8 +118,6 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
          */
         override fun completed(gymEntry: WeightEntry, data: List<WeightEntry>?) {
             if (data != null && data.size > 1) {
-                Log.i("ASYNC TASK", "Updating weight graph")
-
                 view.weight_graph.visibility = View.VISIBLE
                 val series = gymEntry.dataPointSeriesFrom(data)
                 series.color = ContextCompat.getColor(view.context, R.color.colorAccent)
@@ -147,7 +145,6 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
     class LoadHistoryTask(private val entry: WeightEntry, private val viewModel: CalendarGymEntriesViewModel, private val callback: TaskCallback) : AsyncTask<LocalDate, Int, List<WeightEntry>>() {
         override fun doInBackground(vararg date: LocalDate?): List<WeightEntry> {
             if (date.isEmpty() || date.first() == null) return emptyList()
-            Log.i("ASYNC TASK", "Fetching history")
             return viewModel.getWeightEntryHistoryForDate(date.first()!!)
         }
 

@@ -171,7 +171,9 @@ class WeightEntryDetail : AppCompatActivity() {
     }
 
     private fun delete() {
-
+        AsyncTask.execute {
+            calendarGymEntriesViewModel.deleteAll(entry)
+        }
     }
 
     private fun save() {
