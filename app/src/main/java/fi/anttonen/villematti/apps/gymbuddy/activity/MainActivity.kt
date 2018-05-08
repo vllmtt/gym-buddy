@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.Menu
@@ -157,9 +158,21 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         val id = item?.itemId
-        if (id == R.id.menu_item_toggle_calendar) {
-            calendar_view.visibility = if (calendar_view.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+        if (id == R.id.menu_item_calendar_toggle) {
+            if (calendar_view.visibility == View.VISIBLE) {
+                calendar_view.visibility = View.GONE
+                item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_keyboard_arrow_down_white_24px))
+            } else {
+                calendar_view.visibility = View.VISIBLE
+                item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_keyboard_arrow_up_white_24px))
+            }
             calendar_view.setCurrentDate(currentlySelectedDate.toDate())
+            supportActionBar?.title = getMainTitle(currentlySelectedDate)
+        }
+        if (id == R.id.menu_item_today) {
+            currentlySelectedDate = LocalDate.now()
+            calendar_view.setCurrentDate(currentlySelectedDate.toDate())
+            ViewModelProviders.of(this).get(CalendarGymEntriesViewModel::class.java).setDateFilter(currentlySelectedDate)
             supportActionBar?.title = getMainTitle(currentlySelectedDate)
         }
         return super.onOptionsItemSelected(item)
