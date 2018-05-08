@@ -159,6 +159,7 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
         val id = item?.itemId
         if (id == R.id.menu_item_toggle_calendar) {
             calendar_view.visibility = if (calendar_view.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+            calendar_view.setCurrentDate(currentlySelectedDate.toDate())
             supportActionBar?.title = getMainTitle(currentlySelectedDate)
         }
         return super.onOptionsItemSelected(item)

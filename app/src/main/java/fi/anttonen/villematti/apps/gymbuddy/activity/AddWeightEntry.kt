@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
@@ -12,6 +13,10 @@ import android.view.MenuItem
 import android.view.View
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import fi.anttonen.villematti.apps.gymbuddy.R
+import fi.anttonen.villematti.apps.gymbuddy.R.id.add_weight_layout
+import fi.anttonen.villematti.apps.gymbuddy.R.id.date_text
+import fi.anttonen.villematti.apps.gymbuddy.R.string.weight
+import fi.anttonen.villematti.apps.gymbuddy.activity.AddWeightEntry.Companion.DATE_KEY
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymBuddyRoomDataBase
 import kotlinx.android.synthetic.main.activity_add_weight_entry.*
@@ -47,30 +52,58 @@ class AddWeightEntry : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                try {
-                    val n = weight_text.text.toString().toDouble()
-                    if (n < 0) {
-                        weight_text_layout.error = "Weight must be positive"
-                        weight = null
-                    }
-                    weight = n
-                    weight_text_layout.error = null
-
-                } catch (e: NumberFormatException) {
-                    weight_text_layout.error = "Weight is missing"
-                    weight = null
-                }
+                validateWeightTextField()
             }
 
         })
 
         selectedDate = LocalDate.parse(intent.getStringExtra(DATE_KEY))
         date_text.setText(selectedDate?.toString(DATE_FORMATTER))
+        validateDateField()
+    }
+
+    private fun validateWeightTextField(): Boolean {
+        try {
+            val n = weight_text.text.toString().toDouble()
+            if (n < 0) {
+                weight_text_layout.error = "Weight must be positive"
+                weight = null
+                return false
+            }
+            weight = n
+            weight_text_layout.error = null
+            weight_text.error = null
+            return true
+        } catch (e: NumberFormatException) {
+            weight_text_layout.error = "Weight is missing"
+            weight = null
+            return false
+        }
+    }
+
+
+    private fun validateDateField(): Boolean {
+        if (selectedDate == null) return false
+        var valid = false
+        GymBuddyRoomDataBase.weightEntryDao.getAll(selectedDate!!).observe(this, android.arch.lifecycle.Observer {
+            if (it == null || it.isNotEmpty()) {
+                    date_text_layout.error = "Weight already exists on this date"
+                    selectedDate = null
+                    valid = false
+            } else {
+                    date_text_layout.error = null
+                valid = true
+            }
+
+        })
+        return valid
     }
 
     override fun onDateSet(view: DatePickerDialog, year: Int, monthOfYear: Int, dayOfMonth: Int) {
         selectedDate = LocalDate().withYear(year).withMonthOfYear(monthOfYear + 1).withDayOfMonth(dayOfMonth)
         date_text.setText(selectedDate?.toString(DATE_FORMATTER))
+
+        validateDateField()
     }
 
     fun dateTextViewClicked(v: View) {
@@ -100,7 +133,7 @@ class AddWeightEntry : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
         }
         if (id == R.id.menu_item_done) {
             if (save()) {
-            val intent = Intent()
+                val intent = Intent()
                 if (selectedDate != null) intent.putExtra(DATE_KEY, selectedDate.toString())
                 setResult(Activity.RESULT_OK, intent)
 
@@ -114,15 +147,18 @@ class AddWeightEntry : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
     }
 
     private fun save(): Boolean {
-        if (selectedDate != null && weight != null) {
+        validateDateField()
+        validateWeightTextField()
+
+        return if (selectedDate != null && weight != null) {
             val entry = WeightEntry(0, selectedDate!!, weight!!)
             AsyncTask.execute {
                 GymBuddyRoomDataBase.weightEntryDao.insertAll(entry)
             }
-            return true
+            true
         } else {
-            //TODO popup why can't save
-            return false
+            Snackbar.make(add_weight_layout, "Fix errors first", Snackbar.LENGTH_SHORT).show()
+            false
         }
     }
 }

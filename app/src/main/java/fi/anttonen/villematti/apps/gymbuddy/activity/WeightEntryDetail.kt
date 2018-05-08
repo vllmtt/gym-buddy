@@ -12,15 +12,23 @@ import com.jjoe64.graphview.GridLabelRenderer
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.EntryType
 import kotlinx.android.synthetic.main.activity_weight_entry_detail.*
 import android.app.Activity
+import android.app.ProgressDialog.show
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.AsyncTask
+import android.support.design.widget.Snackbar
 import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymBuddyRoomDataBase
 import org.joda.time.LocalDate
 import javax.sql.DataSource
+import android.widget.Toast
+import android.content.DialogInterface
+import android.support.v7.app.AlertDialog
+import fi.anttonen.villematti.apps.gymbuddy.R.id.weight_text
+
+
 
 
 class WeightEntryDetail : AppCompatActivity() {
@@ -69,23 +77,29 @@ class WeightEntryDetail : AppCompatActivity() {
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                try {
-                    val n = weight_text.text.toString().toDouble()
-                    if (n < 0) {
-                        weight_text_layout.error = "Weight must be positive"
-                        clone.weight = 0.0
-                    }
-                    clone.weight = n
-                    weight_text_layout.error = null
-
-                    setupWeightGraph()
-                } catch (e: NumberFormatException) {
-                    weight_text_layout.error = "Weight is missing"
-                    clone.weight = 0.0
-                }
+                validateWeightTextField()
             }
 
         })
+    }
+
+    private fun validateWeightTextField(): Boolean {
+        try {
+            val n = weight_text.text.toString().toDouble()
+            if (n < 0) {
+                weight_text_layout.error = "Weight must be positive"
+                clone.weight = 0.0
+                return false
+            }
+            clone.weight = n
+            weight_text_layout.error = null
+            setupWeightGraph()
+            return true
+        } catch (e: NumberFormatException) {
+            weight_text_layout.error = "Weight is missing"
+            clone.weight = 0.0
+            return false
+        }
     }
 
 
@@ -146,7 +160,7 @@ class WeightEntryDetail : AppCompatActivity() {
             return true
         }
         if (id == R.id.menu_item_done) {
-            save()
+            if (!save()) return true
 
             val intent = Intent()
             intent.putExtra(ENTRY_ID_KEY, clone.id)
@@ -163,9 +177,12 @@ class WeightEntryDetail : AppCompatActivity() {
             intent.putExtra(DELETED_KEY, true)
             setResult(Activity.RESULT_OK, intent)
 
-            delete()
+            AlertDialog.Builder(this)
+                    .setTitle("Delete?")
+                    .setMessage("This weight entry will be removed permanently.")
+                    .setPositiveButton(android.R.string.yes, { _, _ -> delete().run { finish() } })
+                    .setNegativeButton(android.R.string.no, null).show()
 
-            finish()
             return true
         }
 
@@ -178,11 +195,16 @@ class WeightEntryDetail : AppCompatActivity() {
         }
     }
 
-    private fun save() {
+    private fun save(): Boolean {
+        if (!validateWeightTextField()) {
+            Snackbar.make(weight_text, "Fix errors first", Snackbar.LENGTH_SHORT).show()
+            return false
+        }
         entry.updateValuesFrom(clone)
         AsyncTask.execute {
             calendarGymEntriesViewModel.updateAll(entry)
         }
+        return true
     }
 }
 
