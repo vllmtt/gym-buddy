@@ -7,6 +7,8 @@
     <string name="delete">Delete</string>
     <string name="cardio">Cardio</string>
     <string name="strength_exercise">Strength exercise</string>
-    <string name="measurement">Measurement</string>
+    <string name="measurement">Body measurement</string>
     <string name="calories">Calories</string>
+    <string name="settings">Settings</string>
+    <string name="today">Today</string>
 </resources>

@@ -81,6 +81,11 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
     }
 
+    override fun onStart() {
+        super.onStart()
+        calendar_view.invalidate()
+    }
+
     private fun setupSpeedDial() {
         speedDial.inflate(R.menu.speed_dial_menu)
         speedDial.setOnActionSelectedListener {
@@ -161,10 +166,10 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
         if (id == R.id.menu_item_calendar_toggle) {
             if (calendar_view.visibility == View.VISIBLE) {
                 calendar_view.visibility = View.GONE
-                item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_keyboard_arrow_down_white_24px))
+                item.icon = ContextCompat.getDrawable(this, R.drawable.ic_keyboard_arrow_down_white_24px)
             } else {
                 calendar_view.visibility = View.VISIBLE
-                item.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_keyboard_arrow_up_white_24px))
+                item.icon = ContextCompat.getDrawable(this, R.drawable.ic_keyboard_arrow_up_white_24px)
             }
             calendar_view.setCurrentDate(currentlySelectedDate.toDate())
             supportActionBar?.title = getMainTitle(currentlySelectedDate)
@@ -174,6 +179,9 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
             calendar_view.setCurrentDate(currentlySelectedDate.toDate())
             ViewModelProviders.of(this).get(CalendarGymEntriesViewModel::class.java).setDateFilter(currentlySelectedDate)
             supportActionBar?.title = getMainTitle(currentlySelectedDate)
+        }
+        if (id == R.id.menu_item_settings) {
+            //TODO implement settings: distance unit, weight unit,
         }
         return super.onOptionsItemSelected(item)
     }

@@ -4,12 +4,18 @@
     <item
         android:id="@+id/menu_item_today"
         android:icon="@drawable/ic_event_white_24px"
-        android:title="@null"
-        app:showAsAction="always" />
+        android:title="@string/today"
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/menu_item_calendar_toggle"
         android:icon="@drawable/ic_keyboard_arrow_up_white_24px"
         android:title="@null"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_item_settings"
+        android:title="@string/settings"
+        app:showAsAction="never"
+        />
 </menu>
