@@ -3,6 +3,7 @@ package fi.anttonen.villematti.apps.gymbuddy.activity
 import android.app.Activity
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.graphics.Color
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -10,17 +11,18 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import com.github.sundeepk.compactcalendarview.CompactCalendarView
+import com.github.sundeepk.compactcalendarview.domain.Event
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.GymEntry
 import fi.anttonen.villematti.apps.gymbuddy.R
-import fi.anttonen.villematti.apps.gymbuddy.R.id.calendar_view
 import fi.anttonen.villematti.apps.gymbuddy.R.id.new_weight_entry
 import fi.anttonen.villematti.apps.gymbuddy.adapters.CalendarGymEntriesRecyclerAdapter
+import fi.anttonen.villematti.apps.gymbuddy.model.CalendarEventViewModel
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
+import fi.anttonen.villematti.apps.gymbuddy.model.entity.EntryType
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymBuddyRoomDataBase
 import kotlinx.android.synthetic.main.activity_main.*
@@ -66,12 +68,13 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
             }
         }
 
-        val viewModel = ViewModelProviders.of(this).get(CalendarGymEntriesViewModel::class.java)
-        viewModel.setDateFilter(currentlySelectedDate)
+        ///////////// INIT LIVE DATA OBSERVING ///////////////
 
-        viewModel.getGymEntriesForDate().observe(this, android.arch.lifecycle.Observer { entries ->
+        val gymEntriesViewModel = ViewModelProviders.of(this).get(CalendarGymEntriesViewModel::class.java)
+        gymEntriesViewModel.setDateFilter(currentlySelectedDate)
+        gymEntriesViewModel.getGymEntriesForDate().observe(this, android.arch.lifecycle.Observer { entries ->
             if (gymEntriesRecyclerView.adapter == null) {
-                adapter = CalendarGymEntriesRecyclerAdapter(entries, viewModel)
+                adapter = CalendarGymEntriesRecyclerAdapter(entries, gymEntriesViewModel)
                 gymEntriesRecyclerView.adapter = adapter
                 adapter?.itemClickListener = this
             } else {
@@ -79,6 +82,20 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
             }
         })
 
+        val calendarEventViewModel = ViewModelProviders.of(this).get(CalendarEventViewModel::class.java)
+        calendarEventViewModel.setDateFilter(currentlySelectedDate)
+        calendarEventViewModel.getGymEntriesForDateRange().observe(this, android.arch.lifecycle.Observer { entries ->
+            if (entries != null) {
+                calendar_view.removeAllEvents()
+                entryLoop@ for (entry in entries) {
+                    when (entry.getEntryType()) {
+                        EntryType.WEIGHT -> calendar_view.addEvent(Event(ContextCompat.getColor(this, R.color.weight), entry.getEntryDate().toDate().time))
+                        EntryType.CARDIO -> calendar_view.addEvent(Event(ContextCompat.getColor(this, R.color.cardio), entry.getEntryDate().toDate().time))
+                        else -> continue@entryLoop
+                    }
+                }
+            }
+        })
     }
 
     override fun onStart() {
@@ -120,6 +137,7 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
     override fun onMonthScroll(firstDayOfNewMonth: Date?) {
         supportActionBar?.title = getMainTitle(LocalDate.fromDateFields(firstDayOfNewMonth))
+        ViewModelProviders.of(this).get(CalendarEventViewModel::class.java).setDateFilter(LocalDate(firstDayOfNewMonth))
     }
 
 
@@ -178,6 +196,7 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
             currentlySelectedDate = LocalDate.now()
             calendar_view.setCurrentDate(currentlySelectedDate.toDate())
             ViewModelProviders.of(this).get(CalendarGymEntriesViewModel::class.java).setDateFilter(currentlySelectedDate)
+            ViewModelProviders.of(this).get(CalendarEventViewModel::class.java).setDateFilter(LocalDate(currentlySelectedDate))
             supportActionBar?.title = getMainTitle(currentlySelectedDate)
         }
         if (id == R.id.menu_item_settings) {

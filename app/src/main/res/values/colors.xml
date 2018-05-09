@@ -7,4 +7,11 @@
     <color name="primary_material_light">#ffffff</color>
     <color name="primary_material_dark">#212121</color>
     <color name="primary_dark_material_dark">#212121</color>
+
+    <!-- Entry colors -->
+    <color name="weight">#673ab7</color>
+    <color name="cardio">#4caf50</color>
+    <color name="strength">#ff5722</color>
+    <color name="measurement">#607d8b</color>
+    <color name="food">#ff9800</color>
 </resources>

@@ -16,6 +16,9 @@ interface CardioEntryDao {
     @Query("SELECT * FROM cardio_entry WHERE cardio_entry.date = :date")
     fun getAll(date: LocalDate): LiveData<List<CardioEntry>>
 
+    @Query("SELECT * FROM cardio_entry WHERE cardio_entry.date <= :start AND cardio_entry.date >= :end ORDER BY cardio_entry.date DESC")
+    fun getAll(start: LocalDate, end: LocalDate): LiveData<List<CardioEntry>>
+
     @Query("SELECT * FROM cardio_entry WHERE cardio_entry.id = :id")
     fun get(id: Long): LiveData<CardioEntry>
 

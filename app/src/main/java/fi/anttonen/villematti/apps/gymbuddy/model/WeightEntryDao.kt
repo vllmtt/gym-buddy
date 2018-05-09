@@ -14,6 +14,9 @@ interface WeightEntryDao {
     @Query("SELECT * FROM weight_entry WHERE weight_entry.date = :date")
     fun getAll(date: LocalDate): LiveData<List<WeightEntry>>
 
+    @Query("SELECT * FROM weight_entry WHERE weight_entry.date <= :start AND weight_entry.date >= :end ORDER BY weight_entry.date DESC")
+    fun getAll(start: LocalDate, end: LocalDate): LiveData<List<WeightEntry>>
+
     @Query("SELECT * FROM weight_entry WHERE weight_entry.id = :id")
     fun get(id: Long): WeightEntry?
 
