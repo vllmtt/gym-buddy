@@ -122,6 +122,7 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
     }
 
     private fun setupCalendar() {
+        calendar_view.shouldDrawIndicatorsBelowSelectedDays(true)
         calendar_view.shouldSelectFirstDayOfMonthOnScroll(false)
         calendar_view.setListener(this)
         currentlySelectedDate = LocalDate()
