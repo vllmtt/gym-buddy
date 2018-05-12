@@ -19,9 +19,10 @@ import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
 import org.joda.time.LocalDate
 import android.support.v7.app.AlertDialog
+import fi.anttonen.villematti.apps.gymbuddy.fragments.MoodFragment
 
 
-class WeightEntryDetail : AppCompatActivity() {
+class WeightEntryDetail : AppCompatActivity(), MoodFragment.MoodFragmentListener {
 
     companion object {
         const val ENTRY_ID_KEY = "ENTRY_KEY"
@@ -138,6 +139,9 @@ class WeightEntryDetail : AppCompatActivity() {
         }
     }
 
+    override fun onMoodSelection(mood: String?) {
+        clone.mood = mood
+    }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         val id = item?.itemId

@@ -13,6 +13,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
+            android:id="@+id/content_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -81,6 +82,23 @@
                     tools:text="kg" />
 
             </android.support.constraint.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/moodLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:text="@string/mood"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+
+            <fragment
+                android:id="@+id/mood_fragment"
+                android:name="fi.anttonen.villematti.apps.gymbuddy.fragments.MoodFragment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="16dp" />
 
         </LinearLayout>
     </ScrollView>
