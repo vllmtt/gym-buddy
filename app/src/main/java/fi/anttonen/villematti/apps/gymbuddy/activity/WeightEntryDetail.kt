@@ -49,8 +49,10 @@ class WeightEntryDetail : AppCompatActivity(), MoodFragment.MoodFragmentListener
                 date_text.text = clone.getHumanReadableDate(this)
                 setupWeightEditText()
                 setupWeightGraph()
+                supportFragmentManager.beginTransaction().add(R.id.content_layout, MoodFragment.newInstance(clone.mood), "moodFragment").commit()
             }
         }
+
 
         supportActionBar?.title = getString(R.string.weight_entry_detail_title)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

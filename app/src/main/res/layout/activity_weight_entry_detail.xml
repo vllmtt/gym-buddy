@@ -43,6 +43,14 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                 tools:text="TextView" />
 
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="@string/weight"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -63,7 +71,6 @@
                         android:id="@+id/weight_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/weight"
                         android:inputType="numberDecimal"
                         android:selectAllOnFocus="true"
                         android:singleLine="true" />
@@ -87,11 +94,10 @@
                 android:id="@+id/moodLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_margin="16dp"
                 android:text="@string/mood"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
-
+<!--
             <fragment
                 android:id="@+id/mood_fragment"
                 android:name="fi.anttonen.villematti.apps.gymbuddy.fragments.MoodFragment"
@@ -99,7 +105,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_margin="16dp" />
-
+-->
         </LinearLayout>
     </ScrollView>
 

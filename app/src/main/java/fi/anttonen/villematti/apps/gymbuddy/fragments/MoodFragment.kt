@@ -53,16 +53,16 @@ class MoodFragment : Fragment() {
         if (view.tag == THUMB_UP) {
             setActivated(imageButtonThumbDown, false)
             setActivated(imageButtonThumbUp, !imageButtonThumbUp.isActivated)
-            listener?.onMoodSelection(if (!imageButtonThumbUp.isActivated) THUMB_UP else null)
+            listener?.onMoodSelection(if (imageButtonThumbUp.isActivated) THUMB_UP else null)
         }
         if  (view.tag == THUMB_DOWN) {
             setActivated(imageButtonThumbUp, false)
             setActivated(imageButtonThumbDown, !imageButtonThumbDown.isActivated)
-            listener?.onMoodSelection(if (!imageButtonThumbDown.isActivated) THUMB_UP else null)
+            listener?.onMoodSelection(if (imageButtonThumbDown.isActivated) THUMB_DOWN else null)
         }
     }
 
-    fun setActivated(button: View, activated: Boolean) {
+    private fun setActivated(button: View, activated: Boolean) {
         button.isActivated = activated
         button.alpha = if (activated) 1.0f else .38f
     }
@@ -111,10 +111,10 @@ class MoodFragment : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String) =
+        fun newInstance(mood: String?) =
                 MoodFragment().apply {
                     arguments = Bundle().apply {
-                        putString(MOOD_VALUE, param1)
+                        putString(MOOD_VALUE, mood)
                     }
                 }
     }
