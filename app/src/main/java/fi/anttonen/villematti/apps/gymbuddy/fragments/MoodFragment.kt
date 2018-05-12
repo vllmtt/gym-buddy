@@ -64,7 +64,7 @@ class MoodFragment : Fragment() {
 
     private fun setActivated(button: View, activated: Boolean) {
         button.isActivated = activated
-        button.alpha = if (activated) 1.0f else .38f
+        button.alpha = if (activated) 1.0f else .20f
     }
 
     override fun onAttach(context: Context) {
@@ -106,10 +106,9 @@ class MoodFragment : Fragment() {
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param param1 Parameter 1.
+         * @param mood Parameter 1.
          * @return A new instance of fragment MoodFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(mood: String?) =
                 MoodFragment().apply {

@@ -13,13 +13,14 @@ import android.view.MenuItem
 import android.view.View
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import fi.anttonen.villematti.apps.gymbuddy.R
+import fi.anttonen.villematti.apps.gymbuddy.fragments.MoodFragment
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.database.GymBuddyRoomDataBase
 import kotlinx.android.synthetic.main.activity_add_weight_entry.*
 import org.joda.time.LocalDate
 import org.joda.time.format.DateTimeFormat
 
-class AddWeightEntry : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
+class AddWeightEntry : AppCompatActivity(), DatePickerDialog.OnDateSetListener, MoodFragment.MoodFragmentListener {
 
     companion object {
         const val DATE_KEY = "DEFAULT DATE"
@@ -29,6 +30,7 @@ class AddWeightEntry : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
 
     var selectedDate: LocalDate? = null
     var weight: Double? = null
+    var mood: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +39,8 @@ class AddWeightEntry : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
         supportActionBar?.title = "Add weight"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close_white_24px)
+
+        supportFragmentManager.beginTransaction().add(R.id.content_layout, MoodFragment.newInstance(null), "moodFragment").commit()
 
         weight_text.requestFocus()
         weight_text.addTextChangedListener(object : TextWatcher {
@@ -94,6 +98,10 @@ class AddWeightEntry : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
         return valid
     }
 
+    override fun onMoodSelection(mood: String?) {
+        this.mood = mood
+    }
+
     override fun onDateSet(view: DatePickerDialog, year: Int, monthOfYear: Int, dayOfMonth: Int) {
         selectedDate = LocalDate().withYear(year).withMonthOfYear(monthOfYear + 1).withDayOfMonth(dayOfMonth)
         date_text.setText(selectedDate?.toString(DATE_FORMATTER))
@@ -147,6 +155,7 @@ class AddWeightEntry : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
 
         return if (selectedDate != null && weight != null) {
             val entry = WeightEntry(0, selectedDate!!, weight!!)
+            entry.mood = mood
             AsyncTask.execute {
                 GymBuddyRoomDataBase.weightEntryDao.insertAll(entry)
             }
