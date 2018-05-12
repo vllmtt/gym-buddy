@@ -4,13 +4,11 @@ import android.os.AsyncTask
 import android.support.v4.content.ContextCompat
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.jjoe64.graphview.GridLabelRenderer
 import fi.anttonen.villematti.apps.gymbuddy.R
-import fi.anttonen.villematti.apps.gymbuddy.R.string.date
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
@@ -19,7 +17,6 @@ import fi.anttonen.villematti.apps.gymbuddy.model.entity.GymEntry
 import kotlinx.android.synthetic.main.cardio_entry_row.view.*
 import kotlinx.android.synthetic.main.weight_entry_row.view.*
 import org.joda.time.LocalDate
-import javax.sql.DataSource
 
 class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val viewModel: CalendarGymEntriesViewModel) : RecyclerView.Adapter<CalendarGymEntriesRecyclerAdapter.CalendarGymEntryHolder>() {
 
@@ -92,7 +89,7 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
 
 
         private fun bindCardioEntry(cardioEntry: CardioEntry) {
-            view.distance_text.text = cardioEntry.getHumanReadableDistance()
+            view.distance_main_text.text = cardioEntry.getHumanReadableDistance()
             view.duration_text.text = cardioEntry.getHumanReadableDuration()
         }
 

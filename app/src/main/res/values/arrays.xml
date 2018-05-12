@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="weight_units">
+        <item>@string/weight_unit_kilograms</item>
+        <item>@string/weight_unit_pounds</item>
+    </array>
+    <array name="distance_units">
+        <item>@string/distance_unit_kilometers</item>
+        <item>@string/distance_unit_miles</item>
+    </array>
+</resources>

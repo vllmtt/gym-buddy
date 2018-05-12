@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="Units"
+        android:key="pref_key_unit_settings">
+
+        <ListPreference
+            android:dependency="pref_weight_unit"
+            android:key="pref_weight_unit"
+            android:title="@string/weight"
+            android:dialogTitle="@string/weight"
+            android:entries="@array/weight_units"
+            android:defaultValue="@string/weight_unit_kilograms"/>
+
+        <ListPreference
+            android:dependency="pref_distance_unit"
+            android:key="pref_distance_unit"
+            android:title="@string/distance"
+            android:dialogTitle="@string/distance"
+            android:entries="@array/distance_units"
+            android:defaultValue="@string/distance_unit_kilometers"/>
+
+    </PreferenceCategory>
+</PreferenceScreen>
