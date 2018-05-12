@@ -1,12 +1,10 @@
 package fi.anttonen.villematti.apps.gymbuddy.model
 
 import android.arch.lifecycle.*
-import android.util.Log
-import fi.anttonen.villematti.apps.gymbuddy.R.string.date
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.GymEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
-import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymBuddyRoomDataBase
+import fi.anttonen.villematti.apps.gymbuddy.model.database.GymBuddyRoomDataBase
 import org.joda.time.LocalDate
 
 class CalendarGymEntriesViewModel : ViewModel() {

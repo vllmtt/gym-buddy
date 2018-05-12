@@ -13,16 +13,11 @@ import android.view.MenuItem
 import android.view.View
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import fi.anttonen.villematti.apps.gymbuddy.R
-import fi.anttonen.villematti.apps.gymbuddy.R.id.add_weight_layout
-import fi.anttonen.villematti.apps.gymbuddy.R.id.date_text
-import fi.anttonen.villematti.apps.gymbuddy.R.string.weight
-import fi.anttonen.villematti.apps.gymbuddy.activity.AddWeightEntry.Companion.DATE_KEY
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
-import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymBuddyRoomDataBase
+import fi.anttonen.villematti.apps.gymbuddy.model.database.GymBuddyRoomDataBase
 import kotlinx.android.synthetic.main.activity_add_weight_entry.*
 import org.joda.time.LocalDate
 import org.joda.time.format.DateTimeFormat
-import java.util.*
 
 class AddWeightEntry : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
 

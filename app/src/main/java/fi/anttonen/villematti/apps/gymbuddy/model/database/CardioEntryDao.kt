@@ -1,4 +1,4 @@
-package fi.anttonen.villematti.apps.gymbuddy.model
+package fi.anttonen.villematti.apps.gymbuddy.model.database
 
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.Dao

@@ -3,7 +3,6 @@ package fi.anttonen.villematti.apps.gymbuddy.activity
 import android.app.Activity
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.graphics.Color
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -24,7 +23,7 @@ import fi.anttonen.villematti.apps.gymbuddy.model.CalendarEventViewModel
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.EntryType
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
-import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymBuddyRoomDataBase
+import fi.anttonen.villematti.apps.gymbuddy.model.database.GymBuddyRoomDataBase
 import kotlinx.android.synthetic.main.activity_main.*
 import net.danlew.android.joda.JodaTimeAndroid
 import org.joda.time.LocalDate

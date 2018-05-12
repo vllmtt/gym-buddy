@@ -6,13 +6,10 @@ import android.view.MenuItem
 import android.support.v4.content.ContextCompat
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.Menu
 import com.jjoe64.graphview.GridLabelRenderer
-import fi.anttonen.villematti.apps.gymbuddy.model.entity.EntryType
 import kotlinx.android.synthetic.main.activity_weight_entry_detail.*
 import android.app.Activity
-import android.app.ProgressDialog.show
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.AsyncTask
@@ -20,15 +17,8 @@ import android.support.design.widget.Snackbar
 import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
-import fi.anttonen.villematti.apps.gymbuddy.model.interfaces.GymBuddyRoomDataBase
 import org.joda.time.LocalDate
-import javax.sql.DataSource
-import android.widget.Toast
-import android.content.DialogInterface
 import android.support.v7.app.AlertDialog
-import fi.anttonen.villematti.apps.gymbuddy.R.id.weight_text
-
-
 
 
 class WeightEntryDetail : AppCompatActivity() {

@@ -1,10 +1,7 @@
-package fi.anttonen.villematti.apps.gymbuddy.model.interfaces
+package fi.anttonen.villematti.apps.gymbuddy.model.database
 
 import android.arch.persistence.room.Room
 import android.content.Context
-import fi.anttonen.villematti.apps.gymbuddy.model.AppDatabase
-import fi.anttonen.villematti.apps.gymbuddy.model.CardioEntryDao
-import fi.anttonen.villematti.apps.gymbuddy.model.WeightEntryDao
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
 import org.joda.time.Duration
