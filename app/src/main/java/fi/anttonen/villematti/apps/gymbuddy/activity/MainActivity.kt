@@ -200,7 +200,8 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
             supportActionBar?.title = getMainTitle(currentlySelectedDate)
         }
         if (id == R.id.menu_item_settings) {
-            //TODO implement settings: distance unit, weight unit,
+            val settingsIntent = Intent(this, SettingsActivity::class.java)
+            ActivityCompat.startActivity(this, settingsIntent, null)
         }
         return super.onOptionsItemSelected(item)
     }

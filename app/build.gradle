@@ -34,9 +34,10 @@ dependencies {
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support:cardview-v7:27.1.1'
-    implementation "android.arch.persistence.room:runtime:1.0.0"
+    implementation "android.arch.persistence.room:runtime:1.1.0"
     implementation "android.arch.lifecycle:extensions:1.1.1"
     implementation "android.arch.lifecycle:viewmodel:1.1.1"
+    implementation 'com.android.support:preference-v7:27.1.1'
 
     implementation 'com.jjoe64:graphview:4.2.2'
     implementation 'com.github.sundeepk:compact-calendar-view:2.0.2.3'
@@ -45,10 +46,10 @@ dependencies {
     implementation 'com.wdullaer:materialdatetimepicker:3.5.1'
 
     implementation 'com.android.support:support-vector-drawable:27.1.1'
-    kapt "android.arch.persistence.room:compiler:1.0.0"
+    kapt "android.arch.persistence.room:compiler:1.1.0"
 
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation "android.arch.persistence.room:testing:1.0.0"
+    androidTestImplementation "android.arch.persistence.room:testing:1.1.0"
     androidTestImplementation "android.arch.core:core-testing:1.1.1"
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
