@@ -32,7 +32,7 @@ object GymBuddyRoomDataBase {
         weightEntryDao.insertAll(*weightEntries.toTypedArray())
 
 
-        val distances = arrayListOf(12200, 2300, 5600, 7300, 5500, 5980, 3440, 5220, 9600, 11300, 15450)
+        val distances = arrayListOf(12200.0, 2300.0, 5600.0, 7300.0, 5500.0, 5980.0, 3440.0, 5220.0, 9600.0, 11300.0, 15450.0)
         val cardioEntries = mutableListOf<CardioEntry>()
         for (i in 0 until distances.size) {
             val date = LocalDate().minusDays(i)

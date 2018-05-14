@@ -1,6 +1,7 @@
 package fi.anttonen.villematti.apps.gymbuddy.fragments
 
 import android.content.Context
+import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -8,6 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 
 import fi.anttonen.villematti.apps.gymbuddy.R
+import fi.anttonen.villematti.apps.gymbuddy.R.id.imageButtonThumbDown
+import fi.anttonen.villematti.apps.gymbuddy.R.id.imageButtonThumbUp
+import fi.anttonen.villematti.apps.gymbuddy.R.string.mood
 import kotlinx.android.synthetic.main.fragment_mood.*
 import kotlinx.android.synthetic.main.fragment_mood.view.*
 

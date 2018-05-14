@@ -3,6 +3,10 @@ package fi.anttonen.villematti.apps.gymbuddy.model.entity
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
+import fi.anttonen.villematti.apps.gymbuddy.R.string.distance
+import fi.anttonen.villematti.apps.gymbuddy.R.string.mood
+import fi.anttonen.villematti.apps.gymbuddy.misc.UnitManager
+import fi.anttonen.villematti.apps.gymbuddy.misc.UnitManager.Units.distanceRatio
 import fi.anttonen.villematti.apps.gymbuddy.misc.roundToDecimalPlaces
 import org.joda.time.Duration
 import org.joda.time.LocalDate
@@ -10,11 +14,24 @@ import org.joda.time.LocalDate
 @Entity(tableName = "cardio_entry")
 class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val id: Long,
                   @ColumnInfo(name = "date") var date: LocalDate,
-                  @ColumnInfo(name = "distance") var distance: Int,
+                  @ColumnInfo(name = "distance") private var _distance: Double,
                   @ColumnInfo(name = "duration") var duration: Duration)  : GymEntry {
+
+    var distance: Double
+    get() = (_distance * UnitManager.Units.distanceRatio).roundToDecimalPlaces(1)
+    set(value) {
+        _distance = value / UnitManager.Units.distanceRatio
+    }
 
     @ColumnInfo(name = "mood")
     var mood: String? = null
+
+    /**
+     * Save distance to database as m regardless of user preference
+     */
+    init {
+        _distance /= UnitManager.Units.distanceRatio
+    }
 
     override fun getEntryType(): EntryType = EntryType.CARDIO
 
@@ -67,8 +84,21 @@ class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
         return sb.toString()
     }
 
-    fun getMainDistanceUnitString() = "km"
-    fun getSecondaryDistanceUnitString() = "m"
+    fun getMainDistanceUnitString(): String {
+        return when (UnitManager.Units.distanceRatio) {
+            UnitManager.DistanceRatio.KM -> "km"
+            UnitManager.DistanceRatio.M ->  "mi"
+            else -> "unknown"
+        }
+    }
+
+    fun getSecondaryDistanceUnitString(): String {
+        return when (UnitManager.Units.distanceRatio) {
+            UnitManager.DistanceRatio.KM -> "m"
+            UnitManager.DistanceRatio.M ->  "ft"
+            else -> "unknown"
+        }
+    }
 
     fun getHumanReadableDistance(): String {
         return "$distance${getSecondaryDistanceUnitString()}"

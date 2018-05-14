@@ -3,13 +3,16 @@ package fi.anttonen.villematti.apps.gymbuddy.activity
 import android.app.Activity
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.content.ContextCompat
+import android.support.v7.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -18,7 +21,9 @@ import com.github.sundeepk.compactcalendarview.domain.Event
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.GymEntry
 import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.R.id.new_weight_entry
+import fi.anttonen.villematti.apps.gymbuddy.R.xml.preferences
 import fi.anttonen.villematti.apps.gymbuddy.adapters.CalendarGymEntriesRecyclerAdapter
+import fi.anttonen.villematti.apps.gymbuddy.misc.UnitManager
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarEventViewModel
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.EntryType
@@ -31,8 +36,7 @@ import org.joda.time.format.DateTimeFormat
 import java.util.*
 
 
-class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarViewListener, CalendarGymEntriesRecyclerAdapter.OnItemClickListener {
-
+class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarViewListener, CalendarGymEntriesRecyclerAdapter.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
     companion object {
         private const val UPDATE_REQUEST = 1
         private const val ADD_ENTRY = 1
@@ -57,8 +61,23 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
         setupSpeedDial()
 
-        ////////////// INIT DATABASE //////////////
+        ////////////// INIT DATABASE & PREFS //////////////
+        // TODO These to every activity just in case
         GymBuddyRoomDataBase.initIfNull(applicationContext)
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        preferences.getString(getString(R.string.pref_weight_unit_key), getString(R.string.weight_unit_kilograms_key)).apply {
+            when (this) {
+                getString(R.string.weight_unit_kilograms_key) -> UnitManager.Units.weightRatio = UnitManager.WeightRatio.KG
+                getString(R.string.weight_unit_pounds_key) -> UnitManager.Units.weightRatio = UnitManager.WeightRatio.LBS
+            }
+        }
+        preferences.getString(getString(R.string.pref_distance_unit_key), getString(R.string.distance_unit_kilometers_key)).apply {
+            when (this) {
+                getString(R.string.distance_unit_kilometers_key) -> UnitManager.Units.distanceRatio = UnitManager.DistanceRatio.KM
+                getString(R.string.distance_unit_miles_key) -> UnitManager.Units.distanceRatio = UnitManager.DistanceRatio.M
+            }
+        }
+
 
 
         if (false) {
@@ -204,6 +223,10 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
             ActivityCompat.startActivity(this, settingsIntent, null)
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onSharedPreferenceChanged(p0: SharedPreferences?, p1: String?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     private fun getMainTitle(date: LocalDate?): String {

@@ -5,18 +5,18 @@
         android:key="pref_key_unit_settings">
 
         <ListPreference
-            android:key="pref_weight_unit"
+            android:key="@string/pref_weight_unit_key"
             android:title="@string/weight"
             android:dialogTitle="@string/weight"
-            android:entries="@array/weight_units"
+            android:entries="@array/weight_unit_keys"
             android:entryValues="@array/weight_units"
             android:defaultValue="@string/weight_unit_kilograms"/>
 
         <ListPreference
-            android:key="pref_distance_unit"
+            android:key="@string/pref_distance_unit_key"
             android:title="@string/distance"
             android:dialogTitle="@string/distance"
-            android:entries="@array/distance_units"
+            android:entries="@array/distance_unit_keys"
             android:entryValues="@array/distance_units"
             android:defaultValue="@string/distance_unit_kilometers"/>
 

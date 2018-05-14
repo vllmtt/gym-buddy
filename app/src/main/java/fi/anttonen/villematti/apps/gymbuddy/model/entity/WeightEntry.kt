@@ -4,8 +4,12 @@ import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.PrimaryKey
+import android.util.Log
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
+import fi.anttonen.villematti.apps.gymbuddy.R.string.date
+import fi.anttonen.villematti.apps.gymbuddy.R.string.mood
+import fi.anttonen.villematti.apps.gymbuddy.misc.UnitManager
 import fi.anttonen.villematti.apps.gymbuddy.misc.roundToDecimalPlaces
 import org.joda.time.LocalDate
 import java.math.BigDecimal
@@ -18,14 +22,22 @@ class WeightEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
                   @ColumnInfo(name = "date") var date: LocalDate,
                   @ColumnInfo(name = "weight") private var _weight: Double) : GymEntry {
 
+
     @ColumnInfo(name = "mood")
     var mood: String? = null
 
     var weight: Double
-        get() = _weight.roundToDecimalPlaces(1)
+        get() = (_weight * UnitManager.Units.weightRatio).roundToDecimalPlaces(1)
         set(value) {
-            _weight = value
+            _weight = value / UnitManager.Units.weightRatio
         }
+
+    /**
+     * Save weight to database in kg regardless of user preference
+     */
+    init {
+        _weight /= UnitManager.Units.weightRatio
+    }
 
     override fun getEntryType(): EntryType = EntryType.WEIGHT
 
@@ -60,7 +72,13 @@ class WeightEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
         return "Entry: $id, Weight: $weight, date: $date, Mood: $mood"
     }
 
-    fun getUnitString(): String = "kg"
+    fun getUnitString(): String {
+        return when (UnitManager.Units.weightRatio) {
+            UnitManager.WeightRatio.KG -> "kg"
+            UnitManager.WeightRatio.LBS -> "lbs"
+            else -> "unknown"
+        }
+    }
 
     /**
      *

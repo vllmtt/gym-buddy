@@ -4,8 +4,17 @@
         <item>@string/weight_unit_kilograms</item>
         <item>@string/weight_unit_pounds</item>
     </array>
+    <array name="weight_unit_keys">
+        <item>@string/weight_unit_kilograms_key</item>
+        <item>@string/weight_unit_pounds_key</item>
+    </array>
+
     <array name="distance_units">
         <item>@string/distance_unit_kilometers</item>
         <item>@string/distance_unit_miles</item>
+    </array>
+    <array name="distance_unit_keys">
+        <item>@string/distance_unit_kilometers_key</item>
+        <item>@string/distance_unit_miles_key</item>
     </array>
 </resources>

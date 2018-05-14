@@ -4,6 +4,7 @@ import android.os.AsyncTask
 import android.support.v4.content.ContextCompat
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -133,9 +134,11 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
                 view.weight_graph.viewport.isYAxisBoundsManual = true
 
                 view.weight_graph.gridLabelRenderer.setHumanRounding(false)
+
             } else {
                 //view.weight_graph.visibility = View.GONE
             }
+
         }
     }
 
