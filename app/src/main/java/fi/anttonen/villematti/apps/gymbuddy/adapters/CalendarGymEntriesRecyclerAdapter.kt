@@ -107,6 +107,9 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
             view.weight_graph.gridLabelRenderer.isVerticalLabelsVisible = false
             view.weight_graph.gridLabelRenderer.gridStyle = GridLabelRenderer.GridStyle.NONE
 
+            view.weight_graph.gridLabelRenderer.numHorizontalLabels = 0
+            view.weight_graph.gridLabelRenderer.numVerticalLabels = 0
+
             LoadHistoryTask(gymEntry, viewModel, this).execute(gymEntry.date)
 
         }
@@ -125,8 +128,10 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
 
                 // TODO weight graph styling to onCreateViewHolder()
 
-                view.weight_graph.viewport.setMinX(LocalDate(data.last().date).toDate().time.toDouble())
-                view.weight_graph.viewport.setMaxX(LocalDate(data.first().date).toDate().time.toDouble())
+                val minX = LocalDate(data.last().date).toDate().time
+                val maxX = LocalDate(data.first().date).toDate().time
+                view.weight_graph.viewport.setMinX(minX.toDouble())
+                view.weight_graph.viewport.setMaxX(maxX.toDouble())
                 view.weight_graph.viewport.isXAxisBoundsManual = true
 
                 view.weight_graph.viewport.setMinY(series.lowestValueY)

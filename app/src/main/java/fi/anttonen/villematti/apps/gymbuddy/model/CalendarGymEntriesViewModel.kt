@@ -58,7 +58,7 @@ class CalendarGymEntriesViewModel : ViewModel() {
     }
 
     fun getWeightEntryHistoryForDate(date: LocalDate): List<WeightEntry> {
-        return GymBuddyRoomDataBase.weightEntryDao.getHistory(date, WEIGHT_HISTORY_LIMIT) ?: listOf()
+        return GymBuddyRoomDataBase.weightEntryDao.getHistory(date, WEIGHT_HISTORY_LIMIT)
     }
 
     fun updateAll(vararg weightEntries: WeightEntry) {

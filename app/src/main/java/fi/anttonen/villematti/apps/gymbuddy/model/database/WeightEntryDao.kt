@@ -21,7 +21,7 @@ interface WeightEntryDao {
     fun get(id: Long): WeightEntry?
 
     @Query("SELECT * FROM weight_entry WHERE weight_entry.date <= :date ORDER BY weight_entry.date DESC LIMIT :limit")
-    fun getHistory(date: LocalDate, limit: Int): List<WeightEntry>?
+    fun getHistory(date: LocalDate, limit: Int): List<WeightEntry>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg weightEntries: WeightEntry)

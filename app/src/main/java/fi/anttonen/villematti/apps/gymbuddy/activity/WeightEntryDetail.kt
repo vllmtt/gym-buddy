@@ -127,6 +127,9 @@ class WeightEntryDetail : AppCompatActivity(), MoodFragment.MoodFragmentListener
                     weight_graph.gridLabelRenderer.gridStyle = GridLabelRenderer.GridStyle.HORIZONTAL
                     weight_graph.gridLabelRenderer.horizontalAxisTitle = " "
 
+                    //weight_graph.gridLabelRenderer.numHorizontalLabels = 0
+                    //weight_graph.gridLabelRenderer.numVerticalLabels = 0
+
                     weight_graph.viewport.setMinX(LocalDate(data.last().date).toDate().time.toDouble())
                     weight_graph.viewport.setMaxX(LocalDate(data.first().date).toDate().time.toDouble())
                     weight_graph.viewport.isXAxisBoundsManual = true

@@ -7,6 +7,7 @@ import android.content.SharedPreferences
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.StrictMode
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.content.ContextCompat
@@ -47,6 +48,21 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
     private lateinit var currentlySelectedDate: LocalDate
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (false) {
+            StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
+                    .detectDiskReads()
+                    .detectDiskWrites()
+                    .detectAll()
+                    .penaltyLog()
+                    .build())
+            StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder()
+                    .detectLeakedSqlLiteObjects()
+                    .detectLeakedClosableObjects()
+                    .penaltyLog()
+                    .penaltyDeath()
+                    .build())
+        }
+
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
@@ -77,7 +93,6 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
                 getString(R.string.distance_unit_miles_key) -> UnitManager.Units.distanceRatio = UnitManager.DistanceRatio.M
             }
         }
-
 
 
         if (false) {
