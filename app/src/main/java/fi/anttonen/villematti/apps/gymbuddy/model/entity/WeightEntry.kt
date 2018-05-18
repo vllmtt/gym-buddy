@@ -72,23 +72,27 @@ class WeightEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
         return "Entry: $id, Weight: $weight, date: $date, Mood: $mood"
     }
 
-    fun getUnitString(): String {
-        return when (UnitManager.Units.weightRatio) {
-            UnitManager.WeightRatio.KG -> "kg"
-            UnitManager.WeightRatio.LBS -> "lbs"
-            else -> "unknown"
+    companion object {
+        var unitString: String = "unknown"
+        get() {
+             return when (UnitManager.Units.weightRatio) {
+                UnitManager.WeightRatio.KG -> "kg"
+                UnitManager.WeightRatio.LBS -> "lbs"
+                else -> "unknown"
+            }
+        }
+
+        /**
+         *
+         */
+        fun dataPointSeriesFrom(gymEntries: List<WeightEntry>): LineGraphSeries<DataPoint> {
+            val reversed = gymEntries.asReversed()
+            val datapoints = mutableListOf<DataPoint>()
+            for (i in 0 until reversed.size) {
+                datapoints.add(DataPoint(reversed[i].date.toDate(), reversed[i].weight))
+            }
+            return LineGraphSeries(datapoints.toTypedArray())
         }
     }
 
-    /**
-     *
-     */
-    fun dataPointSeriesFrom(gymEntries: List<WeightEntry>): LineGraphSeries<DataPoint> {
-        val reversed = gymEntries.asReversed()
-        val datapoints = mutableListOf<DataPoint>()
-        for (i in 0 until reversed.size) {
-            datapoints.add(DataPoint(reversed[i].date.toDate(), reversed[i].weight))
-        }
-        return LineGraphSeries(datapoints.toTypedArray())
-    }
 }

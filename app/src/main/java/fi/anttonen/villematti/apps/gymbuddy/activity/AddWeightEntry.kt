@@ -40,7 +40,7 @@ class AddWeightEntry : AppCompatActivity(), DatePickerDialog.OnDateSetListener, 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close_white_24px)
 
-        supportFragmentManager.beginTransaction().add(R.id.content_layout, MoodFragment.newInstance(null), "moodFragment").commit()
+        supportFragmentManager.beginTransaction().replace(R.id.content_layout, MoodFragment.newInstance(null), "moodFragment").commit()
 
         weight_text.requestFocus()
         weight_text.addTextChangedListener(object : TextWatcher {
@@ -58,6 +58,7 @@ class AddWeightEntry : AppCompatActivity(), DatePickerDialog.OnDateSetListener, 
 
         selectedDate = LocalDate.parse(intent.getStringExtra(DATE_KEY))
         date_text.setText(selectedDate?.toString(DATE_FORMATTER))
+        unit_label.text = WeightEntry.unitString
         validateDateField()
     }
 

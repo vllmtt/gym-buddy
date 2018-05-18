@@ -49,7 +49,7 @@ class WeightEntryDetail : AppCompatActivity(), MoodFragment.MoodFragmentListener
                 date_text.text = clone.getHumanReadableDate(this)
                 setupWeightEditText()
                 setupWeightGraph()
-                supportFragmentManager.beginTransaction().add(R.id.content_layout, MoodFragment.newInstance(clone.mood), "moodFragment").commit()
+                supportFragmentManager.beginTransaction().replace(R.id.content_layout, MoodFragment.newInstance(clone.mood), "moodFragment").commit()
             }
         }
 
@@ -61,7 +61,7 @@ class WeightEntryDetail : AppCompatActivity(), MoodFragment.MoodFragmentListener
 
     private fun setupWeightEditText() {
         weight_text.setText(clone.weight.toString())
-        unit_label.text = clone.getUnitString()
+        unit_label.text = WeightEntry.unitString
         weight_text.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
             }
@@ -114,7 +114,7 @@ class WeightEntryDetail : AppCompatActivity(), MoodFragment.MoodFragmentListener
 
             runOnUiThread {
                 if (data.size > 1) {
-                    val series = clone.dataPointSeriesFrom(data)
+                    val series = WeightEntry.dataPointSeriesFrom(data)
                     series.color = ContextCompat.getColor(this, R.color.colorAccent)
                     series.isDrawDataPoints = true
                     series.dataPointsRadius = 6.toFloat()

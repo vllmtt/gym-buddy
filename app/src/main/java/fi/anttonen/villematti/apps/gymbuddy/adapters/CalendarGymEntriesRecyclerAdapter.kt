@@ -100,7 +100,7 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
          */
         private fun bindWeightEntry(gymEntry: WeightEntry) {
             view.weight_text.text = gymEntry.weight.toString()
-            view.weight_unit_text.text = gymEntry.getUnitString()
+            view.weight_unit_text.text = WeightEntry.unitString
             view.weight_graph.removeAllSeries()
 
             view.weight_graph.gridLabelRenderer.isHorizontalLabelsVisible = false
@@ -120,7 +120,7 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
         override fun completed(gymEntry: WeightEntry, data: List<WeightEntry>?) {
             if (data != null && data.size > 1) {
                 view.weight_graph.visibility = View.VISIBLE
-                val series = gymEntry.dataPointSeriesFrom(data)
+                val series = WeightEntry.dataPointSeriesFrom(data)
                 series.color = ContextCompat.getColor(view.context, R.color.colorAccent)
                 series.isDrawDataPoints = false
                 series.thickness = 4
