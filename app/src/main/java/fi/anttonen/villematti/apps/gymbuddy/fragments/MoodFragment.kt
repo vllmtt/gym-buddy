@@ -1,16 +1,16 @@
 package fi.anttonen.villematti.apps.gymbuddy.fragments
 
 import android.content.Context
-import android.os.AsyncTask
+import android.media.Image
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 
 import fi.anttonen.villematti.apps.gymbuddy.R
-import fi.anttonen.villematti.apps.gymbuddy.R.id.imageButtonThumbDown
-import fi.anttonen.villematti.apps.gymbuddy.R.id.imageButtonThumbUp
+import fi.anttonen.villematti.apps.gymbuddy.R.id.imageButtonDissatisfied
 import fi.anttonen.villematti.apps.gymbuddy.R.string.mood
 import kotlinx.android.synthetic.main.fragment_mood.*
 import kotlinx.android.synthetic.main.fragment_mood.view.*
@@ -28,6 +28,7 @@ private const val MOOD_VALUE = MoodFragment.NO_SELECTION
  *
  */
 class MoodFragment : Fragment() {
+    private lateinit var moodButtons: List<ImageButton>
     private var mood: String? = null
     private var listener: MoodFragmentListener? = null
 
@@ -41,29 +42,27 @@ class MoodFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_mood, container, false)
-
-        view.imageButtonThumbUp.tag = THUMB_UP
-        setActivated(view.imageButtonThumbUp, mood == THUMB_UP)
-        view.imageButtonThumbUp.apply { setOnClickListener { onButtonPressed(this) } }
-
-        view.imageButtonThumbDown.tag = THUMB_DOWN
-        setActivated(view.imageButtonThumbDown, mood == THUMB_DOWN)
-        view.imageButtonThumbDown.apply { setOnClickListener { onButtonPressed(this) } }
+        moodButtons = listOf(
+                setupMoodButton(view.imageButtonVeryDissatisfied, VERY_DISSATISFIED),
+                setupMoodButton(view.imageButtonDissatisfied, DISSATISFIED),
+                setupMoodButton(view.imageButtonSatisfied, SATISFIED),
+                setupMoodButton(view.imageButtonVerySatisfied, VERY_SATISFIED))
 
         return view
     }
 
+    private fun setupMoodButton(button: ImageButton, mood: String): ImageButton {
+        button.tag = mood
+        setActivated(button, this.mood == mood)
+        button.apply { setOnClickListener { onButtonPressed(this@apply) } }
+        return button
+    }
+
     private fun onButtonPressed(view: View) {
-        if (view.tag == THUMB_UP) {
-            setActivated(imageButtonThumbDown, false)
-            setActivated(imageButtonThumbUp, !imageButtonThumbUp.isActivated)
-            listener?.onMoodSelection(if (imageButtonThumbUp.isActivated) THUMB_UP else null)
-        }
-        if  (view.tag == THUMB_DOWN) {
-            setActivated(imageButtonThumbUp, false)
-            setActivated(imageButtonThumbDown, !imageButtonThumbDown.isActivated)
-            listener?.onMoodSelection(if (imageButtonThumbDown.isActivated) THUMB_DOWN else null)
-        }
+        val pressedMood = view.tag as String
+        mood = if (mood == pressedMood) null else pressedMood
+        for (button in moodButtons) setActivated(button, button.tag == mood)
+        listener?.onMoodSelection(mood)
     }
 
     private fun setActivated(button: View, activated: Boolean) {
@@ -102,8 +101,10 @@ class MoodFragment : Fragment() {
     }
 
     companion object {
-        const val THUMB_UP = "Thumb up"
-        const val THUMB_DOWN = "Thumb down"
+        const val VERY_SATISFIED = "++"
+        const val SATISFIED = "+"
+        const val DISSATISFIED = "-"
+        const val VERY_DISSATISFIED = "--"
         const val NO_SELECTION = "No selection"
 
         /**
