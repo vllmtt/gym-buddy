@@ -139,11 +139,15 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
                 view.weight_graph.viewport.setMaxX(maxX.toDouble())
                 view.weight_graph.viewport.isXAxisBoundsManual = true
 
-                view.weight_graph.viewport.setMinY(series.lowestValueY)
-                view.weight_graph.viewport.setMaxY(series.highestValueY)
-                view.weight_graph.viewport.isYAxisBoundsManual = true
+                val lowY = series.lowestValueY
+                val highY = series.highestValueY
+                if (lowY != highY) {
+                    view.weight_graph.viewport.setMinY(lowY)
+                    view.weight_graph.viewport.setMaxY(highY)
+                    view.weight_graph.viewport.isYAxisBoundsManual = true
+                }
 
-                view.weight_graph.gridLabelRenderer.setHumanRounding(false)
+                view.weight_graph.gridLabelRenderer.setHumanRounding(true)
 
             } else {
                 //view.weight_graph.visibility = View.GONE

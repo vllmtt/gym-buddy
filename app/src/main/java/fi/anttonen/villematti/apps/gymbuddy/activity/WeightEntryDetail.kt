@@ -134,8 +134,8 @@ class WeightEntryDetail : AppCompatActivity(), MoodFragment.MoodFragmentListener
                     weight_graph.viewport.setMaxX(LocalDate(data.first().date).toDate().time.toDouble())
                     weight_graph.viewport.isXAxisBoundsManual = true
 
-                    //weight_graph.viewport.setMinY(series.lowestValueY)
-                    //weight_graph.viewport.setMaxY(series.highestValueY)
+                    //weight_graph.viewport.setMinY(lowY)
+                    //weight_graph.viewport.setMaxY(highY)
                     //weight_graph.viewport.isYAxisBoundsManual = false
 
                     weight_graph.gridLabelRenderer.setHumanRounding(true)
