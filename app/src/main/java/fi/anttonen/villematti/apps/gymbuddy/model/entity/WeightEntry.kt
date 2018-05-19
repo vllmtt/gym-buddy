@@ -19,6 +19,7 @@ class WeightEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
     @ColumnInfo(name = "mood")
     var mood: String? = null
 
+    @ColumnInfo(name = "weight")
     private var weight = 0.0
 
     fun getWeightUI(decimals: Int): Double {

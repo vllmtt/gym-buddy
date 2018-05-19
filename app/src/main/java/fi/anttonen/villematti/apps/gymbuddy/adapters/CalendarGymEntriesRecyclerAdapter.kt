@@ -4,7 +4,6 @@ import android.os.AsyncTask
 import android.support.v4.content.ContextCompat
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -122,10 +121,10 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
         /**
          * TaskCallback override to get execution back on UI thread when database query has benn done
          */
-        override fun completed(gymEntry: WeightEntry, data: List<WeightEntry>?) {
-            if (data != null && data.size > 1) {
+        override fun completed(gymEntry: WeightEntry, result: List<WeightEntry>?) {
+            if (result != null && result.size > 1) {
                 view.weight_graph.visibility = View.VISIBLE
-                val series = WeightEntry.dataPointSeriesFrom(data)
+                val series = WeightEntry.dataPointSeriesFrom(result)
                 series.color = ContextCompat.getColor(view.context, R.color.colorAccent)
                 series.isDrawDataPoints = false
                 series.thickness = 4
@@ -133,8 +132,8 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
 
                 // TODO weight graph styling to onCreateViewHolder()
 
-                val minX = LocalDate(data.last().date).toDate().time
-                val maxX = LocalDate(data.first().date).toDate().time
+                val minX = LocalDate(result.last().date).toDate().time
+                val maxX = LocalDate(result.first().date).toDate().time
                 view.weight_graph.viewport.setMinX(minX.toDouble())
                 view.weight_graph.viewport.setMaxX(maxX.toDouble())
                 view.weight_graph.viewport.isXAxisBoundsManual = true

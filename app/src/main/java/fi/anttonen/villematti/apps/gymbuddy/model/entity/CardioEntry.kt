@@ -3,35 +3,47 @@ package fi.anttonen.villematti.apps.gymbuddy.model.entity
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
-import fi.anttonen.villematti.apps.gymbuddy.R.string.distance
-import fi.anttonen.villematti.apps.gymbuddy.R.string.mood
+import fi.anttonen.villematti.apps.gymbuddy.R.string.*
 import fi.anttonen.villematti.apps.gymbuddy.misc.UnitManager
 import fi.anttonen.villematti.apps.gymbuddy.misc.UnitManager.Units.distanceRatio
 import fi.anttonen.villematti.apps.gymbuddy.misc.roundToDecimalPlaces
+import net.danlew.android.joda.JodaTimeAndroid.init
 import org.joda.time.Duration
 import org.joda.time.LocalDate
 
 @Entity(tableName = "cardio_entry")
 class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val id: Long,
-                  @ColumnInfo(name = "date") var date: LocalDate,
-                  @ColumnInfo(name = "distance") private var _distance: Double,
-                  @ColumnInfo(name = "duration") var duration: Duration)  : GymEntry {
+                  @ColumnInfo(name = "date") var date: LocalDate)  : GymEntry {
 
-    var distance: Double
-    get() = (_distance * UnitManager.Units.distanceRatio).roundToDecimalPlaces(1)
-    set(value) {
-        _distance = value / UnitManager.Units.distanceRatio
-    }
+    @ColumnInfo(name = "distance")
+    private var _distance: Double? = null
+
+    @ColumnInfo(name = "duration")
+    var duration: Duration? = null
 
     @ColumnInfo(name = "mood")
     var mood: String? = null
 
-    /**
-     * Save distance to database as m regardless of user preference
-     */
-    init {
-        _distance /= UnitManager.Units.distanceRatio
+    fun getDistance(): Double? {
+        return _distance
     }
+
+    fun getDistanceUI(decimals: Int): Double? {
+        return ((_distance ?: 0.0) * UnitManager.Units.distanceRatio).roundToDecimalPlaces(decimals)
+    }
+
+    fun setDistance(value: Double?) {
+        setDistance(value, false)
+    }
+
+    fun setDistance(value: Double?, adjustToDb: Boolean) {
+        _distance = if (adjustToDb) {
+            (value ?: 0.0) / UnitManager.Units.distanceRatio
+        } else {
+            value
+        }
+    }
+
 
     override fun getEntryType(): EntryType = EntryType.CARDIO
 
@@ -44,7 +56,7 @@ class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
     override fun updateValuesFrom(entry: GymEntry) {
         if (entry is CardioEntry) {
             date = entry.date
-            distance = entry.distance
+            this.setDistance(entry.getDistance(), false)
             duration = entry.duration
             mood = entry.mood
         }
@@ -52,13 +64,15 @@ class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
 
     override fun equals(other: Any?): Boolean {
         if (other != null && other is CardioEntry) {
-            return other.id == this.id && other.date == this.date && other.distance == this.distance && other.duration == this.duration && other.mood == this.mood
+            return other.id == this.id && other.date == this.date && other.getDistance() == this.getDistance() && other.duration == this.duration && other.mood == this.mood
         }
         return false
     }
 
     override fun clone(): GymEntry {
-        val clone = CardioEntry(this.id, LocalDate(this.date), this.distance, this.duration)
+        val clone = CardioEntry(this.id, LocalDate(this.date))
+        clone.setDistance(getDistance(), false)
+        clone.duration = this.duration
         clone.mood = this.mood
         return clone
     }
@@ -69,10 +83,12 @@ class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
     fun getSecondsUnitString() = "s"
 
     fun getHumanReadableDuration(): String {
-        val d = duration.standardDays
-        val h = duration.standardHours - d * 24
-        val m = duration.standardMinutes - d * 24 * 60 - h * 60
-        val s = duration.standardSeconds - d * 24 * 60 - h * 60 * 60 - m * 60
+        val dur = duration ?: Duration.ZERO
+
+        val d = dur.standardDays
+        val h = dur.standardHours - d * 24
+        val m = dur.standardMinutes - d * 24 * 60 - h * 60
+        val s = dur.standardSeconds - d * 24 * 60 - h * 60 * 60 - m * 60
         //val ms = duration.millis - s * 1000
 
         val sb = StringBuilder()

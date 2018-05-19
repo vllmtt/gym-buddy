@@ -32,6 +32,7 @@ import fi.anttonen.villematti.apps.gymbuddy.model.entity.EntryType
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.database.GymBuddyRoomDataBase
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.view.*
 import net.danlew.android.joda.JodaTimeAndroid
 import org.joda.time.LocalDate
 import org.joda.time.format.DateTimeFormat
@@ -134,7 +135,7 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
     override fun onStart() {
         super.onStart()
-        calendar_view.invalidate()
+        calendar_view.setCurrentDate(currentlySelectedDate.toDate())
     }
 
     override fun onDestroy() {

@@ -15,7 +15,7 @@ object GymBuddyRoomDataBase {
 
     fun initIfNull(applicationContext: Context) {
         if (db == null) {
-            db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "gym-database").fallbackToDestructiveMigration().build()
+            db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "gym-database").fallbackToDestructiveMigration().build() // TODO remove fallbackToDestructiveMigration
             weightEntryDao = db!!.gymEntryDao()
             cardioEntryDao = db!!.cardioEntryDao()
         }
@@ -39,7 +39,10 @@ object GymBuddyRoomDataBase {
         for (i in 0 until distances.size) {
             val date = LocalDate().minusDays(i)
             val dura = Duration.standardMinutes(i * 10.toLong())
-            cardioEntries.add(CardioEntry(i.toLong(), date, distances[i], dura))
+            val entry = CardioEntry(i.toLong(), date)
+            entry.setDistance(distances[i], false)
+            entry.duration = dura
+            cardioEntries.add(entry)
         }
         cardioEntryDao.insertAll(*cardioEntries.toTypedArray())
     }
