@@ -56,7 +56,12 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
     /**
      * Gets entry at a position either from filtered or unfiltered list
      */
-    fun getListItemAtPosition(position: Int) = gymEntries?.get(position)
+    fun getListItemAtPosition(position: Int): GymEntry? {
+        if (position < 0 || position >= gymEntries?.size ?: Int.MIN_VALUE) {
+            return null
+        }
+        return gymEntries?.get(position)
+    }
 
 
     /**
