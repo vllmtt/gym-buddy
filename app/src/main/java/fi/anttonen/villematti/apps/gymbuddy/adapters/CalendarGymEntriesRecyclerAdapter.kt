@@ -124,6 +124,8 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
         override fun completed(gymEntry: WeightEntry, result: List<WeightEntry>?) {
             if (result != null && result.size > 1) {
                 view.weight_graph.visibility = View.VISIBLE
+                view.noWeightHistoryLabel.visibility = View.GONE
+
                 val series = WeightEntry.dataPointSeriesFrom(result)
                 series.color = ContextCompat.getColor(view.context, R.color.colorAccent)
                 series.isDrawDataPoints = false
@@ -150,6 +152,7 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
 
             } else {
                 //view.weight_graph.visibility = View.GONE
+                view.noWeightHistoryLabel.visibility = View.VISIBLE
             }
 
         }
