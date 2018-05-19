@@ -27,7 +27,9 @@ object GymBuddyRoomDataBase {
         for (i in 0 until weightData.size) {
             var date = LocalDate()
             date = date.minusDays(i)
-            weightEntries.add(WeightEntry(i.toLong(), date, weightData[i]))
+            val entry = WeightEntry(i.toLong(), date)
+            entry.setWeight(weightData[i], false)
+            weightEntries.add(WeightEntry(i.toLong(), date))
         }
         weightEntryDao.insertAll(*weightEntries.toTypedArray())
 

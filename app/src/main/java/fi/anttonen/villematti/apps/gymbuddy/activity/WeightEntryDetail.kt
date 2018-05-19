@@ -60,7 +60,7 @@ class WeightEntryDetail : AppCompatActivity(), MoodFragment.MoodFragmentListener
 
 
     private fun setupWeightEditText() {
-        weight_text.setText(clone.weight.toString())
+        weight_text.setText(clone.getWeightUI(1).toString())
         unit_label.text = WeightEntry.unitString
         weight_text.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
@@ -81,16 +81,16 @@ class WeightEntryDetail : AppCompatActivity(), MoodFragment.MoodFragmentListener
             val n = weight_text.text.toString().toDouble()
             if (n < 0) {
                 weight_text_layout.error = "Weight must be positive"
-                clone.weight = 0.0
+                clone.setWeight(0.0, true)
                 return false
             }
-            clone.weight = n
+            clone.setWeight(n, true)
             weight_text_layout.error = null
             setupWeightGraph()
             return true
         } catch (e: NumberFormatException) {
             weight_text_layout.error = "Weight is missing"
-            clone.weight = 0.0
+            clone.setWeight(0.0, true)
             return false
         }
     }

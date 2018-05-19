@@ -99,7 +99,7 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
          * Binds a weight entry to the view holder
          */
         private fun bindWeightEntry(gymEntry: WeightEntry) {
-            view.weight_text.text = gymEntry.weight.toString()
+            view.weight_text.text = gymEntry.getWeightUI(1).toString()
             view.weight_unit_text.text = WeightEntry.unitString
             view.weight_graph.removeAllSeries()
 

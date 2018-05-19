@@ -14,6 +14,7 @@ import android.view.View
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.fragments.MoodFragment
+import fi.anttonen.villematti.apps.gymbuddy.misc.UnitManager
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.database.GymBuddyRoomDataBase
 import kotlinx.android.synthetic.main.activity_add_weight_entry.*
@@ -26,10 +27,11 @@ class AddWeightEntry : AppCompatActivity(), DatePickerDialog.OnDateSetListener, 
         const val DATE_KEY = "DEFAULT DATE"
     }
 
-    val DATE_FORMATTER = DateTimeFormat.forPattern("MMMM d, yyyy")
+    private val formatter = DateTimeFormat.forPattern("MMMM d, yyyy")
 
-    var selectedDate: LocalDate? = null
-    var weight: Double? = null
+    private var selectedDate: LocalDate? = null
+    private var weight: Double? = null
+
     var mood: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,7 +59,7 @@ class AddWeightEntry : AppCompatActivity(), DatePickerDialog.OnDateSetListener, 
         })
 
         selectedDate = LocalDate.parse(intent.getStringExtra(DATE_KEY))
-        date_text.setText(selectedDate?.toString(DATE_FORMATTER))
+        date_text.setText(selectedDate?.toString(formatter))
         unit_label.text = WeightEntry.unitString
         validateDateField()
     }
@@ -105,12 +107,12 @@ class AddWeightEntry : AppCompatActivity(), DatePickerDialog.OnDateSetListener, 
 
     override fun onDateSet(view: DatePickerDialog, year: Int, monthOfYear: Int, dayOfMonth: Int) {
         selectedDate = LocalDate().withYear(year).withMonthOfYear(monthOfYear + 1).withDayOfMonth(dayOfMonth)
-        date_text.setText(selectedDate?.toString(DATE_FORMATTER))
+        date_text.setText(selectedDate?.toString(formatter))
 
         validateDateField()
     }
 
-    fun dateTextViewClicked(v: View) {
+    fun dateTextViewClicked(@Suppress("UNUSED_PARAMETER") v: View) {
         val date = selectedDate ?: LocalDate()
         val dpd = DatePickerDialog.newInstance(
                 this,
@@ -118,7 +120,7 @@ class AddWeightEntry : AppCompatActivity(), DatePickerDialog.OnDateSetListener, 
                 date.monthOfYear - 1,
                 date.dayOfMonth
         )
-        dpd.show(fragmentManager, "Datepickerdialog")
+        dpd.show(fragmentManager, "DatePickerDialog")
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -155,7 +157,8 @@ class AddWeightEntry : AppCompatActivity(), DatePickerDialog.OnDateSetListener, 
         validateWeightTextField()
 
         return if (selectedDate != null && weight != null) {
-            val entry = WeightEntry(0, selectedDate!!, weight!!)
+            val entry = WeightEntry(0, selectedDate!!)
+            entry.setWeight(weight!!, true)
             entry.mood = mood
             AsyncTask.execute {
                 GymBuddyRoomDataBase.weightEntryDao.insertAll(entry)

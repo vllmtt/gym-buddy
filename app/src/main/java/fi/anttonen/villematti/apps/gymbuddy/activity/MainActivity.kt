@@ -24,6 +24,7 @@ import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.R.id.new_weight_entry
 import fi.anttonen.villematti.apps.gymbuddy.R.xml.preferences
 import fi.anttonen.villematti.apps.gymbuddy.adapters.CalendarGymEntriesRecyclerAdapter
+import fi.anttonen.villematti.apps.gymbuddy.fragments.SettingsFragment
 import fi.anttonen.villematti.apps.gymbuddy.misc.UnitManager
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarEventViewModel
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
@@ -93,7 +94,7 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
                 getString(R.string.distance_unit_miles_key) -> UnitManager.Units.distanceRatio = UnitManager.DistanceRatio.M
             }
         }
-
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this)
 
         if (false) {
             AsyncTask.execute {
@@ -134,6 +135,11 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
     override fun onStart() {
         super.onStart()
         calendar_view.invalidate()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this)
     }
 
     private fun setupSpeedDial() {
@@ -240,8 +246,12 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onSharedPreferenceChanged(p0: SharedPreferences?, p1: String?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun onSharedPreferenceChanged(preferences: SharedPreferences?, key: String?) {
+        val weightSettingKey = getString(R.string.pref_weight_unit_key)
+        val distanceSettingKey = getString(R.string.pref_distance_unit_key)
+        if (key == weightSettingKey || key == distanceSettingKey) {
+            gymEntriesRecyclerView.adapter.notifyDataSetChanged()
+        }
     }
 
     private fun getMainTitle(date: LocalDate?): String {
