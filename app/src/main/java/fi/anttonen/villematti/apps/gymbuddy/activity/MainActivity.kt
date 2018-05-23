@@ -13,7 +13,6 @@ import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.preference.PreferenceManager
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -21,10 +20,9 @@ import com.github.sundeepk.compactcalendarview.CompactCalendarView
 import com.github.sundeepk.compactcalendarview.domain.Event
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.GymEntry
 import fi.anttonen.villematti.apps.gymbuddy.R
+import fi.anttonen.villematti.apps.gymbuddy.R.id.new_cardio_entry
 import fi.anttonen.villematti.apps.gymbuddy.R.id.new_weight_entry
-import fi.anttonen.villematti.apps.gymbuddy.R.xml.preferences
 import fi.anttonen.villematti.apps.gymbuddy.adapters.CalendarGymEntriesRecyclerAdapter
-import fi.anttonen.villematti.apps.gymbuddy.fragments.SettingsFragment
 import fi.anttonen.villematti.apps.gymbuddy.misc.UnitManager
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarEventViewModel
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
@@ -32,7 +30,6 @@ import fi.anttonen.villematti.apps.gymbuddy.model.entity.EntryType
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.database.GymBuddyRoomDataBase
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main.view.*
 import net.danlew.android.joda.JodaTimeAndroid
 import org.joda.time.LocalDate
 import org.joda.time.format.DateTimeFormat
@@ -83,6 +80,19 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
         // TODO These to every activity just in case
         GymBuddyRoomDataBase.initIfNull(applicationContext)
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+
+        preferences.getBoolean(getString(R.string.flag_db_initialized), false).let { initialized ->
+            if (!initialized) {
+                AsyncTask.execute {
+                    GymBuddyRoomDataBase.initData()
+                    with (preferences.edit()) {
+                        putBoolean(getString(R.string.flag_db_initialized), true)
+                        apply()
+                    }
+                }
+            }
+        }
+
         preferences.getString(getString(R.string.pref_weight_unit_key), getString(R.string.weight_unit_kilograms_key)).apply {
             when (this) {
                 getString(R.string.weight_unit_kilograms_key) -> UnitManager.Units.weightRatio = UnitManager.WeightRatio.KG
@@ -96,12 +106,6 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
             }
         }
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this)
-
-        if (false) {
-            AsyncTask.execute {
-                GymBuddyRoomDataBase.initTestData()
-            }
-        }
 
         ///////////// INIT LIVE DATA OBSERVING ///////////////
 
@@ -148,9 +152,18 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
         speedDial.setOnActionSelectedListener {
             when (it.id) {
                 new_weight_entry -> showNewWeightEntryDialog()
+                new_cardio_entry -> showNewCardioEntryDialog()
                 else -> false
             }
         }
+    }
+
+    private fun showNewCardioEntryDialog(): Boolean {
+        val intent = Intent(this, AddCardioEntry::class.java).apply {
+            putExtra(AddCardioEntry.DATE_KEY, currentlySelectedDate.toString())
+        }
+        ActivityCompat.startActivityForResult(this, intent, ADD_ENTRY, null)
+        return false
     }
 
     private fun showNewWeightEntryDialog(): Boolean {

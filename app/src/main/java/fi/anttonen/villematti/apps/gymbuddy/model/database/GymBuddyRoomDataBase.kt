@@ -3,6 +3,7 @@ package fi.anttonen.villematti.apps.gymbuddy.model.database
 import android.arch.persistence.room.Room
 import android.content.Context
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioEntry
+import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioType
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
 import org.joda.time.Duration
 import org.joda.time.LocalDate
@@ -12,16 +13,21 @@ object GymBuddyRoomDataBase {
     var db: AppDatabase? = null
     lateinit var weightEntryDao: WeightEntryDao
     lateinit var cardioEntryDao: CardioEntryDao
+    lateinit var cardioTypeDao: CardioTypeDao
 
     fun initIfNull(applicationContext: Context) {
         if (db == null) {
             db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "gym-database").fallbackToDestructiveMigration().build() // TODO remove fallbackToDestructiveMigration
             weightEntryDao = db!!.gymEntryDao()
             cardioEntryDao = db!!.cardioEntryDao()
+            cardioTypeDao = db!!.cardioTypeDao()
         }
     }
 
-    fun initTestData() {
+    fun initData() {
+        cardioTypeDao.insertAll(*CardioType.DEFAULT_CARDIO_TYPES.toTypedArray())
+
+        /*
         val weightData = arrayListOf(79.1, 79.1, 79.2, 79.1, 79.0, 78.8, 78.1, 78.9, 79.3, 79.7, 79.4, 79.6, 79.2, 79.4, 78.7, 78.9, 78.7, 79.7, 79.7, 79.4)
         val weightEntries = mutableListOf<WeightEntry>()
         for (i in 0 until weightData.size) {
@@ -45,5 +51,6 @@ object GymBuddyRoomDataBase {
             cardioEntries.add(entry)
         }
         cardioEntryDao.insertAll(*cardioEntries.toTypedArray())
+        */
     }
 }

@@ -21,6 +21,9 @@ class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
     @ColumnInfo(name = "duration")
     var duration: Duration? = null
 
+    @ColumnInfo(name = "cardio_type")
+    var cardioType: CardioType? = null
+
     @ColumnInfo(name = "mood")
     var mood: String? = null
 
@@ -77,10 +80,6 @@ class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
         return clone
     }
 
-    fun getDayUnitString() = "d"
-    fun getHourUnitString() = "h"
-    fun getMinuteUnitString() = "min"
-    fun getSecondsUnitString() = "s"
 
     fun getHumanReadableDuration(): String {
         val dur = duration ?: Duration.ZERO
@@ -100,24 +99,32 @@ class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
         return sb.toString()
     }
 
-    fun getMainDistanceUnitString(): String {
-        return when (UnitManager.Units.distanceRatio) {
-            UnitManager.DistanceRatio.KM -> "km"
-            UnitManager.DistanceRatio.M ->  "mi"
-            else -> "unknown"
-        }
-    }
 
-    fun getSecondaryDistanceUnitString(): String {
-        return when (UnitManager.Units.distanceRatio) {
-            UnitManager.DistanceRatio.KM -> "m"
-            UnitManager.DistanceRatio.M ->  "ft"
-            else -> "unknown"
-        }
-    }
 
     fun getHumanReadableDistance(): String {
         return "$distance${getSecondaryDistanceUnitString()}"
     }
 
+    companion object {
+        fun getDayUnitString() = "d"
+        fun getHourUnitString() = "h"
+        fun getMinuteUnitString() = "min"
+        fun getSecondsUnitString() = "s"
+
+        fun getMainDistanceUnitString(): String {
+            return when (UnitManager.Units.distanceRatio) {
+                UnitManager.DistanceRatio.KM -> "km"
+                UnitManager.DistanceRatio.M ->  "mi"
+                else -> "unknown"
+            }
+        }
+
+        fun getSecondaryDistanceUnitString(): String {
+            return when (UnitManager.Units.distanceRatio) {
+                UnitManager.DistanceRatio.KM -> "m"
+                UnitManager.DistanceRatio.M ->  "ft"
+                else -> "unknown"
+            }
+        }
+    }
 }

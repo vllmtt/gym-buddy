@@ -14,5 +14,8 @@ object UnitManager {
     object DistanceRatio {
         const val KM = 1.0
         const val M = 0.621371
+
+        const val METERS_IN_KM = 1000
+        const val FEET_IN_M = 5280
     }
 }
