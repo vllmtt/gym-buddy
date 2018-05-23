@@ -21,7 +21,7 @@
         app:compactCalendarCurrentDayTextColor="#000000"
         app:compactCalendarCurrentSelectedDayBackgroundColor="@color/colorAccent"
         app:compactCalendarCurrentSelectedDayTextColor="#ffffff"
-        app:compactCalendarMultiEventIndicatorColor="#fff"
+        app:compactCalendarMultiEventIndicatorColor="#000"
         app:compactCalendarTargetHeight="250dp"
         app:compactCalendarTextColor="#000"
         app:compactCalendarTextSize="12sp"
