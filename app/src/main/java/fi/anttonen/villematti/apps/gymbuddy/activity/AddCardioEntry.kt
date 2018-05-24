@@ -47,9 +47,7 @@ class AddCardioEntry : AppCompatActivity(), MoodFragment.MoodFragmentListener, D
     private var distanceMain: Int? = null
     private var distanceSecondary: Int? = null
 
-    private
-
-    var mood: String? = null
+    private var mood: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,6 +80,7 @@ class AddCardioEntry : AppCompatActivity(), MoodFragment.MoodFragmentListener, D
         val adapter = ArrayAdapter<CardioType>(this, android.R.layout.simple_spinner_item, CardioType.DEFAULT_CARDIO_TYPES)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         cardio_type_spinner.adapter = adapter
+        cardio_type_spinner.onItemSelectedListener = this
 
         cardio_type_spinner.setSelection(0)
         selectedCardioType = cardio_type_spinner.getItemAtPosition(0) as CardioType?
@@ -92,6 +91,8 @@ class AddCardioEntry : AppCompatActivity(), MoodFragment.MoodFragmentListener, D
     override fun onItemSelected(parent: AdapterView<*>, view: View,
                                 pos: Int, id: Long) {
         selectedCardioType = parent.getItemAtPosition(pos) as CardioType?
+
+        Log.i("FGSFGF", "Updated to $selectedCardioType")
     }
 
     override fun onNothingSelected(parent: AdapterView<*>) {

@@ -1,10 +1,7 @@
 package fi.anttonen.villematti.apps.gymbuddy.model.database
 
 import android.arch.lifecycle.LiveData
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.OnConflictStrategy
-import android.arch.persistence.room.Query
+import android.arch.persistence.room.*
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioEntry
 import org.joda.time.LocalDate
 
@@ -20,11 +17,17 @@ interface CardioEntryDao {
     fun getAll(start: LocalDate, end: LocalDate): LiveData<List<CardioEntry>>
 
     @Query("SELECT * FROM cardio_entry WHERE cardio_entry.id = :id")
-    fun get(id: Long): LiveData<CardioEntry>
+    fun get(id: Long): CardioEntry
 
     @Query("SELECT * FROM cardio_entry WHERE cardio_entry.date < :date ORDER BY cardio_entry.date LIMIT :limit")
     fun getHistory(date: LocalDate, limit: Int): LiveData<List<CardioEntry>>?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg cardioEntries: CardioEntry)
+
+    @Update
+    fun updateAll(vararg cardioEntries: CardioEntry)
+
+    @Delete
+    fun deleteAll(vararg cardioEntries: CardioEntry)
 }

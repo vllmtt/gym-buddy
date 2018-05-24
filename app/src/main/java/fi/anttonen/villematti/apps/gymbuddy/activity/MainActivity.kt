@@ -29,6 +29,7 @@ import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.EntryType
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.database.GymBuddyRoomDataBase
+import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioEntry
 import kotlinx.android.synthetic.main.activity_main.*
 import net.danlew.android.joda.JodaTimeAndroid
 import org.joda.time.LocalDate
@@ -85,7 +86,7 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
             if (!initialized) {
                 AsyncTask.execute {
                     GymBuddyRoomDataBase.initData()
-                    with (preferences.edit()) {
+                    with(preferences.edit()) {
                         putBoolean(getString(R.string.flag_db_initialized), true)
                         apply()
                     }
@@ -199,13 +200,23 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
      * Item click listener for gym entry recycler view
      */
     override fun onItemClick(view: View, position: Int, entry: GymEntry?) {
+        var intent: Intent? = null
+        var options: ActivityOptionsCompat? = null
         if (entry is WeightEntry) {
-            val weightDetailIntent = Intent(this, WeightEntryDetail::class.java).apply {
+            intent = Intent(this, WeightEntryDetail::class.java).apply {
                 putExtra(WeightEntryDetail.ENTRY_ID_KEY, entry.getEntryId())
             }
+            options = ActivityOptionsCompat.makeBasic()
+        }
+        if (entry is CardioEntry) {
+            intent = Intent(this, CardioEntryDetail::class.java).apply {
+                putExtra(CardioEntryDetail.ENTRY_ID_KEY, entry.getEntryId())
+            }
+            options = ActivityOptionsCompat.makeBasic()
+        }
 
-            val options = ActivityOptionsCompat.makeBasic()
-            ActivityCompat.startActivityForResult(this@MainActivity, weightDetailIntent, UPDATE_REQUEST, options.toBundle())
+        if (intent != null && options != null) {
+            ActivityCompat.startActivityForResult(this@MainActivity, intent, UPDATE_REQUEST, options.toBundle())
         }
     }
 

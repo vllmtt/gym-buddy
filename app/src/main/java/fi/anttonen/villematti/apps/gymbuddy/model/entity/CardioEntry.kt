@@ -62,6 +62,7 @@ class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
             this.setDistance(entry.getDistance(), false)
             duration = entry.duration
             mood = entry.mood
+            cardioType = entry.cardioType
         }
     }
 
@@ -77,6 +78,7 @@ class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
         clone.setDistance(getDistance(), false)
         clone.duration = this.duration
         clone.mood = this.mood
+        clone.cardioType = this.cardioType
         return clone
     }
 
@@ -102,7 +104,7 @@ class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
 
 
     fun getHumanReadableDistance(): String {
-        return "$distance${getSecondaryDistanceUnitString()}"
+        return "$distance${getMainDistanceUnitString()}"
     }
 
     companion object {

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.WeightEntryDetail">
+    tools:context=".activity.CardioEntryDetail">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -13,6 +13,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
+            android:id="@+id/cardio_detail_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -36,12 +37,31 @@
                 android:id="@+id/date_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="16dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                 tools:text="TextView" />
 
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:text="@string/type"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+
+            <Spinner
+                android:id="@+id/cardio_type_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp" />
 
             <TextView
                 android:id="@+id/textView4"
@@ -51,6 +71,7 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/duration"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
@@ -64,14 +85,16 @@
                     android:layout_marginLeft="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
+                    app:errorEnabled="true"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <android.support.design.widget.TextInputEditText
-                        android:id="@+id/hour_text"
+                        android:id="@+id/duration_h_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="number"
                         android:selectAllOnFocus="true"
                         android:singleLine="true" />
                 </android.support.design.widget.TextInputLayout>
@@ -94,6 +117,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp"
+                    app:errorEnabled="true"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/duration_h_label"
                     app:layout_constraintTop_toTopOf="parent">
@@ -102,6 +126,7 @@
                         android:id="@+id/duration_m_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="number"
                         android:selectAllOnFocus="true"
                         android:singleLine="true" />
                 </android.support.design.widget.TextInputLayout>
@@ -124,6 +149,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp"
+                    app:errorEnabled="true"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/duration_m_label"
                     app:layout_constraintTop_toTopOf="parent">
@@ -132,6 +158,7 @@
                         android:id="@+id/duration_s_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="number"
                         android:selectAllOnFocus="true"
                         android:singleLine="true" />
                 </android.support.design.widget.TextInputLayout>
@@ -171,6 +198,7 @@
                     android:layout_marginLeft="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
+                    app:errorEnabled="true"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
@@ -179,7 +207,7 @@
                         android:id="@+id/distance_main_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="numberDecimal"
+                        android:inputType="number"
                         android:selectAllOnFocus="true"
                         android:singleLine="true" />
                 </android.support.design.widget.TextInputLayout>
@@ -204,6 +232,7 @@
                     android:layout_marginLeft="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
+                    app:errorEnabled="true"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/distance_main_unit_label"
                     app:layout_constraintTop_toTopOf="parent">
@@ -212,6 +241,7 @@
                         android:id="@+id/distance_secondary_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="number"
                         android:selectAllOnFocus="true"
                         android:singleLine="true" />
                 </android.support.design.widget.TextInputLayout>
@@ -223,12 +253,23 @@
                     android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="24dp"
-                    tools:text="m"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     app:layout_constraintStart_toEndOf="@+id/distance_secondary_text_layout"
-                    app:layout_constraintTop_toTopOf="@+id/distance_secondary_text_layout" />
+                    app:layout_constraintTop_toTopOf="@+id/distance_secondary_text_layout"
+                    tools:text="m" />
 
             </android.support.constraint.ConstraintLayout>
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:paddingBottom="16dp"
+                android:text="@string/mood"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
 
         </LinearLayout>
     </ScrollView>

@@ -65,12 +65,24 @@ class CalendarGymEntriesViewModel : ViewModel() {
         GymBuddyRoomDataBase.weightEntryDao.updateAll(*weightEntries)
     }
 
+    fun updateAll(vararg cardioEntries: CardioEntry) {
+        GymBuddyRoomDataBase.cardioEntryDao.updateAll(*cardioEntries)
+    }
+
     fun deleteAll(vararg weightEntries: WeightEntry) {
         GymBuddyRoomDataBase.weightEntryDao.deleteAll(*weightEntries)
     }
 
+    fun deleteAll(vararg cardioEntries: CardioEntry) {
+        GymBuddyRoomDataBase.cardioEntryDao.deleteAll(*cardioEntries)
+    }
+
     fun getWeightEntry(id: Long): WeightEntry? {
         return GymBuddyRoomDataBase.weightEntryDao.get(id)
+    }
+
+    fun getCardioEntry(id: Long): CardioEntry? {
+        return GymBuddyRoomDataBase.cardioEntryDao.get(id)
     }
 
     fun setDateFilter(date: LocalDate?) {
