@@ -13,7 +13,7 @@ import org.joda.time.LocalDate
 
 @Entity(tableName = "cardio_entry")
 class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val id: Long,
-                  @ColumnInfo(name = "date") var date: LocalDate)  : GymEntry {
+                  @ColumnInfo(name = "date") var date: LocalDate) : GymEntry {
 
     @ColumnInfo(name = "distance")
     private var _distance: Double? = null
@@ -102,9 +102,19 @@ class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
     }
 
 
-
     fun getHumanReadableDistance(): String {
-        return "$distance${getMainDistanceUnitString()}"
+        val dist = getDistanceUI(1)
+        if (dist != null) {
+            val ratio = if (UnitManager.Units.distanceRatio == UnitManager.DistanceRatio.KM) UnitManager.DistanceRatio.METERS_IN_KM else UnitManager.DistanceRatio.FEET_IN_M
+            val secondaryUnits = dist % ratio
+            val mainUnits = (dist - secondaryUnits) / ratio
+
+            val distanceMain = mainUnits.toInt()
+            val distanceSecondary = secondaryUnits.roundToDecimalPlaces(0).toInt()
+            return "$distanceMain${getMainDistanceUnitString()} $distanceSecondary${getSecondaryDistanceUnitString()}"
+        }
+
+        return ""
     }
 
     companion object {
@@ -116,7 +126,7 @@ class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
         fun getMainDistanceUnitString(): String {
             return when (UnitManager.Units.distanceRatio) {
                 UnitManager.DistanceRatio.KM -> "km"
-                UnitManager.DistanceRatio.M ->  "mi"
+                UnitManager.DistanceRatio.M -> "mi"
                 else -> "unknown"
             }
         }
@@ -124,7 +134,7 @@ class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
         fun getSecondaryDistanceUnitString(): String {
             return when (UnitManager.Units.distanceRatio) {
                 UnitManager.DistanceRatio.KM -> "m"
-                UnitManager.DistanceRatio.M ->  "ft"
+                UnitManager.DistanceRatio.M -> "ft"
                 else -> "unknown"
             }
         }

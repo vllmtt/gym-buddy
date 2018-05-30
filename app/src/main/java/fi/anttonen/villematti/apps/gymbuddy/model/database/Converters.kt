@@ -22,13 +22,13 @@ class Converters {
     // Duration
 
     @TypeConverter
-    fun fromDuration(value: String): Duration {
-        return Duration.parse(value)
+    fun fromDuration(value: String?): Duration? {
+        return if (value == null) null else Duration.parse(value)
     }
 
     @TypeConverter
-    fun durationToString(duration: Duration): String {
-        return duration.toString()
+    fun durationToString(duration: Duration?): String? {
+        return duration?.toString()
     }
 
     // CardioType

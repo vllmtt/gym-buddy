@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter
 import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.fragments.MoodFragment
 import fi.anttonen.villematti.apps.gymbuddy.misc.UnitManager
+import fi.anttonen.villematti.apps.gymbuddy.misc.roundToDecimalPlaces
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioType
@@ -52,9 +53,8 @@ class CardioEntryDetail : AppCompatActivity(), MoodFragment.MoodFragmentListener
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cardio_entry_detail)
 
-        supportActionBar?.title = "Add cardio"
+        supportActionBar?.title = "Cardio"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close_white_24px)
 
         val id = intent.getLongExtra(ENTRY_ID_KEY, -1)
 
@@ -112,11 +112,11 @@ class CardioEntryDetail : AppCompatActivity(), MoodFragment.MoodFragmentListener
     private fun setupTextFields() {
         //duration_h_text.requestFocus()
 
-        duration_h_text.setText(hour.toString())
-        duration_m_text.setText(min.toString())
-        duration_s_text.setText(sec.toString())
-        distance_main_text.setText(distanceMain.toString())
-        distance_secondary_text.setText(distanceSecondary.toString())
+        duration_h_text.setText(hour?.toString() ?: "")
+        duration_m_text.setText(min?.toString() ?: "")
+        duration_s_text.setText(sec?.toString() ?: "")
+        distance_main_text.setText(distanceMain?.toString() ?: "")
+        distance_secondary_text.setText(distanceSecondary?.toString() ?: "")
 
         duration_h_text.addTextChangedListener(object : CustomTextWatcher() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -303,7 +303,7 @@ class CardioEntryDetail : AppCompatActivity(), MoodFragment.MoodFragmentListener
             val mainUnits = (distance - secondaryUnits) / ratio
 
             distanceMain = mainUnits.toInt()
-            distanceSecondary = secondaryUnits.toInt()
+            distanceSecondary = secondaryUnits.roundToDecimalPlaces(0).toInt()
         }
     }
 
