@@ -44,8 +44,7 @@ class AddCardioEntry : AppCompatActivity(), MoodFragment.MoodFragmentListener, D
     private var min: Int? = null
     private var sec: Int? = null
 
-    private var distanceMain: Int? = null
-    private var distanceSecondary: Int? = null
+    private var distance: Double? = null
 
     private var mood: String? = null
 
@@ -68,7 +67,6 @@ class AddCardioEntry : AppCompatActivity(), MoodFragment.MoodFragmentListener, D
         duration_s_label.text = CardioEntry.getSecondsUnitString()
 
         distance_main_unit_label.text = CardioEntry.getMainDistanceUnitString()
-        distance_secondary_label.text = CardioEntry.getSecondaryDistanceUnitString()
 
         setupTextFields()
         validateDateField()
@@ -104,7 +102,7 @@ class AddCardioEntry : AppCompatActivity(), MoodFragment.MoodFragmentListener, D
 
         duration_h_text.addTextChangedListener(object : CustomTextWatcher() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (isNumberBetween(0, 1000, p0, true, "Invalid", duration_h_layout)) {
+                if (isNumberBetween(0.0, 1000.0, p0, true, "Invalid", duration_h_layout)) {
                     hour = if (p0.isNullOrEmpty()) 0 else duration_h_text.text.toString().toInt()
                     if (p0.toString().length > 1) {
                         duration_m_text.requestFocus()
@@ -116,7 +114,7 @@ class AddCardioEntry : AppCompatActivity(), MoodFragment.MoodFragmentListener, D
         })
         duration_m_text.addTextChangedListener(object : CustomTextWatcher() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (isNumberBetween(0, 59, p0, true, "Invalid", duration_m_layout)) {
+                if (isNumberBetween(0.0, 59.0, p0, true, "Invalid", duration_m_layout)) {
                     min = if (p0.isNullOrEmpty()) 0 else duration_m_text.text.toString().toInt()
                     if (p0.toString().length > 1) {
                         duration_s_text.requestFocus()
@@ -128,7 +126,7 @@ class AddCardioEntry : AppCompatActivity(), MoodFragment.MoodFragmentListener, D
         })
         duration_s_text.addTextChangedListener(object : CustomTextWatcher() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if (isNumberBetween(0, 59, p0, true, "Invalid", duration_s_layout)) {
+                if (isNumberBetween(0.0, 59.0, p0, true, "Invalid", duration_s_layout)) {
                     sec = if (p0.isNullOrEmpty()) 0 else duration_s_text.text.toString().toInt()
                     if (p0.toString().length > 1) {
                         distance_main_text.requestFocus()
@@ -141,21 +139,8 @@ class AddCardioEntry : AppCompatActivity(), MoodFragment.MoodFragmentListener, D
 
         distance_main_text.addTextChangedListener(object : CustomTextWatcher() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                val max = if (UnitManager.Units.distanceRatio == UnitManager.DistanceRatio.KM) UnitManager.DistanceRatio.METERS_IN_KM else UnitManager.DistanceRatio.FEET_IN_M
-                if (isNumberBetween(0, max, p0, true, "Invalid", distance_main_text_layout)) {
-                    distanceMain = if (p0.isNullOrEmpty()) 0 else distance_main_text.text.toString().toInt()
-                    if (p0.toString().length > 1) {
-                        distance_secondary_text.requestFocus()
-                    }
-                } else {
-                    distanceMain = null
-                }
-            }
-        })
-        distance_secondary_text.addTextChangedListener(object : CustomTextWatcher() {
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                distanceSecondary = if (isNumberBetween(0, 999, p0, true, "Invalid", distance_secondary_text_layout)) {
-                    if (p0.isNullOrEmpty()) 0 else distance_secondary_text.text.toString().toInt()
+                distance = if (isNumberBetween(0.0, 10000.0, p0, true, "Invalid", distance_main_text_layout)) {
+                    if (p0.isNullOrEmpty()) 0.0 else distance_main_text.text.toString().toDouble()
                 } else {
                     null
                 }
@@ -163,7 +148,7 @@ class AddCardioEntry : AppCompatActivity(), MoodFragment.MoodFragmentListener, D
         })
     }
 
-    private fun isNumberBetween(min: Int?, max: Int?, string: CharSequence?, isEmptyValid: Boolean, errorMessage: String, errorDestination: TextInputLayout): Boolean {
+    private fun isNumberBetween(min: Double?, max: Double?, string: CharSequence?, isEmptyValid: Boolean, errorMessage: String, errorDestination: TextInputLayout): Boolean {
         errorDestination.error = null
         val text = string?.toString() ?: ""
 
@@ -173,7 +158,7 @@ class AddCardioEntry : AppCompatActivity(), MoodFragment.MoodFragmentListener, D
         }
 
         try {
-            val n = text.toInt()
+            val n = text.toDouble()
             if ((min != null && n < min) || (max != null && n > max)) {
                 errorDestination.error = errorMessage
                 return false
@@ -182,6 +167,7 @@ class AddCardioEntry : AppCompatActivity(), MoodFragment.MoodFragmentListener, D
         } catch (e: NumberFormatException) {
             errorDestination.error = errorMessage
         }
+
         return false
     }
 
@@ -190,7 +176,7 @@ class AddCardioEntry : AppCompatActivity(), MoodFragment.MoodFragmentListener, D
     }
 
     private fun validateDistanceTextFields(): Boolean {
-        return distance_main_text_layout.error == null && distance_secondary_text_layout.error == null
+        return distance_main_text_layout.error == null
     }
 
 
@@ -254,7 +240,7 @@ class AddCardioEntry : AppCompatActivity(), MoodFragment.MoodFragmentListener, D
         return if (valid) {
             val entry = CardioEntry(0, selectedDate!!)
             entry.mood = mood
-            entry.setDistance(parseDistance(), true)
+            entry.setDistance(distance, true)
             entry.duration = parseDuration()
             entry.cardioType = selectedCardioType
             AsyncTask.execute {
@@ -274,14 +260,6 @@ class AddCardioEntry : AppCompatActivity(), MoodFragment.MoodFragmentListener, D
         val lSec = sec?.toLong() ?: 0L
         if (lHour == 0L && lMin == 0L && lSec == 0L) return null
         return Duration.standardSeconds(lHour * 60 * 60 + lMin * 60 + lSec)
-    }
-
-    private fun parseDistance(): Double? {
-        if (distanceMain == null && distanceSecondary == null) return null
-        val multiplier = if (UnitManager.Units.distanceRatio == UnitManager.DistanceRatio.KM) UnitManager.DistanceRatio.METERS_IN_KM else UnitManager.DistanceRatio.FEET_IN_M
-        val dMain = distanceMain?.toDouble() ?: 0.0
-        val dSecondary = distanceSecondary?.toDouble() ?: 0.0
-        return dMain * multiplier + dSecondary
     }
 
     abstract inner class CustomTextWatcher : TextWatcher {

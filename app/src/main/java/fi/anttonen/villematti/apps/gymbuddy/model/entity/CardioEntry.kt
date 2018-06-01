@@ -6,6 +6,7 @@ import android.arch.persistence.room.PrimaryKey
 import fi.anttonen.villematti.apps.gymbuddy.R.string.*
 import fi.anttonen.villematti.apps.gymbuddy.misc.UnitManager
 import fi.anttonen.villematti.apps.gymbuddy.misc.UnitManager.Units.distanceRatio
+import fi.anttonen.villematti.apps.gymbuddy.misc.format
 import fi.anttonen.villematti.apps.gymbuddy.misc.roundToDecimalPlaces
 import net.danlew.android.joda.JodaTimeAndroid.init
 import org.joda.time.Duration
@@ -83,7 +84,9 @@ class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
     }
 
 
-    fun getHumanReadableDuration(): String {
+    fun getHumanReadableDuration(): String? {
+        if (duration == null) return null
+
         val dur = duration ?: Duration.ZERO
 
         val d = dur.standardDays
@@ -92,29 +95,24 @@ class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
         val s = dur.standardSeconds - d * 24 * 60 - h * 60 * 60 - m * 60
         //val ms = duration.millis - s * 1000
 
-        val sb = StringBuilder()
+
+        /*
         if (d > 0) sb.append("$d${getDayUnitString()} ")
         if (d > 0 || h > 0) sb.append("$h${getHourUnitString()} ")
         if (d > 0 || h > 0 || m > 0) sb.append("$m${getMinuteUnitString()} ")
         sb.append("$s${getSecondsUnitString()}")
-
-        return sb.toString()
+        */
+        return "${h.format(2)}:${m.format(2)}:${s.format(2)}"
     }
 
 
-    fun getHumanReadableDistance(): String {
-        val dist = getDistanceUI(1)
-        if (dist != null) {
-            val ratio = if (UnitManager.Units.distanceRatio == UnitManager.DistanceRatio.KM) UnitManager.DistanceRatio.METERS_IN_KM else UnitManager.DistanceRatio.FEET_IN_M
-            val secondaryUnits = dist % ratio
-            val mainUnits = (dist - secondaryUnits) / ratio
-
-            val distanceMain = mainUnits.toInt()
-            val distanceSecondary = secondaryUnits.roundToDecimalPlaces(0).toInt()
-            return "$distanceMain${getMainDistanceUnitString()} $distanceSecondary${getSecondaryDistanceUnitString()}"
+    fun getHumanReadableDistance(): String? {
+        val dist = getDistanceUI(3)
+        if (dist != null && dist > 0.0) {
+            return "$dist${getMainDistanceUnitString()}"
         }
 
-        return ""
+        return null
     }
 
     companion object {

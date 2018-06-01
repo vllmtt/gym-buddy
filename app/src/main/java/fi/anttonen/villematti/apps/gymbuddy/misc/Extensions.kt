@@ -5,3 +5,5 @@ import java.math.BigDecimal
 
 fun Double.roundToDecimalPlaces(decimals: Int) =
         BigDecimal(this).setScale(decimals, BigDecimal.ROUND_HALF_UP).toDouble()
+
+fun Long.format(digits: Int) = java.lang.String.format("%0${digits}d", this)
