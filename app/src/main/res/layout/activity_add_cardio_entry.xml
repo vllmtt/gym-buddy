@@ -221,7 +221,7 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <android.support.design.widget.TextInputEditText
-                        android:id="@+id/distance_main_text"
+                        android:id="@+id/distance_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="numberDecimal"

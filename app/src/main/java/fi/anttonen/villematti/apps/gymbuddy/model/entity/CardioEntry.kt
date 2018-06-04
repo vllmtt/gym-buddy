@@ -48,6 +48,20 @@ class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
         }
     }
 
+    fun avgSpeed(): Double? {
+        val dist = getDistanceUI(3)
+        val dur = duration
+        if (dist != null && dur != null) {
+            val hours = dur.millis.toDouble() / (1000 * 60 * 60).toDouble()
+            return dist / hours
+        }
+        return null
+    }
+
+    fun avgSpeedText(): String? {
+        val avg = avgSpeed()
+        return if (avg == null) null else "${avg.roundToDecimalPlaces(2)}${getMainDistanceUnitString()}/h"
+    }
 
     override fun getEntryType(): EntryType = EntryType.CARDIO
 

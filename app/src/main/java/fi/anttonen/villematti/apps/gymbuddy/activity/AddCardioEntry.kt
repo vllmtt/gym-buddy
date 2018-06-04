@@ -15,11 +15,9 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.EditText
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.fragments.MoodFragment
-import fi.anttonen.villematti.apps.gymbuddy.misc.UnitManager
 import fi.anttonen.villematti.apps.gymbuddy.model.database.GymBuddyRoomDataBase
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioType
@@ -129,7 +127,7 @@ class AddCardioEntry : AppCompatActivity(), MoodFragment.MoodFragmentListener, D
                 if (isNumberBetween(0.0, 59.0, p0, true, "Invalid", duration_s_layout)) {
                     sec = if (p0.isNullOrEmpty()) 0 else duration_s_text.text.toString().toInt()
                     if (p0.toString().length > 1) {
-                        distance_main_text.requestFocus()
+                        distance_text.requestFocus()
                     }
                 } else {
                     sec = null
@@ -137,10 +135,10 @@ class AddCardioEntry : AppCompatActivity(), MoodFragment.MoodFragmentListener, D
             }
         })
 
-        distance_main_text.addTextChangedListener(object : CustomTextWatcher() {
+        distance_text.addTextChangedListener(object : CustomTextWatcher() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 distance = if (isNumberBetween(0.0, 10000.0, p0, true, "Invalid", distance_main_text_layout)) {
-                    if (p0.isNullOrEmpty()) 0.0 else distance_main_text.text.toString().toDouble()
+                    if (p0.isNullOrEmpty()) 0.0 else distance_text.text.toString().toDouble()
                 } else {
                     null
                 }

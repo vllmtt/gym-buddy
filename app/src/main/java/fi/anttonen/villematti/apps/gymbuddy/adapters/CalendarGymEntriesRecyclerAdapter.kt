@@ -94,8 +94,29 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
 
 
         private fun bindCardioEntry(cardioEntry: CardioEntry) {
-            view.distance_main_text.text = cardioEntry.getHumanReadableDistance()
-            view.duration_text.text = cardioEntry.getHumanReadableDuration()
+            val cardioTypeString = cardioEntry.cardioType?.toString()
+            val distanceString = cardioEntry.getHumanReadableDistance() ?: "-"
+            val durationString = cardioEntry.getHumanReadableDuration() ?: "-"
+            val avgSpeedString = cardioEntry.avgSpeedText() ?: "-"
+
+            if (cardioTypeString != null) {
+                view.cardio_entry_type.text = cardioTypeString
+            }
+
+            val distanceVisibility = /*if (distanceString == null) View.GONE else*/ View.VISIBLE
+            view.distance_text.visibility = distanceVisibility
+            view.distance_label.visibility = distanceVisibility
+            view.distance_text.text = distanceString
+
+            val durationVisibility = /*if (durationString == null) View.GONE else*/ View.VISIBLE
+            view.duration_text.visibility = durationVisibility
+            view.duration_label.visibility = durationVisibility
+            view.duration_text.text = durationString
+
+            val avgSpeedVisibility = /*if (distanceString == null || durationString == null) View.INVISIBLE else*/ View.VISIBLE
+            view.average_speed_label.visibility = avgSpeedVisibility
+            view.average_speed_text.visibility = avgSpeedVisibility
+            view.average_speed_text.text = avgSpeedString
         }
 
 

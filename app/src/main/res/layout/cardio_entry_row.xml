@@ -26,8 +26,10 @@
             card_view:layout_constraintTop_toTopOf="parent"
             tools:text="Entry type" />
 
+
+
         <TextView
-            android:id="@+id/distance_main_text"
+            android:id="@+id/distance_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
@@ -35,20 +37,69 @@
             android:layout_marginTop="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
             card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toBottomOf="@+id/cardio_entry_type"
-            tools:text="128.50km" />
+            card_view:layout_constraintTop_toBottomOf="@+id/distance_label"
+            tools:text="999.99km" />
+
+        <TextView
+            android:id="@+id/average_speed_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/average_speed_label"
+            tools:text="99.99km/h" />
+
+        <TextView
+            android:id="@+id/distance_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/distance"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/cardio_entry_type" />
+
+        <TextView
+            android:id="@+id/duration_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/duration"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            card_view:layout_constraintStart_toStartOf="@+id/duration_text"
+            card_view:layout_constraintTop_toBottomOf="@+id/cardio_entry_type" />
 
         <TextView
             android:id="@+id/duration_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:layout_marginTop="8dp"
+            android:minWidth="110dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-            card_view:layout_constraintBottom_toBottomOf="parent"
-            card_view:layout_constraintStart_toStartOf="@+id/distance_main_text"
-            card_view:layout_constraintTop_toBottomOf="@+id/distance_main_text"
-            tools:text="10h 58min 46s" />
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/duration_label"
+            tools:text="-" />
+
+        <TextView
+            android:id="@+id/average_speed_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/average_speed"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/distance_text" />
 
     </android.support.constraint.ConstraintLayout>
 

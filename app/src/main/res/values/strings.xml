@@ -37,5 +37,6 @@
     <string name="pref_weight_unit_key">pref_weight_unit</string>
     <string name="no_weight_data">This is your first entry! Log your weight tomorrow to see history here</string>
     <string name="type">Type</string>
+    <string name="average_speed">Average speed</string>
 
 </resources>
