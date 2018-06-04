@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 Ville-Matti Anttonen
+ */
+
 package fi.anttonen.villematti.apps.gymbuddy
 
 import org.junit.Test

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 Ville-Matti Anttonen
+ */
+
 package fi.anttonen.villematti.apps.gymbuddy.activity
 
 import android.support.v7.app.AppCompatActivity

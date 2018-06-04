@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2018 Ville-Matti Anttonen
+  -->
+
 <resources>
     <array name="weight_units">
         <item>@string/weight_unit_kilograms</item>

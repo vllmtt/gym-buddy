@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2018 Ville-Matti Anttonen
+ */
+
 package fi.anttonen.villematti.apps.gymbuddy.model.database
 
 import android.arch.persistence.room.Room
