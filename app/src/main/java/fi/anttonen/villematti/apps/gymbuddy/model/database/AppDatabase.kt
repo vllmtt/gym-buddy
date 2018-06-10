@@ -10,14 +10,20 @@ import android.arch.persistence.room.TypeConverters
 import fi.anttonen.villematti.apps.gymbuddy.model.database.CardioEntryDao
 import fi.anttonen.villematti.apps.gymbuddy.model.database.Converters
 import fi.anttonen.villematti.apps.gymbuddy.model.database.WeightEntryDao
-import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioEntry
-import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioType
-import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
+import fi.anttonen.villematti.apps.gymbuddy.model.entity.*
 
-@Database(entities = [(WeightEntry::class), (CardioEntry::class), (CardioType::class)], version = 5)
+@Database(entities = [
+    (WeightEntry::class),
+    (CardioEntry::class),
+    (CardioType::class),
+    (StrengthWorkoutEntry::class),
+    (StrengthExercise::class)], version = 7)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun gymEntryDao(): WeightEntryDao
     abstract fun cardioEntryDao(): CardioEntryDao
     abstract fun cardioTypeDao(): CardioTypeDao
+    abstract fun strengthWorkoutEntryDao(): StrengthWorkoutEntryDao
+    abstract fun strengthExerciseDao(): StrengthExerciseDao
+    //abstract fun exerciseSetDao(): ExerciseSetDao
 }

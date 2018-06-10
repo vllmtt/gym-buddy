@@ -5,7 +5,7 @@
 package fi.anttonen.villematti.apps.gymbuddy.model.database
 
 import android.arch.persistence.room.TypeConverter
-import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioType
+import fi.anttonen.villematti.apps.gymbuddy.model.entity.*
 import org.joda.time.Duration
 import org.joda.time.LocalDate
 
@@ -45,5 +45,41 @@ class Converters {
     @TypeConverter
     fun cardioTypeToString(cardioType: CardioType): String {
         return cardioType.toDbString()
+    }
+
+    // List<StrengthExerciseSubCharacteristic>
+
+    @TypeConverter
+    fun toStrengthExerciseSubCharacteristic(value: String): List<StrengthExerciseSubCharacteristic> {
+        return StrengthExercise.parseStrengthExerciseSubCharacteristics(value)
+    }
+
+    @TypeConverter
+    fun fromStrengthExerciseSubCharacteristic(characteristics: List<StrengthExerciseSubCharacteristic>): String {
+        return StrengthExercise.strengthExerciseSubCharacteristicsToDbString(characteristics)
+    }
+
+    // StrengthExerciseType
+
+    @TypeConverter
+    fun toStrengthExerciseType(value: String): StrengthExerciseType {
+        return StrengthExercise.parseStrengthExerciseType(value)
+    }
+
+    @TypeConverter
+    fun fromStrengthExerciseType(strengthExerciseType: StrengthExerciseType): String {
+        return StrengthExercise.strengthExerciseTypeToDbString(strengthExerciseType)
+    }
+
+    // List<ExerciseSet>
+
+    @TypeConverter
+    fun toExerciseSets(value: String): List<ExerciseSet> {
+        return ExerciseSet.parseExerciseSets(value)
+    }
+
+    @TypeConverter
+    fun fromExerciseSets(sets: List<ExerciseSet>): String {
+        return ExerciseSet.toDbString(sets)
     }
 }

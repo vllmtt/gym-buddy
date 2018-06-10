@@ -10,10 +10,10 @@ import android.arch.persistence.room.PrimaryKey
 
 @Entity(tableName = "cardio_type")
 data class CardioType(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val id: Long,
-                      @ColumnInfo val name: String) {
+                      @ColumnInfo var name: String) {
 
     override fun toString(): String {
-        return "$name"
+        return name
     }
 
     fun toDbString(): String {
@@ -22,7 +22,7 @@ data class CardioType(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) 
 
     companion object {
         val DEFAULT_CARDIO_TYPES = mutableListOf<CardioType>().apply {
-            val names = arrayOf("Biking", "Running", "Walking").sortedArray()
+            val names = arrayOf("Biking", "Running", "Walking")
             for (i in names.indices) this.add(CardioType(i.toLong(), names[i]))
         }
 

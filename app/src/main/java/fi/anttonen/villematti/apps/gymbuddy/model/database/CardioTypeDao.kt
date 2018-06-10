@@ -14,7 +14,7 @@ import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioType
 @Dao
 interface CardioTypeDao {
 
-    @Query("SELECT * FROM cardio_type")
+    @Query("SELECT * FROM cardio_type ORDER BY cardio_type.name")
     fun getAll(): LiveData<List<CardioType>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
