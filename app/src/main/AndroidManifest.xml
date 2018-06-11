@@ -46,11 +46,25 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity" />
         </activity>
-        <activity android:name=".activity.AddCardioEntry"
+        <activity
+            android:name=".activity.AddCardioEntry"
             android:parentActivityName=".activity.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity" />
+        </activity>
+        <activity
+            android:name=".activity.AddStrengthWorkoutEntry"
+            android:parentActivityName=".activity.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.MainActivity" />
+        </activity>
+        <activity android:name=".activity.ExerciseChooserDialog"
+            android:parentActivityName=".activity.AddStrengthWorkoutEntry">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.AddStrengthWorkoutEntry" />
         </activity>
     </application>
 

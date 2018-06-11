@@ -7,14 +7,28 @@ package fi.anttonen.villematti.apps.gymbuddy.model.entity
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
+import fi.anttonen.villematti.apps.gymbuddy.misc.SearchableView
+import fi.anttonen.villematti.apps.gymbuddy.misc.SearchableViewType
 
 @Entity(tableName = "strength_exercise")
 class StrengthExercise(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val id: Long,
                        @ColumnInfo var name: String,
-                       @ColumnInfo var type: StrengthExerciseType) {
+                       @ColumnInfo var type: StrengthExerciseType) : SearchableView {
 
     @ColumnInfo
     var subCharacteristics = mutableListOf<StrengthExerciseSubCharacteristic>()
+
+    @ColumnInfo
+    var usageCount: Long = 0
+
+    override fun matches(query: String?): Boolean {
+        return if (query.isNullOrEmpty()) true else name.contains(query!!) || type.description.contains(query)
+    }
+
+    override fun title() = name
+    override fun subTitle() = type.description
+    override fun relevanceCount() = usageCount
+    override fun type() = SearchableViewType.CONTENT
 
     companion object {
         fun create(name: String, type: StrengthExerciseType, vararg subCharacteristics: StrengthExerciseSubCharacteristic): StrengthExercise {
@@ -47,7 +61,9 @@ class StrengthExercise(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true)
             val stringValues = value.split(";")
             val characteristics = mutableListOf<StrengthExerciseSubCharacteristic>()
             for (stringValue in stringValues) {
-                characteristics.add(StrengthExerciseSubCharacteristic.valueOf(stringValue))
+                if (stringValue.isNotEmpty()) {
+                    characteristics.add(StrengthExerciseSubCharacteristic.valueOf(stringValue))
+                }
             }
             return characteristics
         }
@@ -140,13 +156,13 @@ class StrengthExercise(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true)
     }
 }
 
-enum class StrengthExerciseType {
-    MACHINE,
-    BARBELL,
-    DUMBBELL,
-    CABLE,
-    BODY_WEIGHT,
-    OTHER
+enum class StrengthExerciseType(val description: String) {
+    MACHINE("Machine"),
+    BARBELL("Barbell"),
+    DUMBBELL("Dumbbell"),
+    CABLE("Cable"),
+    BODY_WEIGHT("Body weight"),
+    OTHER("Other")
 }
 
 enum class StrengthExerciseMainCharacteristic {

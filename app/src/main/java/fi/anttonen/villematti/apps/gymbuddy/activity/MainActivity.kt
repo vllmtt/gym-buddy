@@ -22,18 +22,14 @@ import android.view.MenuItem
 import android.view.View
 import com.github.sundeepk.compactcalendarview.CompactCalendarView
 import com.github.sundeepk.compactcalendarview.domain.Event
-import fi.anttonen.villematti.apps.gymbuddy.model.entity.GymEntry
 import fi.anttonen.villematti.apps.gymbuddy.R
-import fi.anttonen.villematti.apps.gymbuddy.R.id.new_cardio_entry
-import fi.anttonen.villematti.apps.gymbuddy.R.id.new_weight_entry
+import fi.anttonen.villematti.apps.gymbuddy.R.id.*
 import fi.anttonen.villematti.apps.gymbuddy.adapters.CalendarGymEntriesRecyclerAdapter
 import fi.anttonen.villematti.apps.gymbuddy.misc.UnitManager
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarEventViewModel
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
-import fi.anttonen.villematti.apps.gymbuddy.model.entity.EntryType
-import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.database.GymBuddyRoomDataBase
-import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioEntry
+import fi.anttonen.villematti.apps.gymbuddy.model.entity.*
 import kotlinx.android.synthetic.main.activity_main.*
 import net.danlew.android.joda.JodaTimeAndroid
 import org.joda.time.LocalDate
@@ -135,6 +131,7 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
                     when (entry.getEntryType()) {
                         EntryType.WEIGHT -> calendar_view.addEvent(Event(ContextCompat.getColor(this, R.color.weight), entry.getEntryDate().toDate().time))
                         EntryType.CARDIO -> calendar_view.addEvent(Event(ContextCompat.getColor(this, R.color.cardio), entry.getEntryDate().toDate().time))
+                        EntryType.STRENGTH -> calendar_view.addEvent(Event(ContextCompat.getColor(this, R.color.strength), entry.getEntryDate().toDate().time))
                         else -> continue@entryLoop
                     }
                 }
@@ -158,10 +155,20 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
             when (it.id) {
                 new_weight_entry -> showNewWeightEntryDialog()
                 new_cardio_entry -> showNewCardioEntryDialog()
+                new_strength_entry -> showNewStrengthWorkoutEntryDialog()
                 else -> false
             }
         }
     }
+
+    private fun showNewStrengthWorkoutEntryDialog(): Boolean {
+        val intent = Intent(this, AddStrengthWorkoutEntry::class.java).apply {
+            putExtra(AddStrengthWorkoutEntry.DATE_KEY, currentlySelectedDate.toString())
+        }
+        ActivityCompat.startActivityForResult(this, intent, ADD_ENTRY, null)
+        return false
+    }
+
 
     private fun showNewCardioEntryDialog(): Boolean {
         val intent = Intent(this, AddCardioEntry::class.java).apply {
@@ -218,6 +225,9 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
             }
             options = ActivityOptionsCompat.makeBasic()
         }
+        if (entry is StrengthWorkoutEntry) {
+            // TODO intent & options
+        }
 
         if (intent != null && options != null) {
             ActivityCompat.startActivityForResult(this@MainActivity, intent, UPDATE_REQUEST, options.toBundle())
@@ -228,7 +238,7 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == ADD_ENTRY && resultCode == Activity.RESULT_OK) {
             if (data != null) {
-                val stringExtra = data.getStringExtra(AddWeightEntry.DATE_KEY)
+                val stringExtra = data.getStringExtra(AddWeightEntry.DATE_KEY) //TODO generalize, DATE_KEY also from cardio, strength, not just weight
                 if (stringExtra != null) {
                     val dateWhereAdditionTookPlace = LocalDate.parse(stringExtra)
                     if (dateWhereAdditionTookPlace != null) {
