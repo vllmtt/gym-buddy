@@ -4,10 +4,7 @@
 
 package fi.anttonen.villematti.apps.gymbuddy.model.entity
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.PrimaryKey
-import android.arch.persistence.room.Relation
+import android.arch.persistence.room.*
 import org.joda.time.LocalDate
 
 @Entity(tableName = "strength_workout_entry")
@@ -19,6 +16,19 @@ class StrengthWorkoutEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = t
 
     //@Relation(parentColumn = "id", entityColumn = "workoutId", entity = ExerciseSet::class)
     var sets = mutableListOf<ExerciseSet>()
+
+    @Ignore
+    private val exerciseMap: MutableMap<Long, List<ExerciseSet>> = mutableMapOf()
+
+    fun getExerciseMap(): MutableMap<Long, List<ExerciseSet>> {
+        for (set in sets) {
+            val exerciseId = set.exerciseId
+            //if (!exerciseMap.containsKey(exerciseId)) {
+            exerciseMap[exerciseId] = sets.filter { it.exerciseId == exerciseId }
+            //}
+        }
+        return exerciseMap
+    }
 
     override fun getEntryId(): Long = id
     override fun getEntryDate(): LocalDate = date

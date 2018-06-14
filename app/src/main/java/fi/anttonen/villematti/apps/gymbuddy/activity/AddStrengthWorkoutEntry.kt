@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -20,6 +21,7 @@ import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.fragments.MoodFragment
 import fi.anttonen.villematti.apps.gymbuddy.model.database.GymBuddyRoomDataBase
+import fi.anttonen.villematti.apps.gymbuddy.model.entity.StrengthWorkoutEntry
 import kotlinx.android.synthetic.main.activity_add_strength_workout_entry.*
 import org.joda.time.LocalDate
 import org.joda.time.format.DateTimeFormat
@@ -33,7 +35,9 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
 
     private val formatter = DateTimeFormat.forPattern("MMMM d, yyyy")
     private var selectedDate: LocalDate? = null
-    var mood: String? = null
+    private var mood: String? = null
+
+    private var workout = StrengthWorkoutEntry(0, LocalDate.now())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,7 +80,6 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
     }
 
     fun addExerciseButtonClicked(@Suppress("UNUSED_PARAMETER") v: View) {
-        // TODO create new exercise view, set it draggable
         showExerciseChooser()
     }
 
@@ -89,10 +92,15 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == EXERCISE_CHOOSE_REQUEST && resultCode == Activity.RESULT_OK) {
             if (data != null) {
-                val stringExtra = data.getStringExtra(ExerciseChooserDialog.SELECTED_EXERCISE_ID)
-                //TODO parse and attach to workout
+                val exerciseId = data.getLongExtra(ExerciseChooserDialog.SELECTED_EXERCISE_ID, -1)
+                addExerciseToWorkout(exerciseId)
             }
         }
+    }
+
+    private fun addExerciseToWorkout(exerciseId: Long) {
+        // TODO create new exercise view, set it draggable
+        Log.i("ADD EXERCISE", "Adding exercise with id: $exerciseId")
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -125,8 +133,8 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
     }
 
     private fun save(): Boolean {
-        //TODO back buttons to work
         return if (false) {
+            //TODO set correct mood and date
             AsyncTask.execute {
                 //GymBuddyRoomDataBase.weightEntryDao.insertAll(entry)
             }

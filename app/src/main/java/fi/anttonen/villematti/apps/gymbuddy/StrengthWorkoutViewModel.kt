@@ -15,4 +15,8 @@ class StrengthWorkoutViewModel : ViewModel() {
     fun getAllExercises(): LiveData<List<StrengthExercise>> {
         return GymBuddyRoomDataBase.strengthExerciseDao.getAll()
     }
+
+    fun getExercise(id: Long): StrengthExercise? {
+        return GymBuddyRoomDataBase.strengthExerciseDao.get(id)
+    }
 }
