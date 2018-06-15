@@ -31,7 +31,7 @@
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/date"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
@@ -41,7 +41,6 @@
                     android:id="@+id/date_text_layout"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_marginBottom="8dp"
                     android:layout_marginEnd="16dp"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
@@ -74,7 +73,7 @@
                 android:layout_marginTop="16dp"
                 android:paddingBottom="16dp"
                 android:text="@string/exercises"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
             <com.jmedeisis.draglinearlayout.DragLinearLayout
                 android:id="@+id/exercises_layout"
@@ -83,14 +82,16 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp">
 
-                <Button
-                    android:id="@+id/add_exercise_button"
-                    style="@style/Widget.AppCompat.Button.Colored"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:onClick="addExerciseButtonClicked"
-                    android:text="@string/add_exercise" />
             </com.jmedeisis.draglinearlayout.DragLinearLayout>
+
+            <Button
+                android:id="@+id/add_exercise_button"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:onClick="addExerciseButtonClicked"
+                android:text="@string/add_exercise" />
 
             <TextView
                 android:id="@+id/textView"
@@ -101,7 +102,7 @@
                 android:layout_marginTop="16dp"
                 android:paddingBottom="16dp"
                 android:text="@string/mood"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
         </LinearLayout>
     </ScrollView>

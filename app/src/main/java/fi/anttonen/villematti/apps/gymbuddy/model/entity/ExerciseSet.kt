@@ -14,7 +14,7 @@ import fi.anttonen.villematti.apps.gymbuddy.misc.roundToDecimalPlaces
 class ExerciseSet(/*@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true)*/ val id: Long,
                   /*@ColumnInfo(name = "workoutId")*/ val workoutId: Long,
                   /*@ColumnInfo(name = "exerciseId")*/ val exerciseId: Long,
-                  /*@ColumnInfo(name = "sequence")*/ var sequence: Int) {
+                  /*@ColumnInfo(name = "sequence")*/ var sequence: Int) : Comparable<ExerciseSet> {
 
     //@ColumnInfo(name = "working_set")
     var workingSet: Boolean = false
@@ -54,6 +54,10 @@ class ExerciseSet(/*@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true)*/ 
                 other.reps == this.reps &&
                 other.weight == this.weight &&
                 other.sequence == this.sequence
+    }
+
+    override fun compareTo(other: ExerciseSet): Int {
+        return sequence - other.sequence
     }
 
     companion object {
