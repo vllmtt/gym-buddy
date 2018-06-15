@@ -41,7 +41,7 @@ class ExerciseFragment : Fragment() {
     private var workout: StrengthWorkoutEntry? = null
     private var sets: MutableList<ExerciseSet> = mutableListOf()
 
-    //private var listener: ExerciseFragmentListener? = null
+    private var listener: ExerciseFragmentListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,21 +62,21 @@ class ExerciseFragment : Fragment() {
                 sets.addAll(workout!!.sets.filter { it.exerciseId == exercise!!.id })
                 sets.sort()
                 sets.forEach { inflateSetView(it) }
+                listener?.exerciseViewAdded(view)
             }
         }
 
         return view
     }
 
-    fun onAddSetButtonClick() {
-        // TODO add set fragment, compute sequence + init fields
+    private fun onAddSetButtonClick() {
         val nextSequence = if (sets.isEmpty()) 0 else sets.last().sequence + 1
         val set = ExerciseSet(0, workout!!.id, exercise!!.id, nextSequence)
         sets.add(set)
         inflateSetView(set)
     }
 
-    fun inflateSetView(set: ExerciseSet) {
+    private fun inflateSetView(set: ExerciseSet) {
         val setView = layoutInflater.inflate(R.layout.exercise_set_view, sets_layout, false)
         setView.tag = set
 
@@ -87,7 +87,7 @@ class ExerciseFragment : Fragment() {
         }
 
         setView.reps_edit_text.setText(set.reps?.toString() ?: "")
-        setView.weight_edit_text.setText(set.getWeightUI(2).toString())
+        setView.weight_edit_text.setText(set.getWeightUI(2)?.toString() ?: "")
 
         sets_layout.addView(setView)
 
@@ -96,20 +96,21 @@ class ExerciseFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        /*
         if (context is ExerciseFragmentListener) {
             listener = context
         } else {
             throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
         }
-        */
     }
 
     override fun onDetach() {
         super.onDetach()
-        //listener = null
+        listener = null
     }
 
+    interface ExerciseFragmentListener {
+        fun exerciseViewAdded(view: View)
+    }
 
     companion object {
         /**

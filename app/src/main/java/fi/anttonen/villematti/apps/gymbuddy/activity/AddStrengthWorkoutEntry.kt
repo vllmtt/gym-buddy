@@ -13,7 +13,6 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -23,13 +22,12 @@ import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.WorkoutEditViewModel
 import fi.anttonen.villematti.apps.gymbuddy.fragments.ExerciseFragment
 import fi.anttonen.villematti.apps.gymbuddy.fragments.MoodFragment
-import fi.anttonen.villematti.apps.gymbuddy.model.database.GymBuddyRoomDataBase
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.StrengthWorkoutEntry
 import kotlinx.android.synthetic.main.activity_add_strength_workout_entry.*
 import org.joda.time.LocalDate
 import org.joda.time.format.DateTimeFormat
 
-class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetListener, MoodFragment.MoodFragmentListener, DragLinearLayout.OnViewSwapListener {
+class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetListener, MoodFragment.MoodFragmentListener, DragLinearLayout.OnViewSwapListener, ExerciseFragment.ExerciseFragmentListener {
 
     companion object {
         const val DATE_KEY = "DEFAULT DATE"
@@ -60,7 +58,7 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
         date_text.setText(selectedDate?.toString(formatter))
 
         exercises_layout.setOnViewSwapListener(this)
-        setExercisesDraggable()
+        setAllExercisesDraggable()
     }
 
     override fun onMoodSelection(mood: String?) {
@@ -107,15 +105,17 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
     }
 
     private fun addExerciseToWorkout(exerciseId: Long) {
-        // TODO create new exercise view, set it draggable
         supportFragmentManager.beginTransaction().add(R.id.exercises_layout, ExerciseFragment.newInstance(exerciseId), "exercise $exerciseId").commitAllowingStateLoss()
-        setExercisesDraggable()
     }
 
-    private fun setExercisesDraggable() {
+    override fun exerciseViewAdded(view: View) {
+        exercises_layout.setViewDraggable(view, view.findViewById(R.id.drag_handle))
+    }
+
+    private fun setAllExercisesDraggable() {
         for (i in 0 until exercises_layout.childCount) {
             val child = exercises_layout.getChildAt(i)
-            exercises_layout.setViewDraggable(child, child)
+            exercises_layout.setViewDraggable(child, child.findViewById(R.id.drag_handle))
         }
     }
 

@@ -25,8 +25,8 @@ class ExerciseSet(/*@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true)*/ 
     //@ColumnInfo(name = "weight")
     private var weight: Double? = null
 
-    fun getWeightUI(decimals: Int): Double {
-        return (weight ?: 0.0 * UnitManager.Units.weightRatio).roundToDecimalPlaces(decimals)
+    fun getWeightUI(decimals: Int): Double? {
+        return if (weight == null) null else (weight ?: 0.0 * UnitManager.Units.weightRatio).roundToDecimalPlaces(decimals)
     }
 
     fun getWeight(): Double? {
