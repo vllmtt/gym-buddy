@@ -50,9 +50,11 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
 
         ViewModelProviders.of(this).get(WorkoutEditViewModel::class.java).workout = workout
 
-        supportFragmentManager.beginTransaction().replace(R.id.content_layout, MoodFragment.newInstance(null), "moodFragment").commit()
+        for (exerciseId in workout.getExerciseMap().keys) {
+            addExerciseViewFragment(exerciseId)
+        }
 
-        //TODO fragment for each existing exercise
+        supportFragmentManager.beginTransaction().replace(R.id.content_layout, MoodFragment.newInstance(null), "moodFragment").commit()
 
         selectedDate = LocalDate.parse(intent.getStringExtra(DATE_KEY))
         date_text.setText(selectedDate?.toString(formatter))
@@ -99,12 +101,12 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
         if (requestCode == EXERCISE_CHOOSE_REQUEST && resultCode == Activity.RESULT_OK) {
             if (data != null) {
                 val exerciseId = data.getLongExtra(ExerciseChooserDialog.SELECTED_EXERCISE_ID, -1)
-                addExerciseToWorkout(exerciseId)
+                addExerciseViewFragment(exerciseId)
             }
         }
     }
 
-    private fun addExerciseToWorkout(exerciseId: Long) {
+    private fun addExerciseViewFragment(exerciseId: Long) {
         supportFragmentManager.beginTransaction().add(R.id.exercises_layout, ExerciseFragment.newInstance(exerciseId), "exercise $exerciseId").commitAllowingStateLoss()
     }
 

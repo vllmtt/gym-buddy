@@ -8,10 +8,14 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.AsyncTask
 import android.os.Bundle
+import android.support.design.widget.TextInputLayout
 import android.support.v4.app.Fragment
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 
 import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.StrengthWorkoutViewModel
@@ -23,6 +27,9 @@ import fi.anttonen.villematti.apps.gymbuddy.model.entity.StrengthWorkoutEntry
 import kotlinx.android.synthetic.main.exercise_set_view.view.*
 import kotlinx.android.synthetic.main.fragment_exercise.*
 import kotlinx.android.synthetic.main.fragment_exercise.view.*
+import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
+
+
 
 private const val EXERCISE_ID = "Exercise id"
 
@@ -89,9 +96,50 @@ class ExerciseFragment : Fragment() {
         setView.reps_edit_text.setText(set.reps?.toString() ?: "")
         setView.weight_edit_text.setText(set.getWeightUI(2)?.toString() ?: "")
 
-        sets_layout.addView(setView)
+        setView.reps_edit_text.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {}
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                if (isNumberBetween(0.0, 9999.0, p0, true, null, null)) {
+                    set.reps = p0?.toString()?.toInt()
+                    if (p0.toString()?.length > 1) setView.weight_edit_text.requestFocus()
+                }
+            }
+        })
+        setView.weight_edit_text.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {}
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                if (isNumberBetween(0.0, 99999.0, p0, true, null, null)) {
+                    set.setWeight(p0?.toString()?.toDouble(), true)
+                }
+            }
+        })
 
-        // TODO add text change listener, identify sets by tag
+        sets_layout.addView(setView)
+    }
+
+    private fun isNumberBetween(min: Double?, max: Double?, string: CharSequence?, isEmptyValid: Boolean, errorMessage: String?, errorDestination: TextInputLayout?): Boolean {
+        errorDestination?.error = null
+        val text = string?.toString() ?: ""
+
+        if (text.isEmpty()) {
+            if (!isEmptyValid) errorDestination?.error = errorMessage
+            return isEmptyValid
+        }
+
+        try {
+            val n = text.toDouble()
+            if ((min != null && n < min) || (max != null && n > max)) {
+                errorDestination?.error = errorMessage
+                return false
+            }
+            return true
+        } catch (e: NumberFormatException) {
+            errorDestination?.error = errorMessage
+        }
+
+        return false
     }
 
     override fun onAttach(context: Context) {
@@ -99,7 +147,7 @@ class ExerciseFragment : Fragment() {
         if (context is ExerciseFragmentListener) {
             listener = context
         } else {
-            throw RuntimeException(context.toString() + " must implement OnFragmentInteractionListener")
+            throw RuntimeException(context.toString() + " must implement ExerciseFragmentListener")
         }
     }
 
@@ -119,7 +167,6 @@ class ExerciseFragment : Fragment() {
          *
          * @return A new instance of fragment ExerciseFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(exerciseId: Long) =
                 ExerciseFragment().apply {
