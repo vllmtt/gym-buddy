@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -38,6 +39,10 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
     private var selectedDate: LocalDate? = null
     private var mood: String? = null
 
+    private var editMode = false
+
+    private var exerciseFragments = mutableListOf<ExerciseFragment>()
+
     private var workout = StrengthWorkoutEntry(0, LocalDate.now())
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,11 +55,14 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
 
         ViewModelProviders.of(this).get(WorkoutEditViewModel::class.java).workout = workout
 
+        exerciseFragments.clear()
         for (exerciseId in workout.getExerciseMap().keys) {
             addExerciseViewFragment(exerciseId)
         }
 
         supportFragmentManager.beginTransaction().replace(R.id.content_layout, MoodFragment.newInstance(null), "moodFragment").commit()
+
+        toggle_delete_mode_button.visibility = if (exerciseFragments.isEmpty()) View.GONE else View.VISIBLE
 
         selectedDate = LocalDate.parse(intent.getStringExtra(DATE_KEY))
         date_text.setText(selectedDate?.toString(formatter))
@@ -84,7 +92,14 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
     }
 
     override fun onSwap(firstView: View?, firstPosition: Int, secondView: View?, secondPosition: Int) {
-        // TODO update sequence or multiple sequences of sets depending if exercise or set was dragged
+        //TODO
+    }
+
+    fun toggleDeleteModeButtonClicked(@Suppress("UNUSED_PARAMETER") v: View) {
+        editMode = !editMode
+        for (exerciseFragment in exerciseFragments) {
+            exerciseFragment.setEditMode(editMode)
+        }
     }
 
     fun addExerciseButtonClicked(@Suppress("UNUSED_PARAMETER") v: View) {
@@ -107,11 +122,19 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
     }
 
     private fun addExerciseViewFragment(exerciseId: Long) {
-        supportFragmentManager.beginTransaction().add(R.id.exercises_layout, ExerciseFragment.newInstance(exerciseId), "exercise $exerciseId").commitAllowingStateLoss()
+        val exerciseFragment = ExerciseFragment.newInstance(exerciseId, editMode)
+        exerciseFragments.add(exerciseFragment)
+        supportFragmentManager.beginTransaction().add(R.id.exercises_layout, exerciseFragment, "exercise $exerciseId").commitAllowingStateLoss()
     }
 
     override fun exerciseViewAdded(view: View) {
         exercises_layout.setViewDraggable(view, view.findViewById(R.id.drag_handle))
+        toggle_delete_mode_button.visibility = if (exerciseFragments.isEmpty()) View.GONE else View.VISIBLE
+    }
+
+    override fun deleteExercise(sender: ExerciseFragment) {
+        exerciseFragments.remove(sender)
+        supportFragmentManager.beginTransaction().remove(sender).commitAllowingStateLoss()
     }
 
     private fun setAllExercisesDraggable() {
@@ -153,6 +176,7 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
     private fun save(): Boolean {
         return if (false) {
             //TODO set correct mood and date
+            //TODO set sequences
             AsyncTask.execute {
                 //GymBuddyRoomDataBase.weightEntryDao.insertAll(entry)
             }

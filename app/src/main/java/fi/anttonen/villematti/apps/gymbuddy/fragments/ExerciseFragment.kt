@@ -32,6 +32,7 @@ import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 
 
 private const val EXERCISE_ID = "Exercise id"
+private const val EDIT_MODE = "Edit mode"
 
 /**
  * A simple [Fragment] subclass.
@@ -46,7 +47,10 @@ class ExerciseFragment : Fragment() {
     private var exerciseId: Long = -1
     private var exercise: StrengthExercise? = null
     private var workout: StrengthWorkoutEntry? = null
-    private var sets: MutableList<ExerciseSet> = mutableListOf()
+
+    var sets: MutableList<ExerciseSet> = mutableListOf() //TODO get rid of and update sets directly to workout. ExerciseSequence to differentiate between ExerciseFragments that have same exercise?
+
+    private var editMode = false
 
     private var listener: ExerciseFragmentListener? = null
 
@@ -54,18 +58,28 @@ class ExerciseFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             exerciseId = it.getLong(EXERCISE_ID)
+            editMode = it.getBoolean(EDIT_MODE)
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_exercise, container, false)
+
         view.add_set_button.setOnClickListener { onAddSetButtonClick() }
+
+        view.delete_exercise_button.visibility = if (editMode) View.VISIBLE else View.INVISIBLE
+        view.delete_exercise_button.setOnClickListener {
+            listener?.deleteExercise(this)
+        }
+
+        view.tag = this
         AsyncTask.execute {
             workout = ViewModelProviders.of(activity!!).get(WorkoutEditViewModel::class.java).workout
             exercise = ViewModelProviders.of(activity!!).get(StrengthWorkoutViewModel::class.java).getExercise(exerciseId)
             activity?.runOnUiThread {
                 view.exercise_name.text = exercise?.name
+                view.exercise_type.text = exercise?.type?.description
                 sets.addAll(workout!!.sets.filter { it.exerciseId == exercise!!.id })
                 sets.sort()
                 sets.forEach { inflateSetView(it) }
@@ -77,10 +91,17 @@ class ExerciseFragment : Fragment() {
     }
 
     private fun onAddSetButtonClick() {
-        val nextSequence = if (sets.isEmpty()) 0 else sets.last().sequence + 1
-        val set = ExerciseSet(0, workout!!.id, exercise!!.id, nextSequence)
+        //val nextSequence = if (sets.isEmpty()) 0 else sets.last().sequence + 1
+        val set = ExerciseSet(0, workout!!.id, exercise!!.id, 0)
         sets.add(set)
         inflateSetView(set)
+    }
+
+    private fun onDeleteSetButtonClick(set: ExerciseSet) {
+        sets.remove(set)
+        val setView = sets_layout.findViewWithTag<View>(set)
+        sets_layout.removeView(setView)
+        // TODO
     }
 
     private fun inflateSetView(set: ExerciseSet) {
@@ -116,7 +137,19 @@ class ExerciseFragment : Fragment() {
             }
         })
 
+        setView.delete_set_button.visibility = if (editMode) View.VISIBLE else View.INVISIBLE
+        setView.delete_set_button.setOnClickListener { onDeleteSetButtonClick(set) }
+
         sets_layout.addView(setView)
+    }
+
+    fun setEditMode(enabled: Boolean) {
+        editMode = enabled
+        for (i in 0 until sets_layout.childCount) {
+            val child = sets_layout.getChildAt(i)
+            child.delete_set_button.visibility = if (enabled) View.VISIBLE else View.INVISIBLE
+        }
+        delete_exercise_button.visibility = if (enabled) View.VISIBLE else View.INVISIBLE
     }
 
     private fun isNumberBetween(min: Double?, max: Double?, string: CharSequence?, isEmptyValid: Boolean, errorMessage: String?, errorDestination: TextInputLayout?): Boolean {
@@ -158,6 +191,7 @@ class ExerciseFragment : Fragment() {
 
     interface ExerciseFragmentListener {
         fun exerciseViewAdded(view: View)
+        fun deleteExercise(sender: ExerciseFragment)
     }
 
     companion object {
@@ -168,10 +202,11 @@ class ExerciseFragment : Fragment() {
          * @return A new instance of fragment ExerciseFragment.
          */
         @JvmStatic
-        fun newInstance(exerciseId: Long) =
+        fun newInstance(exerciseId: Long, editMode: Boolean) =
                 ExerciseFragment().apply {
                     arguments = Bundle().apply {
                         putLong(EXERCISE_ID, exerciseId)
+                        putBoolean(EDIT_MODE, editMode)
                     }
                 }
     }

@@ -50,5 +50,6 @@
     <string name="search_title">Search</string>
     <string name="add_set">Add set</string>
     <string name="set_x_sign">×</string>
+    <string name="toggle_delete_mode">Toggle delete mode</string>
 
 </resources>

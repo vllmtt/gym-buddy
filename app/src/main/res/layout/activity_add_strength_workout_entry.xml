@@ -64,16 +64,40 @@
                 </android.support.design.widget.TextInputLayout>
             </android.support.constraint.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/textView2"
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
-                android:paddingBottom="16dp"
-                android:text="@string/exercises"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_weight="1"
+                    android:paddingBottom="16dp"
+                    android:text="@string/exercises"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageButton
+                    android:id="@+id/toggle_delete_mode_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_weight="1"
+                    android:alpha="0.54"
+                    android:background="@null"
+                    android:onClick="toggleDeleteModeButtonClicked"
+                    android:padding="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_edit_black_24px" />
+            </android.support.constraint.ConstraintLayout>
 
             <com.jmedeisis.draglinearlayout.DragLinearLayout
                 android:id="@+id/exercises_layout"
