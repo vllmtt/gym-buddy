@@ -24,6 +24,7 @@ import fi.anttonen.villematti.apps.gymbuddy.WorkoutEditViewModel
 import fi.anttonen.villematti.apps.gymbuddy.fragments.ExerciseFragment
 import fi.anttonen.villematti.apps.gymbuddy.fragments.MoodFragment
 import fi.anttonen.villematti.apps.gymbuddy.misc.WorkoutCoordinator
+import fi.anttonen.villematti.apps.gymbuddy.model.database.GymBuddyRoomDataBase
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.StrengthWorkoutEntry
 import kotlinx.android.synthetic.main.activity_add_strength_workout_entry.*
 import org.joda.time.LocalDate
@@ -181,11 +182,13 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
     }
 
     private fun save(): Boolean {
-        return if (false) {
-            //TODO set correct mood and date
-            //TODO set sequences
+        val workout = workoutCoordinator.workout
+        val date = selectedDate
+        return if (date != null) {
+            workout.mood = mood
+            workout.date = date
             AsyncTask.execute {
-                //GymBuddyRoomDataBase.weightEntryDao.insertAll(entry)
+                GymBuddyRoomDataBase.strengthWorkoutEntryDao.insertAll(workout)
             }
             true
         } else {
