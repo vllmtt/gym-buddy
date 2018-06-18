@@ -18,16 +18,18 @@ class StrengthWorkoutEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = t
     var sets = mutableListOf<ExerciseSet>()
 
     @Ignore
-    private val exerciseMap: MutableMap<Long, List<ExerciseSet>> = mutableMapOf()
+    private var exerciseSequenceMap: MutableMap<Int, MutableList<ExerciseSet>> = mutableMapOf()
 
-    fun getExerciseMap(): MutableMap<Long, List<ExerciseSet>> {
+    fun getExerciseSequenceMap(): MutableMap<Int, MutableList<ExerciseSet>> {
+        exerciseSequenceMap = mutableMapOf()
         for (set in sets) {
-            val exerciseId = set.exerciseId
-            //if (!exerciseMap.containsKey(exerciseId)) {
-            exerciseMap[exerciseId] = sets.filter { it.exerciseId == exerciseId }
-            //}
+            val exerciseSequence = set.exerciseSequence
+            if (!exerciseSequenceMap.containsKey(exerciseSequence)) {
+                val filtered = sets.filter { it.exerciseSequence == exerciseSequence }
+                exerciseSequenceMap[exerciseSequence] = mutableListOf(*filtered.toTypedArray())
+            }
         }
-        return exerciseMap
+        return exerciseSequenceMap
     }
 
     override fun getEntryId(): Long = id
@@ -73,7 +75,7 @@ class StrengthWorkoutEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = t
     private fun cloneSets(sets: List<ExerciseSet>): List<ExerciseSet> {
         val clones = mutableListOf<ExerciseSet>()
         for (set in sets) {
-            val clone = ExerciseSet(set.id, set.workoutId, set.exerciseId, set.sequence)
+            val clone = ExerciseSet(set.id, set.workoutId, set.exerciseId, set.setSequence, set.exerciseSequence)
             clone.reps = set.reps
             clone.setWeight(set.getWeight())
             clone.workingSet = set.workingSet

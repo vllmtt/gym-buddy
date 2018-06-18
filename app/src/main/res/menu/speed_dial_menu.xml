@@ -8,13 +8,15 @@
         android:title="@string/weight"
         android:icon="@drawable/ic_add_white_24px"/>
 
-    <item android:id="@+id/new_cardio_entry"
-        android:title="@string/cardio"
+    <item android:id="@+id/new_strength_entry"
+        android:title="@string/gym_workout"
         android:icon="@drawable/ic_add_white_24px"/>
 
-    <item android:id="@+id/new_strength_entry"
-        android:title="@string/strength_exercise"
+
+    <item android:id="@+id/new_cardio_entry"
+        android:title="@string/cardio_workout"
         android:icon="@drawable/ic_add_white_24px"/>
+
     <!--
     <item android:id="@+id/new_measurement_entry"
         android:title="@string/measurement"

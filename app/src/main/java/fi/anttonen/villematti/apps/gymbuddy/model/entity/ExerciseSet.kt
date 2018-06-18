@@ -4,25 +4,17 @@
 
 package fi.anttonen.villematti.apps.gymbuddy.model.entity
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.PrimaryKey
 import fi.anttonen.villematti.apps.gymbuddy.misc.UnitManager
 import fi.anttonen.villematti.apps.gymbuddy.misc.roundToDecimalPlaces
 
-//@Entity(tableName = "exercise_set")
-class ExerciseSet(/*@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true)*/ val id: Long,
-                  /*@ColumnInfo(name = "workoutId")*/ val workoutId: Long,
-                  /*@ColumnInfo(name = "exerciseId")*/ val exerciseId: Long,
-                  /*@ColumnInfo(name = "sequence")*/ var sequence: Int) : Comparable<ExerciseSet> {
+class ExerciseSet(val id: Long,
+                  val workoutId: Long,
+                  val exerciseId: Long,
+                  var setSequence: Int,
+                  var exerciseSequence: Int) : Comparable<ExerciseSet> {
 
-    //@ColumnInfo(name = "working_set")
     var workingSet: Boolean = false
-
-    //@ColumnInfo(name = "reps")
     var reps: Int? = null
-
-    //@ColumnInfo(name = "weight")
     private var weight: Double? = null
 
     fun getWeightUI(decimals: Int): Double? {
@@ -53,11 +45,13 @@ class ExerciseSet(/*@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true)*/ 
                 other.workingSet == this.workingSet &&
                 other.reps == this.reps &&
                 other.weight == this.weight &&
-                other.sequence == this.sequence
+                other.setSequence == this.setSequence &&
+                other.exerciseSequence == this.exerciseSequence
     }
 
     override fun compareTo(other: ExerciseSet): Int {
-        return sequence - other.sequence
+        val exerciseSequenceComparison = exerciseSequence - other.exerciseSequence
+        return if (exerciseSequenceComparison == 0) setSequence - other.setSequence else exerciseSequenceComparison
     }
 
     companion object {
@@ -86,11 +80,12 @@ class ExerciseSet(/*@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true)*/ 
             val exerciseId = valueString[1].toLong()
             val workoutId = valueString[2].toLong()
             val sequence = valueString[3].toInt()
-            val workingSet = valueString[4] == "1"
-            val reps = if (valueString[5].isEmpty()) null else valueString[5].toInt()
-            val weight = if (valueString[6].isEmpty()) null else valueString[6].toDouble()
+            val exerciseSequence = valueString[4].toInt()
+            val workingSet = valueString[5] == "1"
+            val reps = if (valueString[6].isEmpty()) null else valueString[6].toInt()
+            val weight = if (valueString[7].isEmpty()) null else valueString[7].toDouble()
 
-            val set = ExerciseSet(id, workoutId, exerciseId, sequence)
+            val set = ExerciseSet(id, workoutId, exerciseId, sequence, exerciseSequence)
             set.setWeight(weight)
             set.workingSet = workingSet
             set.reps = reps
@@ -102,7 +97,7 @@ class ExerciseSet(/*@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true)*/ 
             val workingSetString = if (set.workingSet) "1" else "0"
             val repsString = if (set.reps != null) set.reps.toString() else ""
             val weightString = if (set.getWeight() != null) set.getWeight().toString() else ""
-            return "${set.id};${set.workoutId};${set.exerciseId};${set.sequence};$workingSetString;$repsString;$weightString"
+            return "${set.id};${set.workoutId};${set.exerciseId};${set.setSequence};${set.exerciseSequence};$workingSetString;$repsString;$weightString"
         }
     }
 }

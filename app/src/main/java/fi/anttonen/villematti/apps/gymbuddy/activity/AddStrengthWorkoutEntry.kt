@@ -23,6 +23,7 @@ import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.WorkoutEditViewModel
 import fi.anttonen.villematti.apps.gymbuddy.fragments.ExerciseFragment
 import fi.anttonen.villematti.apps.gymbuddy.fragments.MoodFragment
+import fi.anttonen.villematti.apps.gymbuddy.misc.WorkoutCoordinator
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.StrengthWorkoutEntry
 import kotlinx.android.synthetic.main.activity_add_strength_workout_entry.*
 import org.joda.time.LocalDate
@@ -43,7 +44,7 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
 
     private var exerciseFragments = mutableListOf<ExerciseFragment>()
 
-    private var workout = StrengthWorkoutEntry(0, LocalDate.now())
+    private lateinit var workoutCoordinator: WorkoutCoordinator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,11 +54,14 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close_white_24px)
 
-        ViewModelProviders.of(this).get(WorkoutEditViewModel::class.java).workout = workout
+        workoutCoordinator = WorkoutCoordinator(StrengthWorkoutEntry(0, LocalDate.now()))
+        ViewModelProviders.of(this).get(WorkoutEditViewModel::class.java).workoutCoordinator = workoutCoordinator
 
         exerciseFragments.clear()
-        for (exerciseId in workout.getExerciseMap().keys) {
-            addExerciseViewFragment(exerciseId)
+        for (entry in workoutCoordinator.sequenceIdMap) {
+            val exerciseSequence = entry.key
+            val exerciseId = entry.value
+            addExerciseViewFragment(exerciseSequence, exerciseId)
         }
 
         supportFragmentManager.beginTransaction().replace(R.id.content_layout, MoodFragment.newInstance(null), "moodFragment").commit()
@@ -92,7 +96,7 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
     }
 
     override fun onSwap(firstView: View?, firstPosition: Int, secondView: View?, secondPosition: Int) {
-        //TODO
+        workoutCoordinator.swap(firstView?.tag as Int, secondView?.tag as Int)
     }
 
     fun toggleDeleteModeButtonClicked(@Suppress("UNUSED_PARAMETER") v: View) {
@@ -116,23 +120,26 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
         if (requestCode == EXERCISE_CHOOSE_REQUEST && resultCode == Activity.RESULT_OK) {
             if (data != null) {
                 val exerciseId = data.getLongExtra(ExerciseChooserDialog.SELECTED_EXERCISE_ID, -1)
-                addExerciseViewFragment(exerciseId)
+                val exerciseSequence = workoutCoordinator.addExercise(exerciseId)
+                addExerciseViewFragment(exerciseSequence, exerciseId)
             }
         }
     }
 
-    private fun addExerciseViewFragment(exerciseId: Long) {
-        val exerciseFragment = ExerciseFragment.newInstance(exerciseId, editMode)
+    private fun addExerciseViewFragment(exerciseSequence: Int, exerciseId: Long) {
+        val exerciseFragment = ExerciseFragment.newInstance(exerciseSequence, exerciseId, editMode)
         exerciseFragments.add(exerciseFragment)
         supportFragmentManager.beginTransaction().add(R.id.exercises_layout, exerciseFragment, "exercise $exerciseId").commitAllowingStateLoss()
     }
 
-    override fun exerciseViewAdded(view: View) {
+    override fun exerciseViewAdded(view: View, exerciseSequence: Int) {
+        view.tag = exerciseSequence
         exercises_layout.setViewDraggable(view, view.findViewById(R.id.drag_handle))
         toggle_delete_mode_button.visibility = if (exerciseFragments.isEmpty()) View.GONE else View.VISIBLE
     }
 
     override fun deleteExercise(sender: ExerciseFragment) {
+        workoutCoordinator.removeExercise(sender.exerciseSequence, sender.exerciseId)
         exerciseFragments.remove(sender)
         supportFragmentManager.beginTransaction().remove(sender).commitAllowingStateLoss()
     }

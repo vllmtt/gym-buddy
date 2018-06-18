@@ -28,9 +28,10 @@ import kotlinx.android.synthetic.main.exercise_set_view.view.*
 import kotlinx.android.synthetic.main.fragment_exercise.*
 import kotlinx.android.synthetic.main.fragment_exercise.view.*
 import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
+import fi.anttonen.villematti.apps.gymbuddy.misc.WorkoutCoordinator
 
 
-
+private const val EXERCISE_SEQUENCE = "Exercise sequence"
 private const val EXERCISE_ID = "Exercise id"
 private const val EDIT_MODE = "Edit mode"
 
@@ -44,19 +45,18 @@ private const val EDIT_MODE = "Edit mode"
  *
  */
 class ExerciseFragment : Fragment() {
-    private var exerciseId: Long = -1
-    private var exercise: StrengthExercise? = null
-    private var workout: StrengthWorkoutEntry? = null
-
-    var sets: MutableList<ExerciseSet> = mutableListOf() //TODO get rid of and update sets directly to workout. ExerciseSequence to differentiate between ExerciseFragments that have same exercise?
+    var exerciseSequence = -1
+    var exerciseId: Long = -1
+    var exercise: StrengthExercise? = null
+    private lateinit var workoutCoordinator: WorkoutCoordinator
 
     private var editMode = false
-
     private var listener: ExerciseFragmentListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
+            exerciseSequence = it.getInt(EXERCISE_SEQUENCE)
             exerciseId = it.getLong(EXERCISE_ID)
             editMode = it.getBoolean(EDIT_MODE)
         }
@@ -75,15 +75,15 @@ class ExerciseFragment : Fragment() {
 
         view.tag = this
         AsyncTask.execute {
-            workout = ViewModelProviders.of(activity!!).get(WorkoutEditViewModel::class.java).workout
+            workoutCoordinator = ViewModelProviders.of(activity!!).get(WorkoutEditViewModel::class.java).workoutCoordinator!!
             exercise = ViewModelProviders.of(activity!!).get(StrengthWorkoutViewModel::class.java).getExercise(exerciseId)
             activity?.runOnUiThread {
                 view.exercise_name.text = exercise?.name
                 view.exercise_type.text = exercise?.type?.description
-                sets.addAll(workout!!.sets.filter { it.exerciseId == exercise!!.id })
-                sets.sort()
-                sets.forEach { inflateSetView(it) }
-                listener?.exerciseViewAdded(view)
+
+                workoutCoordinator.sequenceSetsMap[exerciseSequence]!!.forEach { inflateSetView(it) }
+
+                listener?.exerciseViewAdded(view, exerciseSequence)
             }
         }
 
@@ -91,17 +91,15 @@ class ExerciseFragment : Fragment() {
     }
 
     private fun onAddSetButtonClick() {
-        //val nextSequence = if (sets.isEmpty()) 0 else sets.last().sequence + 1
-        val set = ExerciseSet(0, workout!!.id, exercise!!.id, 0)
-        sets.add(set)
+        val set = ExerciseSet(0, workoutCoordinator.workout.id, exercise!!.id, 0, exerciseSequence)
+        workoutCoordinator.addSet(set)
         inflateSetView(set)
     }
 
     private fun onDeleteSetButtonClick(set: ExerciseSet) {
-        sets.remove(set)
+        workoutCoordinator.removeSet(set)
         val setView = sets_layout.findViewWithTag<View>(set)
         sets_layout.removeView(setView)
-        // TODO
     }
 
     private fun inflateSetView(set: ExerciseSet) {
@@ -190,7 +188,7 @@ class ExerciseFragment : Fragment() {
     }
 
     interface ExerciseFragmentListener {
-        fun exerciseViewAdded(view: View)
+        fun exerciseViewAdded(view: View, exerciseSequence: Int)
         fun deleteExercise(sender: ExerciseFragment)
     }
 
@@ -202,9 +200,10 @@ class ExerciseFragment : Fragment() {
          * @return A new instance of fragment ExerciseFragment.
          */
         @JvmStatic
-        fun newInstance(exerciseId: Long, editMode: Boolean) =
+        fun newInstance(exerciseSequence: Int, exerciseId: Long, editMode: Boolean) =
                 ExerciseFragment().apply {
                     arguments = Bundle().apply {
+                        putInt(EXERCISE_SEQUENCE, exerciseSequence)
                         putLong(EXERCISE_ID, exerciseId)
                         putBoolean(EDIT_MODE, editMode)
                     }

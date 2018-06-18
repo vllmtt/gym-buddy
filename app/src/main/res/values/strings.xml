@@ -51,5 +51,7 @@
     <string name="add_set">Add set</string>
     <string name="set_x_sign">×</string>
     <string name="toggle_delete_mode">Toggle delete mode</string>
+    <string name="gym_workout">Gym workout</string>
+    <string name="cardio_workout">Cardio workout</string>
 
 </resources>
