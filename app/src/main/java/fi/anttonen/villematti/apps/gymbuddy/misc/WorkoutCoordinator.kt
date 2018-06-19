@@ -4,14 +4,24 @@
 
 package fi.anttonen.villematti.apps.gymbuddy.misc
 
+import android.os.AsyncTask
 import android.util.Log
+import fi.anttonen.villematti.apps.gymbuddy.model.database.GymBuddyRoomDataBase
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.ExerciseSet
+import fi.anttonen.villematti.apps.gymbuddy.model.entity.StrengthExercise
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.StrengthWorkoutEntry
 
 class WorkoutCoordinator(val workout: StrengthWorkoutEntry) {
+    // Map of which sets belong to each exercise sequence
     var sequenceSetsMap: MutableMap<Int, MutableList<ExerciseSet>> = workout.getExerciseSequenceMap()
+
+    // Map of which exercise id corresponds to each exercise sequence
     var sequenceIdMap: MutableMap<Int, Long> = mutableMapOf()
+
+    // Map of how much each exercise's usage count should be incremented
     private var usageCountMap: MutableMap<Long, Int> = mutableMapOf()
+
+    // Highest currently used exercise and set sequence
     private var lastExerciseSequence: Int = -1
     private var lastSetSequence: Int = -1
 
@@ -59,6 +69,18 @@ class WorkoutCoordinator(val workout: StrengthWorkoutEntry) {
             sequenceSetsMap[secondExerciseSequence] = firstSets
         } else {
             Log.e("WorkoutCoordinator", "Couldn't swap exercises, sequence provided was null")
+        }
+    }
+
+    fun saveUsageCounts() {
+        AsyncTask.execute {
+            val exercises = mutableListOf<StrengthExercise>()
+            for (usageEntry in usageCountMap) {
+                val exercise = GymBuddyRoomDataBase.strengthExerciseDao.get(usageEntry.key)
+                exercise.usageCount += usageEntry.value
+                exercises.add(exercise)
+            }
+            GymBuddyRoomDataBase.strengthExerciseDao.updateAll(*exercises.toTypedArray())
         }
     }
 

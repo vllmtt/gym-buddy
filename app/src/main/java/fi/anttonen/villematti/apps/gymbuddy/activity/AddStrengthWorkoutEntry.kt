@@ -13,7 +13,6 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -188,6 +187,8 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
             workout.mood = mood
             workout.date = date
             AsyncTask.execute {
+                //TODO update exercises to DB (usage)
+                workoutCoordinator.saveUsageCounts()
                 GymBuddyRoomDataBase.strengthWorkoutEntryDao.insertAll(workout)
             }
             true

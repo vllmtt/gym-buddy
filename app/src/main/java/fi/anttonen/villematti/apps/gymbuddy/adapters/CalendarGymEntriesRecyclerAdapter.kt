@@ -14,11 +14,9 @@ import android.view.ViewGroup
 import com.jjoe64.graphview.GridLabelRenderer
 import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
-import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioEntry
-import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
-import fi.anttonen.villematti.apps.gymbuddy.model.entity.EntryType
-import fi.anttonen.villematti.apps.gymbuddy.model.entity.GymEntry
+import fi.anttonen.villematti.apps.gymbuddy.model.entity.*
 import kotlinx.android.synthetic.main.cardio_entry_row.view.*
+import kotlinx.android.synthetic.main.strength_workout_entry_row.view.*
 import kotlinx.android.synthetic.main.weight_entry_row.view.*
 import org.joda.time.LocalDate
 
@@ -36,6 +34,7 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
         val inflatedView: View = when (viewType) {
             EntryType.WEIGHT.ordinal -> layoutInflater.inflate(R.layout.weight_entry_row, parent, false)
             EntryType.CARDIO.ordinal -> layoutInflater.inflate(R.layout.cardio_entry_row, parent, false)
+            EntryType.STRENGTH.ordinal -> layoutInflater.inflate(R.layout.strength_workout_entry_row, parent, false)
             else -> layoutInflater.inflate(R.layout.weight_entry_row, parent, false) //TODO implement other entry types
         }
 
@@ -94,8 +93,15 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
                 view.cardio_entry_type.text = gymEntry.getEntryType().displayName
                 bindCardioEntry(gymEntry)
             }
+            if (gymEntry is StrengthWorkoutEntry) {
+                view.strength_workout_entry_type.text = gymEntry.getEntryType().displayName
+                bindStrengthWorkoutEntry(gymEntry)
+            }
         }
 
+        private fun bindStrengthWorkoutEntry(workout: StrengthWorkoutEntry) {
+            // TODO
+        }
 
         private fun bindCardioEntry(cardioEntry: CardioEntry) {
             val cardioTypeString = cardioEntry.cardioType?.toString()

@@ -9,6 +9,7 @@ import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.GymEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.database.GymBuddyRoomDataBase
+import fi.anttonen.villematti.apps.gymbuddy.model.entity.StrengthWorkoutEntry
 import org.joda.time.LocalDate
 
 class CalendarGymEntriesViewModel : ViewModel() {
@@ -18,6 +19,7 @@ class CalendarGymEntriesViewModel : ViewModel() {
 
     private var weightEntryLiveData: LiveData<List<WeightEntry>>? = null
     private var cardioEntryLiveData: LiveData<List<CardioEntry>>? = null
+    private var strengthWorkoutLiveData: LiveData<List<StrengthWorkoutEntry>>? = null
 
     private val dateFilterLiveData: MutableLiveData<LocalDate> = MutableLiveData()
 
@@ -32,20 +34,28 @@ class CalendarGymEntriesViewModel : ViewModel() {
                 GymBuddyRoomDataBase.cardioEntryDao.getAll(date)
             }
         }
+        if (strengthWorkoutLiveData == null) {
+            strengthWorkoutLiveData = Transformations.switchMap(dateFilterLiveData) { date ->
+                GymBuddyRoomDataBase.strengthWorkoutEntryDao.getAll(date)
+            }
+        }
 
 
         return MediatorLiveData<List<GymEntry>>().apply {
             var weightEntries: List<WeightEntry>? = null
             var cardioEntries: List<CardioEntry>? = null
+            var strengthWorkoutEntries: List<StrengthWorkoutEntry>? = null
 
             fun update() {
                 val localWeightEntries = weightEntries
                 val localCardioEntries = cardioEntries
+                val localStrengthWorkoutEntries = strengthWorkoutEntries
 
-                if (localWeightEntries != null && localCardioEntries != null) {
+                if (localWeightEntries != null && localCardioEntries != null && localStrengthWorkoutEntries != null) {
                     val gymEntries = mutableListOf<GymEntry>()
                     gymEntries.addAll(localWeightEntries)
                     gymEntries.addAll(localCardioEntries)
+                    gymEntries.addAll(localStrengthWorkoutEntries)
                     this.value = gymEntries
                 }
             }
@@ -56,6 +66,10 @@ class CalendarGymEntriesViewModel : ViewModel() {
             }
             addSource(cardioEntryLiveData!!) {
                 cardioEntries = it
+                update()
+            }
+            addSource(strengthWorkoutLiveData!!) {
+                strengthWorkoutEntries = it
                 update()
             }
         }
@@ -73,6 +87,10 @@ class CalendarGymEntriesViewModel : ViewModel() {
         GymBuddyRoomDataBase.cardioEntryDao.updateAll(*cardioEntries)
     }
 
+    fun updateAll(vararg strengthWorkoutEntries: StrengthWorkoutEntry) {
+        GymBuddyRoomDataBase.strengthWorkoutEntryDao.updateAll(*strengthWorkoutEntries)
+    }
+
     fun deleteAll(vararg weightEntries: WeightEntry) {
         GymBuddyRoomDataBase.weightEntryDao.deleteAll(*weightEntries)
     }
@@ -81,12 +99,20 @@ class CalendarGymEntriesViewModel : ViewModel() {
         GymBuddyRoomDataBase.cardioEntryDao.deleteAll(*cardioEntries)
     }
 
+    fun deleteAll(vararg strengthWorkoutEntries: StrengthWorkoutEntry) {
+        GymBuddyRoomDataBase.strengthWorkoutEntryDao.deleteAll(*strengthWorkoutEntries)
+    }
+
     fun getWeightEntry(id: Long): WeightEntry? {
         return GymBuddyRoomDataBase.weightEntryDao.get(id)
     }
 
     fun getCardioEntry(id: Long): CardioEntry? {
         return GymBuddyRoomDataBase.cardioEntryDao.get(id)
+    }
+
+    fun  getStrengthWorkoutEntry(id: Long): StrengthWorkoutEntry? {
+        return GymBuddyRoomDataBase.strengthWorkoutEntryDao.get(id)
     }
 
     fun setDateFilter(date: LocalDate?) {
