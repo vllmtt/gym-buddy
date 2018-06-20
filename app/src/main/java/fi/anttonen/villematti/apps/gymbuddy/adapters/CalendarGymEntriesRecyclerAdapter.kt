@@ -8,14 +8,17 @@ import android.os.AsyncTask
 import android.support.v4.content.ContextCompat
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
+import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.jjoe64.graphview.GridLabelRenderer
 import fi.anttonen.villematti.apps.gymbuddy.R
+import fi.anttonen.villematti.apps.gymbuddy.misc.ExerciseSetSummaryView
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.*
 import kotlinx.android.synthetic.main.cardio_entry_row.view.*
+import kotlinx.android.synthetic.main.exercise_set_summary_view.view.*
 import kotlinx.android.synthetic.main.strength_workout_entry_row.view.*
 import kotlinx.android.synthetic.main.weight_entry_row.view.*
 import org.joda.time.LocalDate
@@ -69,7 +72,7 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
     /**
      * Gym entry view holder
      */
-    inner class CalendarGymEntryHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener, TaskCallback {
+    inner class CalendarGymEntryHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener, LoadHistoryTaskCallback, LoadExerciseTaskCallback {
 
         private var view: View = v
 
@@ -100,7 +103,18 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
         }
 
         private fun bindStrengthWorkoutEntry(workout: StrengthWorkoutEntry) {
-            // TODO
+            val exerciseSequenceMap = workout.getExerciseSequenceMap()
+            // TODO cache worth it? If so, must be refactored to higher level than this method
+            val exerciseCache = mutableListOf<StrengthExercise>()
+            for (sequence in exerciseSequenceMap.keys.sorted()) {
+                val summaryView = ExerciseSetSummaryView(view.context)
+                summaryView.tag = sequence
+                view.exercise_summary_layout.addView(summaryView)
+
+                val sets = exerciseSequenceMap[sequence]!!
+                val exerciseId = sets.first().exerciseId
+                LoadExerciseTask(sequence, sets, viewModel, this).execute(exerciseId)
+            }
         }
 
         private fun bindCardioEntry(cardioEntry: CardioEntry) {
@@ -150,9 +164,9 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
         }
 
         /**
-         * TaskCallback override to get execution back on UI thread when database query has benn done
+         * LoadHistoryTaskCallback override to get execution back on UI thread when database query has benn done
          */
-        override fun completed(gymEntry: WeightEntry, result: List<WeightEntry>?) {
+        override fun loadHistoryTaskCompleted(gymEntry: WeightEntry, result: List<WeightEntry>?) {
             if (result != null && result.size > 1) {
                 view.weight_graph.visibility = View.VISIBLE
                 view.noWeightHistoryLabel.visibility = View.GONE
@@ -187,9 +201,20 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
             }
 
         }
+
+        override fun loadExerciseTaskCompleted(summaryViewTag: Int, sets: List<ExerciseSet>, result: StrengthExercise?) {
+            val summaryView = view.exercise_summary_layout.findViewWithTag<ExerciseSetSummaryView>(summaryViewTag)
+            val exercise = result!!
+
+            //TODO fill summaryView
+            summaryView.exercise_name_text.text = exercise.name
+        }
     }
 
-    class LoadHistoryTask(private val entry: WeightEntry, private val viewModel: CalendarGymEntriesViewModel, private val callback: TaskCallback) : AsyncTask<LocalDate, Int, List<WeightEntry>>() {
+
+    //////////////////////
+
+    class LoadHistoryTask(private val entry: WeightEntry, private val viewModel: CalendarGymEntriesViewModel, private val callback: LoadHistoryTaskCallback) : AsyncTask<LocalDate, Int, List<WeightEntry>>() {
         override fun doInBackground(vararg date: LocalDate?): List<WeightEntry> {
             if (date.isEmpty() || date.first() == null) return emptyList()
             return viewModel.getWeightEntryHistoryForDate(date.first()!!)
@@ -197,14 +222,32 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
 
         override fun onPostExecute(result: List<WeightEntry>?) {
             super.onPostExecute(result)
-            callback.completed(entry, result)
+            callback.loadHistoryTaskCompleted(entry, result)
         }
     }
 
-    interface TaskCallback {
-        fun completed(gymEntry: WeightEntry, result: List<WeightEntry>?)
+    interface LoadHistoryTaskCallback {
+        fun loadHistoryTaskCompleted(gymEntry: WeightEntry, result: List<WeightEntry>?)
     }
 
+    //////////////////////
+
+    class LoadExerciseTask(private val summaryViewTag: Int, private val sets: List<ExerciseSet>, private val viewModel: CalendarGymEntriesViewModel, private val callback: LoadExerciseTaskCallback) : AsyncTask<Long, Int, StrengthExercise>() {
+        override fun doInBackground(vararg exerciseId: Long?): StrengthExercise {
+            return viewModel.getStrengthExercise(exerciseId.first()!!)
+        }
+
+        override fun onPostExecute(result: StrengthExercise?) {
+            super.onPostExecute(result)
+            callback.loadExerciseTaskCompleted(summaryViewTag, sets, result)
+        }
+    }
+
+    interface LoadExerciseTaskCallback {
+        fun loadExerciseTaskCompleted(summaryViewTag: Int, sets: List<ExerciseSet>, result: StrengthExercise?)
+    }
+
+    //////////////////////
 
     inner class EntryRowDiffCallback(private val newRows: List<GymEntry>?, private val oldRows: List<GymEntry>?) : DiffUtil.Callback() {
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {

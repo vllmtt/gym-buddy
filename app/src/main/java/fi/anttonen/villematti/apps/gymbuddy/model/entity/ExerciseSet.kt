@@ -73,12 +73,12 @@ class ExerciseSet(val id: Long,
             return sb.toString()
         }
 
-        fun parseExerciseSet(value: String): ExerciseSet {
+        private fun parseExerciseSet(value: String): ExerciseSet {
             val valueString = value.split(";")
 
             val id = valueString[0].toLong()
-            val exerciseId = valueString[1].toLong()
-            val workoutId = valueString[2].toLong()
+            val workoutId = valueString[1].toLong()
+            val exerciseId = valueString[2].toLong()
             val sequence = valueString[3].toInt()
             val exerciseSequence = valueString[4].toInt()
             val workingSet = valueString[5] == "1"
@@ -93,7 +93,7 @@ class ExerciseSet(val id: Long,
             return set
         }
 
-        fun toDbString(set: ExerciseSet): String {
+        private fun toDbString(set: ExerciseSet): String {
             val workingSetString = if (set.workingSet) "1" else "0"
             val repsString = if (set.reps != null) set.reps.toString() else ""
             val weightString = if (set.getWeight() != null) set.getWeight().toString() else ""

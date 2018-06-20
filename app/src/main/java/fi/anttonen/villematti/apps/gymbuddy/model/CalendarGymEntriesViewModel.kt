@@ -5,11 +5,8 @@
 package fi.anttonen.villematti.apps.gymbuddy.model
 
 import android.arch.lifecycle.*
-import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioEntry
-import fi.anttonen.villematti.apps.gymbuddy.model.entity.GymEntry
-import fi.anttonen.villematti.apps.gymbuddy.model.entity.WeightEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.database.GymBuddyRoomDataBase
-import fi.anttonen.villematti.apps.gymbuddy.model.entity.StrengthWorkoutEntry
+import fi.anttonen.villematti.apps.gymbuddy.model.entity.*
 import org.joda.time.LocalDate
 
 class CalendarGymEntriesViewModel : ViewModel() {
@@ -115,7 +112,12 @@ class CalendarGymEntriesViewModel : ViewModel() {
         return GymBuddyRoomDataBase.strengthWorkoutEntryDao.get(id)
     }
 
+    fun getStrengthExercise(id: Long): StrengthExercise {
+        return GymBuddyRoomDataBase.strengthExerciseDao.get(id)
+    }
+
     fun setDateFilter(date: LocalDate?) {
         dateFilterLiveData.value = date
     }
+
 }
