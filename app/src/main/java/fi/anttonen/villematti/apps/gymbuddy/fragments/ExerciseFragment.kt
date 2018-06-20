@@ -120,7 +120,7 @@ class ExerciseFragment : Fragment() {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 if (isNumberBetween(0.0, 9999.0, p0, true, null, null)) {
-                    set.reps = p0?.toString()?.toInt()
+                    set.reps = if (p0.isNullOrEmpty()) null else p0?.toString()?.toInt()
                     if (p0.toString()?.length > 1) setView.weight_edit_text.requestFocus()
                 }
             }
@@ -130,7 +130,7 @@ class ExerciseFragment : Fragment() {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 if (isNumberBetween(0.0, 99999.0, p0, true, null, null)) {
-                    set.setWeight(p0?.toString()?.toDouble(), true)
+                    set.setWeight(if (p0.isNullOrEmpty()) null else p0?.toString()?.toDouble(), true)
                 }
             }
         })

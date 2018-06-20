@@ -54,8 +54,13 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close_white_24px)
 
-        workoutCoordinator = WorkoutCoordinator(StrengthWorkoutEntry(0, LocalDate.now()))
-        ViewModelProviders.of(this).get(WorkoutEditViewModel::class.java).workoutCoordinator = workoutCoordinator
+        val viewModel = ViewModelProviders.of(this).get(WorkoutEditViewModel::class.java)
+        if (viewModel.workoutCoordinator == null) {
+            workoutCoordinator = WorkoutCoordinator(StrengthWorkoutEntry(0, LocalDate.now()))
+            viewModel.workoutCoordinator = workoutCoordinator
+        } else {
+            workoutCoordinator = viewModel.workoutCoordinator!!
+        }
 
         exerciseFragments.clear()
         for (entry in workoutCoordinator.sequenceIdMap) {
@@ -187,8 +192,7 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
             workout.mood = mood
             workout.date = date
             AsyncTask.execute {
-                //TODO update exercises to DB (usage)
-                workoutCoordinator.saveUsageCounts()
+                workoutCoordinator.save()
                 GymBuddyRoomDataBase.strengthWorkoutEntryDao.insertAll(workout)
             }
             true

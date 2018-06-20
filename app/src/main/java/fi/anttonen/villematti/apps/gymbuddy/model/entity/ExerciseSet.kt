@@ -66,9 +66,9 @@ class ExerciseSet(val id: Long,
 
         fun toDbString(sets: List<ExerciseSet>): String {
             val sb = StringBuilder()
-            for (set in sets) {
+            for ((i, set) in sets.withIndex()) {
                 sb.append(ExerciseSet.toDbString(set))
-                sb.append("|")
+                if (i < sets.size - 1) sb.append("|")
             }
             return sb.toString()
         }

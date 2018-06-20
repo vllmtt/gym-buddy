@@ -72,22 +72,39 @@ class WorkoutCoordinator(val workout: StrengthWorkoutEntry) {
         }
     }
 
-    fun saveUsageCounts() {
+    fun save() {
+        saveWorkout()
         AsyncTask.execute {
-            val exercises = mutableListOf<StrengthExercise>()
-            for (usageEntry in usageCountMap) {
-                val exercise = GymBuddyRoomDataBase.strengthExerciseDao.get(usageEntry.key)
-                exercise.usageCount += usageEntry.value
-                exercises.add(exercise)
-            }
-            GymBuddyRoomDataBase.strengthExerciseDao.updateAll(*exercises.toTypedArray())
+            saveUsageCounts()
         }
+    }
+
+    private fun saveWorkout() {
+        for (sequence in sequenceSetsMap.keys.sorted()) {
+            val sets = sequenceSetsMap[sequence]
+            if (sets != null) workout.sets.addAll(sets)
+        }
+    }
+
+    private fun saveUsageCounts() {
+        val exercises = mutableListOf<StrengthExercise>()
+        for (usageEntry in usageCountMap) {
+            val exercise = GymBuddyRoomDataBase.strengthExerciseDao.get(usageEntry.key)
+            exercise.usageCount += usageEntry.value
+            exercises.add(exercise)
+        }
+        GymBuddyRoomDataBase.strengthExerciseDao.updateAll(*exercises.toTypedArray())
     }
 
     private fun updateUsageCount(exerciseId: Long, change: Int, valueIfAbsent: Int? = null) {
         if (usageCountMap.containsKey(exerciseId)) {
             val previousCount = usageCountMap[exerciseId]!!
-            usageCountMap[exerciseId] = previousCount + change
+            val newCount = previousCount + change
+            if (newCount == 0) {
+                usageCountMap.remove(exerciseId)
+            } else {
+                usageCountMap[exerciseId] = newCount
+            }
         } else {
             if (valueIfAbsent != null) usageCountMap[exerciseId] = valueIfAbsent
         }
