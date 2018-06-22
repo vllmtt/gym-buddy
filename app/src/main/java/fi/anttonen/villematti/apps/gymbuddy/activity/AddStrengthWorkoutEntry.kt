@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -43,7 +44,6 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
     private var editMode = false
 
     private var exerciseFragments = mutableListOf<ExerciseFragment>()
-
     private lateinit var workoutCoordinator: WorkoutCoordinator
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,14 +62,19 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
             workoutCoordinator = viewModel.workoutCoordinator!!
         }
 
-        exerciseFragments.clear()
-        for (entry in workoutCoordinator.sequenceIdMap) {
-            val exerciseSequence = entry.key
-            val exerciseId = entry.value
-            addExerciseViewFragment(exerciseSequence, exerciseId)
+        for (f in supportFragmentManager.fragments) {
+            if (f is ExerciseFragment) exerciseFragments.add(f)
         }
 
-        supportFragmentManager.beginTransaction().replace(R.id.content_layout, MoodFragment.newInstance(null), "moodFragment").commit()
+        if (savedInstanceState == null) {
+            for (entry in workoutCoordinator.sequenceIdMap) {
+                val exerciseSequence = entry.key
+                val exerciseId = entry.value
+                addExerciseViewFragment(exerciseSequence, exerciseId)
+            }
+
+            supportFragmentManager.beginTransaction().add(R.id.content_layout, MoodFragment.newInstance(null), "moodFragment").commit()
+        }
 
         toggle_delete_mode_button.visibility = if (exerciseFragments.isEmpty()) View.GONE else View.VISIBLE
 
@@ -134,7 +139,7 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
     private fun addExerciseViewFragment(exerciseSequence: Int, exerciseId: Long) {
         val exerciseFragment = ExerciseFragment.newInstance(exerciseSequence, exerciseId, editMode)
         exerciseFragments.add(exerciseFragment)
-        supportFragmentManager.beginTransaction().add(R.id.exercises_layout, exerciseFragment, "exercise $exerciseId").commitAllowingStateLoss()
+        supportFragmentManager.beginTransaction().add(R.id.exercises_layout, exerciseFragment, "seq $exerciseSequence").commitAllowingStateLoss()
     }
 
     override fun exerciseViewAdded(view: View, exerciseSequence: Int) {

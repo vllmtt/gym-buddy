@@ -83,7 +83,7 @@ class ExerciseFragment : Fragment() {
 
                 val sets = workoutCoordinator.sequenceSetsMap[exerciseSequence]!!
                 if (sets.isNotEmpty()) {
-                    sets.forEach { inflateSetView(it) }
+                    sets.forEach { inflateSetView(it, inflater, view) }
                 } else {
                     // Force add one set
                     onAddSetButtonClick()
@@ -113,8 +113,8 @@ class ExerciseFragment : Fragment() {
         }
     }
 
-    private fun inflateSetView(set: ExerciseSet) {
-        val setView = layoutInflater.inflate(R.layout.exercise_set_view, sets_layout, false)
+    private fun inflateSetView(set: ExerciseSet, inflater: LayoutInflater = layoutInflater, exerciseView: View? = view) {
+        val setView = inflater.inflate(R.layout.exercise_set_view, sets_layout, false)
         setView.tag = set
 
         setView.weight_unit_label.text = when (UnitManager.Units.weightRatio) {
@@ -149,16 +149,17 @@ class ExerciseFragment : Fragment() {
         setView.delete_set_button.visibility = if (editMode) View.VISIBLE else View.INVISIBLE
         setView.delete_set_button.setOnClickListener { onDeleteSetButtonClick(set) }
 
-        sets_layout.addView(setView)
+        exerciseView?.sets_layout?.addView(setView)
     }
 
-    fun setEditMode(enabled: Boolean) {
+    fun setEditMode(enabled: Boolean, exerciseView: View? = view) {
         editMode = enabled
-        for (i in 0 until sets_layout.childCount) {
+        val count = view?.sets_layout?.childCount ?: 0
+        for (i in 0 until count) {
             val child = sets_layout.getChildAt(i)
             child.delete_set_button.visibility = if (enabled) View.VISIBLE else View.INVISIBLE
         }
-        delete_exercise_button.visibility = if (enabled) View.VISIBLE else View.INVISIBLE
+        view?.delete_exercise_button?.visibility = if (enabled) View.VISIBLE else View.INVISIBLE
     }
 
     private fun isNumberBetween(min: Double?, max: Double?, string: CharSequence?, isEmptyValid: Boolean, errorMessage: String?, errorDestination: TextInputLayout?): Boolean {

@@ -37,7 +37,7 @@ class StringGenerator {
                     texts.add("• Set with ${set.getWeightUI(2)}$weightLabel")
                 } else {
                     val plural = if (set.reps == 1) "" else "s"
-                    texts.add("• Set of ${set.reps} rep$plural")
+                    texts.add("• Set of ${set.reps ?: "-"} rep$plural")
                 }
 
                 i++

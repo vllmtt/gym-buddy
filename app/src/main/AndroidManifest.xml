@@ -60,11 +60,19 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity" />
         </activity>
-        <activity android:name=".activity.ExerciseChooserDialog"
+        <activity
+            android:name=".activity.ExerciseChooserDialog"
             android:parentActivityName=".activity.AddStrengthWorkoutEntry">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.AddStrengthWorkoutEntry" />
+        </activity>
+        <activity
+            android:name=".activity.StrengthWorkoutEntryDetail"
+            android:parentActivityName=".activity.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.MainActivity" />
         </activity>
     </application>
 
