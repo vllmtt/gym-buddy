@@ -81,7 +81,13 @@ class ExerciseFragment : Fragment() {
                 view.exercise_name.text = exercise?.name
                 view.exercise_type.text = exercise?.type?.description
 
-                workoutCoordinator.sequenceSetsMap[exerciseSequence]!!.forEach { inflateSetView(it) }
+                val sets = workoutCoordinator.sequenceSetsMap[exerciseSequence]!!
+                if (sets.isNotEmpty()) {
+                    sets.forEach { inflateSetView(it) }
+                } else {
+                    // Force add one set
+                    onAddSetButtonClick()
+                }
 
                 listener?.exerciseViewAdded(view, exerciseSequence)
             }
@@ -100,6 +106,11 @@ class ExerciseFragment : Fragment() {
         workoutCoordinator.removeSet(set)
         val setView = sets_layout.findViewWithTag<View>(set)
         sets_layout.removeView(setView)
+
+        // Delete exercise if no sets are left
+        if (sets_layout.childCount < 1) {
+            listener?.deleteExercise(this)
+        }
     }
 
     private fun inflateSetView(set: ExerciseSet) {

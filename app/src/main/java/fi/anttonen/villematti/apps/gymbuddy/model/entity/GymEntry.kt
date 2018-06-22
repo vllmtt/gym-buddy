@@ -30,7 +30,7 @@ interface GymEntry : Cloneable {
 enum class EntryType(val displayName: String) {
     WEIGHT("Weight"),
     CARDIO("Cardio"),
-    STRENGTH("Strength workout"),
+    STRENGTH("Gym workout"),
     MEASUREMENT("Measurement"),
     FOOD("Food")
 }
