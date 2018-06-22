@@ -12,9 +12,11 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.jjoe64.graphview.GridLabelRenderer
 import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.misc.ExerciseSetSummaryView
+import fi.anttonen.villematti.apps.gymbuddy.misc.StringGenerator
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.*
 import kotlinx.android.synthetic.main.cardio_entry_row.view.*
@@ -103,6 +105,9 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
         }
 
         private fun bindStrengthWorkoutEntry(workout: StrengthWorkoutEntry) {
+            // Clear old views
+            view.exercise_summary_layout.removeAllViews()
+
             val exerciseSequenceMap = workout.getExerciseSequenceMap()
             // TODO cache worth it? If so, must be refactored to higher level than this method
             val exerciseCache = mutableListOf<StrengthExercise>()
@@ -206,8 +211,15 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
             val summaryView = view.exercise_summary_layout.findViewWithTag<ExerciseSetSummaryView>(summaryViewTag)
             val exercise = result!!
 
-            //TODO fill summaryView
             summaryView.exercise_name_text.text = exercise.name
+            summaryView.exercise_type_text.text = exercise.type.description
+
+            val summaryStrings = StringGenerator.generateHumanReadableSetsSummary(sets)
+            for (summary in summaryStrings) {
+                val tv = TextView(view.context)
+                tv.text = summary
+                summaryView.set_summary_layout.addView(tv)
+            }
         }
     }
 

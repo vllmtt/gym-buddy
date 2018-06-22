@@ -7,7 +7,7 @@ package fi.anttonen.villematti.apps.gymbuddy.model.entity
 import fi.anttonen.villematti.apps.gymbuddy.misc.UnitManager
 import fi.anttonen.villematti.apps.gymbuddy.misc.roundToDecimalPlaces
 
-class ExerciseSet(val id: Long,
+class ExerciseSet(var id: Long,
                   val workoutId: Long,
                   val exerciseId: Long,
                   var setSequence: Int,
@@ -17,8 +17,20 @@ class ExerciseSet(val id: Long,
     var reps: Int? = null
     private var weight: Double? = null
 
+    init {
+        setNonZeroId(id)
+    }
+
     fun getWeightUI(decimals: Int): Double? {
-        return if (weight == null) null else (weight ?: 0.0 * UnitManager.Units.weightRatio).roundToDecimalPlaces(decimals)
+        val w = weight
+        return if (w == null) {
+            null
+        } else {
+            val ratio = UnitManager.Units.weightRatio
+            val adjusted = w * ratio
+            val rounded = adjusted.roundToDecimalPlaces(decimals)
+            rounded
+        }
     }
 
     fun getWeight(): Double? {
@@ -36,6 +48,21 @@ class ExerciseSet(val id: Long,
             value
         }
     }
+
+    fun setNonZeroId(suggestedId: Long) {
+        if (suggestedId == 0L) {
+            id = nextId
+            nextId++
+        } else {
+            id = suggestedId
+            if (id >= nextId) {
+                nextId = suggestedId + 1
+            }
+        }
+    }
+
+    fun isWeightSame(otherSet: ExerciseSet) = if (weight == null && otherSet.weight == null) true else getWeight() == otherSet.getWeight()
+    fun isRepsSame(otherSet: ExerciseSet) = if (reps == null && otherSet.reps == null) true else reps == otherSet.reps
 
     override fun equals(other: Any?): Boolean {
         return other is ExerciseSet &&
@@ -55,6 +82,8 @@ class ExerciseSet(val id: Long,
     }
 
     companion object {
+        var nextId = 1L
+
         fun parseExerciseSets(value: String): List<ExerciseSet> {
             val valueStrings = value.split("|")
             val sets = mutableListOf<ExerciseSet>()

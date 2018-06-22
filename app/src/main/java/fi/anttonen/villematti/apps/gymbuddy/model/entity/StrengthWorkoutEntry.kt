@@ -8,7 +8,7 @@ import android.arch.persistence.room.*
 import org.joda.time.LocalDate
 
 @Entity(tableName = "strength_workout_entry")
-class StrengthWorkoutEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val id: Long,
+class StrengthWorkoutEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = false) var id: Long,
                            @ColumnInfo(name = "date") var date: LocalDate) : GymEntry {
 
     @ColumnInfo(name = "mood")
@@ -19,6 +19,10 @@ class StrengthWorkoutEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = t
 
     @Ignore
     private var exerciseSequenceMap: MutableMap<Int, MutableList<ExerciseSet>> = mutableMapOf()
+
+    init {
+        setNonZeroId(id)
+    }
 
     fun getExerciseSequenceMap(): MutableMap<Int, MutableList<ExerciseSet>> {
         exerciseSequenceMap = mutableMapOf()
@@ -82,5 +86,21 @@ class StrengthWorkoutEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = t
             clones.add(clone)
         }
         return clones
+    }
+
+    fun setNonZeroId(suggestedId: Long) {
+        if (suggestedId == 0L) {
+            id = nextId
+            nextId++
+        } else {
+            id = suggestedId
+            if (id >= nextId) {
+                nextId = suggestedId + 1
+            }
+        }
+    }
+
+    companion object {
+        var nextId = 1L
     }
 }
