@@ -59,6 +59,8 @@ class StrengthWorkoutEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = f
     }
 
     private fun isSameSets(otherSets: List<ExerciseSet>): Boolean {
+        if (otherSets.size != sets.size) return false
+
         otherSetsLoop@for (otherSet in otherSets) {
             for (thisSet in sets) {
                 if (thisSet == otherSet) continue@otherSetsLoop // Match found from this.sets

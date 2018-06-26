@@ -215,6 +215,7 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
             summaryView.exercise_type_text.text = exercise.type.description
 
             val summaryStrings = StringGenerator.generateHumanReadableSetsSummary(sets)
+            summaryView.set_summary_layout.removeAllViews()
             for (summary in summaryStrings) {
                 val tv = TextView(view.context)
                 tv.text = summary
