@@ -42,7 +42,7 @@ class WorkoutCoordinator(val workout: StrengthWorkoutEntry) {
     fun removeExercise(exerciseSequence: Int, exerciseId: Long) {
         sequenceSetsMap.remove(exerciseSequence)
         sequenceIdMap.remove(exerciseSequence)
-        updateUsageCount(exerciseId, -1)
+        updateUsageCount(exerciseId, -1, -1)
         if (exerciseSequence == lastExerciseSequence) computeLastExerciseSequence()
     }
 
@@ -80,6 +80,9 @@ class WorkoutCoordinator(val workout: StrengthWorkoutEntry) {
     }
 
     fun delete() {
+        for (id in sequenceIdMap.values) {
+            updateUsageCount(id, -1, -1)
+        }
         AsyncTask.execute {
             saveUsageCounts()
         }
