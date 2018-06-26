@@ -100,6 +100,13 @@ class StrengthWorkoutEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = f
         }
     }
 
+    fun setSetsForExerciseSequence(newSets: MutableList<ExerciseSet>, sequence: Int) {
+        sets.removeAll {
+            it.exerciseSequence == sequence
+        }
+        sets.addAll(newSets)
+    }
+
     companion object {
         var nextId = 1L
     }

@@ -79,10 +79,16 @@ class WorkoutCoordinator(val workout: StrengthWorkoutEntry) {
         }
     }
 
+    fun delete() {
+        AsyncTask.execute {
+            saveUsageCounts()
+        }
+    }
+
     private fun saveWorkout() {
         for (sequence in sequenceSetsMap.keys.sorted()) {
             val sets = sequenceSetsMap[sequence]
-            if (sets != null) workout.sets.addAll(sets)
+            if (sets != null) workout.setSetsForExerciseSequence(sets, sequence)
         }
     }
 

@@ -15,19 +15,19 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 
 import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.StrengthWorkoutViewModel
-import fi.anttonen.villematti.apps.gymbuddy.WorkoutEditViewModel
+import fi.anttonen.villematti.apps.gymbuddy.AddWorkoutViewModel
+import fi.anttonen.villematti.apps.gymbuddy.EditWorkoutViewModel
+import fi.anttonen.villematti.apps.gymbuddy.activity.AddStrengthWorkoutEntry
+import fi.anttonen.villematti.apps.gymbuddy.activity.StrengthWorkoutEntryDetail
 import fi.anttonen.villematti.apps.gymbuddy.misc.UnitManager
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.ExerciseSet
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.StrengthExercise
-import fi.anttonen.villematti.apps.gymbuddy.model.entity.StrengthWorkoutEntry
 import kotlinx.android.synthetic.main.exercise_set_view.view.*
 import kotlinx.android.synthetic.main.fragment_exercise.*
 import kotlinx.android.synthetic.main.fragment_exercise.view.*
-import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import fi.anttonen.villematti.apps.gymbuddy.misc.WorkoutCoordinator
 
 
@@ -75,7 +75,11 @@ class ExerciseFragment : Fragment() {
 
         view.tag = this
         AsyncTask.execute {
-            workoutCoordinator = ViewModelProviders.of(activity!!).get(WorkoutEditViewModel::class.java).workoutCoordinator!!
+            workoutCoordinator = when (activity) {
+                is AddStrengthWorkoutEntry -> ViewModelProviders.of(activity!!).get(AddWorkoutViewModel::class.java).workoutCoordinator!!
+                is StrengthWorkoutEntryDetail -> ViewModelProviders.of(activity!!).get(EditWorkoutViewModel::class.java).workoutCoordinator!!
+                else -> throw RuntimeException("Trying to get WorkoutCoordinator from unknown activity")
+            }
             exercise = ViewModelProviders.of(activity!!).get(StrengthWorkoutViewModel::class.java).getExercise(exerciseId)
             activity?.runOnUiThread {
                 view.exercise_name.text = exercise?.name

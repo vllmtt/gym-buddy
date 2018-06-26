@@ -6,8 +6,7 @@ package fi.anttonen.villematti.apps.gymbuddy
 
 import android.arch.lifecycle.ViewModel
 import fi.anttonen.villematti.apps.gymbuddy.misc.WorkoutCoordinator
-import fi.anttonen.villematti.apps.gymbuddy.model.entity.StrengthWorkoutEntry
 
-class WorkoutEditViewModel : ViewModel() {
+class EditWorkoutViewModel : ViewModel() {
     var workoutCoordinator: WorkoutCoordinator? = null
 }

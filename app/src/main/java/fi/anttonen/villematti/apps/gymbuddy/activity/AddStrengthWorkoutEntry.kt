@@ -13,14 +13,13 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.ActivityOptionsCompat
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import com.jmedeisis.draglinearlayout.DragLinearLayout
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import fi.anttonen.villematti.apps.gymbuddy.R
-import fi.anttonen.villematti.apps.gymbuddy.WorkoutEditViewModel
+import fi.anttonen.villematti.apps.gymbuddy.AddWorkoutViewModel
 import fi.anttonen.villematti.apps.gymbuddy.fragments.ExerciseFragment
 import fi.anttonen.villematti.apps.gymbuddy.fragments.MoodFragment
 import fi.anttonen.villematti.apps.gymbuddy.misc.WorkoutCoordinator
@@ -54,7 +53,7 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_close_white_24px)
 
-        val viewModel = ViewModelProviders.of(this).get(WorkoutEditViewModel::class.java)
+        val viewModel = ViewModelProviders.of(this).get(AddWorkoutViewModel::class.java)
         if (viewModel.workoutCoordinator == null) {
             workoutCoordinator = WorkoutCoordinator(StrengthWorkoutEntry(0, LocalDate.now()))
             viewModel.workoutCoordinator = workoutCoordinator

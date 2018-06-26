@@ -226,7 +226,11 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
             options = ActivityOptionsCompat.makeBasic()
         }
         if (entry is StrengthWorkoutEntry) {
-            // TODO intent & options
+            intent = Intent(this, StrengthWorkoutEntryDetail::class.java).apply {
+                putExtra(StrengthWorkoutEntryDetail.ENTRY_ID_KEY, entry.getEntryId())
+            }
+
+            options = ActivityOptionsCompat.makeBasic()
         }
 
         if (intent != null && options != null) {
