@@ -86,9 +86,10 @@ class WorkoutCoordinator(val workout: StrengthWorkoutEntry) {
     }
 
     private fun saveWorkout() {
+        workout.sets.clear()
         for (sequence in sequenceSetsMap.keys.sorted()) {
             val sets = sequenceSetsMap[sequence]
-            if (sets != null) workout.setSetsForExerciseSequence(sets, sequence)
+            if (sets != null) workout.sets.addAll(sets)
         }
     }
 

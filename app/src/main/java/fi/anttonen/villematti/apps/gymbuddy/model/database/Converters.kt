@@ -71,15 +71,15 @@ class Converters {
         return StrengthExercise.strengthExerciseTypeToDbString(strengthExerciseType)
     }
 
-    // List<ExerciseSet>
+    // MutableList<ExerciseSet>
 
     @TypeConverter
-    fun toExerciseSets(value: String): List<ExerciseSet> {
+    fun toExerciseSets(value: String): MutableList<ExerciseSet> {
         return ExerciseSet.parseExerciseSets(value)
     }
 
     @TypeConverter
-    fun fromExerciseSets(sets: List<ExerciseSet>): String {
+    fun fromExerciseSets(sets: MutableList<ExerciseSet>): String {
         return ExerciseSet.toDbString(sets)
     }
 }

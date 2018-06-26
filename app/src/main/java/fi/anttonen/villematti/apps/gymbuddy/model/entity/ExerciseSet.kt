@@ -84,7 +84,9 @@ class ExerciseSet(var id: Long,
     companion object {
         var nextId = 1L
 
-        fun parseExerciseSets(value: String): List<ExerciseSet> {
+        fun parseExerciseSets(value: String): MutableList<ExerciseSet> {
+            if (value.isEmpty()) return mutableListOf()
+
             val valueStrings = value.split("|")
             val sets = mutableListOf<ExerciseSet>()
             for (valueString in valueStrings) {
@@ -93,7 +95,7 @@ class ExerciseSet(var id: Long,
             return sets
         }
 
-        fun toDbString(sets: List<ExerciseSet>): String {
+        fun toDbString(sets: MutableList<ExerciseSet>): String {
             val sb = StringBuilder()
             for ((i, set) in sets.withIndex()) {
                 sb.append(ExerciseSet.toDbString(set))
