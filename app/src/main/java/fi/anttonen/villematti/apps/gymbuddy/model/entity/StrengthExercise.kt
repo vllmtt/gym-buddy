@@ -27,6 +27,13 @@ class StrengthExercise(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true)
 
     override fun title() = name
     override fun subTitle() = type.description
+    override fun meta(): String {
+        return when (usageCount) {
+            0L -> ""
+            1L -> "$usageCount time used"
+            else -> "$usageCount times used"
+        }
+    }
     override fun relevanceCount() = usageCount
     override fun type() = SearchableViewType.CONTENT
 

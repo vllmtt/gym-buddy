@@ -8,6 +8,7 @@ interface SearchableView {
     fun matches(query: String?): Boolean
     fun title(): String
     fun subTitle(): String
+    fun meta(): String
     fun relevanceCount(): Long
     fun type(): SearchableViewType
 }

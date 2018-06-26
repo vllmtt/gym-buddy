@@ -10,8 +10,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.misc.SearchableView
 import fi.anttonen.villematti.apps.gymbuddy.misc.SearchableViewType
+import kotlinx.android.synthetic.main.exercise_list_row.view.*
 
 class SearchableRecyclerViewAdapter : RecyclerView.Adapter<SearchableRecyclerViewAdapter.SearchableViewHolder>() {
     private var allItems: List<SearchableView>? = null
@@ -44,7 +46,7 @@ class SearchableRecyclerViewAdapter : RecyclerView.Adapter<SearchableRecyclerVie
         val layoutInflater = LayoutInflater.from(parent.context)
 
         val inflatedView = when (viewType) {
-            SearchableViewType.CONTENT.ordinal -> layoutInflater.inflate(android.R.layout.simple_list_item_2, parent, false)
+            SearchableViewType.CONTENT.ordinal -> layoutInflater.inflate(R.layout.exercise_list_row, parent, false)
             else -> layoutInflater.inflate(android.R.layout.simple_list_item_2, parent, false) //TODO AUXILIARY
         }
         return SearchableViewHolder(inflatedView)
@@ -77,8 +79,9 @@ class SearchableRecyclerViewAdapter : RecyclerView.Adapter<SearchableRecyclerVie
         }
 
         fun bindEntry(item: SearchableView?) {
-            view.findViewById<TextView>(android.R.id.text1).text = item?.title()
-            view.findViewById<TextView>(android.R.id.text2).text = item?.subTitle()
+            view.title_text.text = item?.title()
+            view.subtitle_text.text = item?.subTitle()
+            view.meta_text.text = item?.meta()
         }
 
         override fun onClick(view: View) = itemClickListener.onItemClick(itemView, adapterPosition, getListItemAtPosition(adapterPosition))

@@ -34,7 +34,7 @@ class ExerciseChooserDialog : AppCompatActivity(), SearchView.OnQueryTextListene
         supportFragmentManager.beginTransaction().replace(R.id.exercise_chooser_content_layout, exerciseChooser, "searchableRecyclerViewFragment").commit()
 
         val strengthWorkoutViewModel = ViewModelProviders.of(this).get(StrengthWorkoutViewModel::class.java)
-        strengthWorkoutViewModel.getAllExercises().observe(this, Observer { exercises ->
+        strengthWorkoutViewModel.getAllExercises(true).observe(this, Observer { exercises ->
             exerciseChooser.updateViewItems(exercises as List<SearchableView>)
         })
 

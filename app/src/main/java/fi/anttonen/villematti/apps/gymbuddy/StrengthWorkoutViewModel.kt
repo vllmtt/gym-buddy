@@ -12,7 +12,10 @@ import fi.anttonen.villematti.apps.gymbuddy.model.entity.StrengthExercise
 class StrengthWorkoutViewModel : ViewModel() {
     private var exercisesLiveData: LiveData<List<StrengthExercise>>? = null
 
-    fun getAllExercises(): LiveData<List<StrengthExercise>> {
+    fun getAllExercises(sortByUsageCount: Boolean): LiveData<List<StrengthExercise>> {
+        if (sortByUsageCount) {
+            return GymBuddyRoomDataBase.strengthExerciseDao.getAllSortedByUsageCount()
+        }
         return GymBuddyRoomDataBase.strengthExerciseDao.getAll()
     }
 

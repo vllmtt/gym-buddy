@@ -16,6 +16,9 @@ interface StrengthExerciseDao {
     @Query("SELECT * FROM strength_exercise WHERE strength_exercise.id = :id")
     fun get(id: Long): StrengthExercise
 
+    @Query("SELECT * FROM strength_exercise ORDER BY strength_exercise.usageCount DESC, strength_exercise.name ASC")
+    fun getAllSortedByUsageCount(): LiveData<List<StrengthExercise>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg cardioEntries: StrengthExercise)
 
@@ -24,4 +27,5 @@ interface StrengthExerciseDao {
 
     @Delete
     fun deleteAll(vararg cardioEntries: StrengthExercise)
+
 }
