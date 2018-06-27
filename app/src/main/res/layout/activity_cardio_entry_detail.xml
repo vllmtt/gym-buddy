@@ -41,7 +41,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:text="@string/type"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
             <Spinner
                 android:id="@+id/cardio_type_spinner"
@@ -59,7 +59,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/duration"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
 
             <android.support.constraint.ConstraintLayout
@@ -173,7 +173,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/distance"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
@@ -224,7 +224,7 @@
                 android:layout_marginTop="16dp"
                 android:paddingBottom="16dp"
                 android:text="@string/mood"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
+                android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
         </LinearLayout>
     </ScrollView>
