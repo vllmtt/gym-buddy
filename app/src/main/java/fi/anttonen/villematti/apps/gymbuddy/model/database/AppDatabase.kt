@@ -17,7 +17,7 @@ import fi.anttonen.villematti.apps.gymbuddy.model.entity.*
     (CardioEntry::class),
     (CardioType::class),
     (StrengthWorkoutEntry::class),
-    (StrengthExercise::class)], version = 9)
+    (StrengthExercise::class)], version = 10)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun gymEntryDao(): WeightEntryDao

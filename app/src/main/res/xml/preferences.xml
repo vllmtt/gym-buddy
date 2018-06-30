@@ -25,4 +25,17 @@
             android:defaultValue="@string/distance_unit_kilometers"/>
 
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Exercises"
+        android:key="pref_key_exercise_settings">
+
+        <Preference android:title="@string/edit_strength_exercises"
+            android:key="@string/key_edit_strength_exercises"/>
+
+        <Preference android:title="@string/key_edit_cardio_exercises"
+            android:key="@string/edit_cardio_exercises"/>
+
+    </PreferenceCategory>
+
 </PreferenceScreen>

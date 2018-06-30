@@ -9,6 +9,9 @@ import android.os.Bundle
 import android.support.v7.preference.*
 import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.misc.UnitManager
+import android.R.attr.button
+
+
 
 class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -21,6 +24,29 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             val p = preferenceScreen.getPreference(i)
             handlePreference(p, sharedPreferences)
         }
+
+        setupExerciseEditorButtons()
+    }
+
+    private fun setupExerciseEditorButtons() {
+        val strengthButton = findPreference(getString(R.string.key_edit_strength_exercises))
+        strengthButton.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            openStrengthExerciseEditor()
+            true
+        }
+        val cardioButton = findPreference(getString(R.string.key_edit_cardio_exercises))
+        cardioButton.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            openCardioExerciseEditor()
+            true
+        }
+    }
+
+    private fun openStrengthExerciseEditor() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    private fun openCardioExerciseEditor() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     private fun handlePreference(preference: Preference, sharedPreferences: SharedPreferences) {
@@ -34,6 +60,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             setPreferenceSummary(preference, value)
         }
     }
+
 
     private fun setPreferenceSummary(preference: Preference, value: String) {
         if (preference is ListPreference) {
