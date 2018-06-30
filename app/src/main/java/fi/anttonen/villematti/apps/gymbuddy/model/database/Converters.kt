@@ -47,7 +47,7 @@ class Converters {
         return cardioType.toDbString()
     }
 
-    // List<StrengthExerciseSubCharacteristic>
+    // ExerciseEditorList<StrengthExerciseSubCharacteristic>
 
     @TypeConverter
     fun toStrengthExerciseSubCharacteristic(value: String): List<StrengthExerciseSubCharacteristic> {

@@ -74,6 +74,19 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MainActivity" />
         </activity>
+        <activity
+            android:name=".activity.StrengthExerciseEditor"
+            android:parentActivityName=".activity.ExerciseEditorList">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.ExerciseEditorList" />
+        </activity>
+        <activity android:name=".activity.ExerciseEditorList"
+            android:parentActivityName=".activity.SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.SettingsActivity" />
+        </activity>
     </application>
 
 </manifest>

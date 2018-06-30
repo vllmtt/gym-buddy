@@ -120,7 +120,9 @@ class AddStrengthWorkoutEntry : AppCompatActivity(), DatePickerDialog.OnDateSetL
     }
 
     private fun showExerciseChooser() {
-        val intent = Intent(this, ExerciseChooserDialog::class.java)
+        val intent = Intent(this, ExerciseChooserDialog::class.java).apply {
+            this.putExtra(ExerciseChooserDialog.STRENGTH_EXERCISES, true)
+        }
         val options = ActivityOptionsCompat.makeBasic()
         ActivityCompat.startActivityForResult(this, intent, EXERCISE_CHOOSE_REQUEST, options.toBundle())
     }

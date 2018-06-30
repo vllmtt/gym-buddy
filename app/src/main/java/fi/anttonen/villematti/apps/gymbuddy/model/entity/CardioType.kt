@@ -23,7 +23,13 @@ data class CardioType(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) 
 
     override fun title() = name
     override fun subTitle(): String? = null
-    override fun meta(): String? = null
+    override fun meta(): String {
+        return when (usageCount) {
+            0L -> ""
+            1L -> "$usageCount time used"
+            else -> "$usageCount times used"
+        }
+    }
 
     override fun relevanceCount(): Long {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.

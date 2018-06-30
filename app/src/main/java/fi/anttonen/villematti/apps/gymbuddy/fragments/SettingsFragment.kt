@@ -10,7 +10,9 @@ import android.support.v7.preference.*
 import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.misc.UnitManager
 import android.R.attr.button
-
+import android.content.Intent
+import android.support.v4.app.ActivityCompat
+import fi.anttonen.villematti.apps.gymbuddy.activity.ExerciseEditorList
 
 
 class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -42,7 +44,12 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     }
 
     private fun openStrengthExerciseEditor() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (context != null) {
+            val intent = Intent(activity, ExerciseEditorList::class.java).apply {
+                putExtra(ExerciseEditorList.STRENGTH_EXERCISES, true)
+            }
+            ActivityCompat.startActivity(context!!, intent, null)
+        }
     }
 
     private fun openCardioExerciseEditor() {

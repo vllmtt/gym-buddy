@@ -20,12 +20,12 @@ interface StrengthExerciseDao {
     fun getAllSortedByUsageCount(): LiveData<List<StrengthExercise>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(vararg cardioEntries: StrengthExercise)
+    fun insertAll(vararg strengthExercises: StrengthExercise)
 
     @Update
-    fun updateAll(vararg cardioEntries: StrengthExercise)
+    fun updateAll(vararg strengthExercises: StrengthExercise)
 
     @Delete
-    fun deleteAll(vararg cardioEntries: StrengthExercise)
+    fun deleteAll(vararg strengthExercises: StrengthExercise)
 
 }

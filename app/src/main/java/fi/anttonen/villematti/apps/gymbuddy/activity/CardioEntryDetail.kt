@@ -92,21 +92,15 @@ class CardioEntryDetail : AppCompatActivity(), MoodFragment.MoodFragmentListener
 
         val position = adapter.getPosition(clone.cardioType)
         cardio_type_spinner.setSelection(position)
-
-        Log.i("FGSFGF", "Pos: $position of ${clone.cardioType}")
     }
 
     override fun onItemSelected(parent: AdapterView<*>, view: View,
                                 pos: Int, id: Long) {
         clone.cardioType = parent.getItemAtPosition(pos) as CardioType?
-
-        Log.i("FGSFGF", "Updated to ${clone.cardioType}")
     }
 
     override fun onNothingSelected(parent: AdapterView<*>) {
         clone.cardioType = null
-
-        Log.i("FGSFGF", "Nothing selected to ${clone.cardioType}")
     }
 
     private fun setupTextFields() {

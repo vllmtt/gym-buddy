@@ -91,8 +91,6 @@ class AddCardioEntry : AppCompatActivity(), MoodFragment.MoodFragmentListener, D
     override fun onItemSelected(parent: AdapterView<*>, view: View,
                                 pos: Int, id: Long) {
         selectedCardioType = parent.getItemAtPosition(pos) as CardioType?
-
-        Log.i("FGSFGF", "Updated to $selectedCardioType")
     }
 
     override fun onNothingSelected(parent: AdapterView<*>) {

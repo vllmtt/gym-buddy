@@ -58,5 +58,6 @@
 
     <string name="key_edit_strength_exercises">Edit strength exercises</string>
     <string name="key_edit_cardio_exercises">Edit cardio exercises</string>
+    <string name="exercise_name">Exercise name</string>
 
 </resources>
