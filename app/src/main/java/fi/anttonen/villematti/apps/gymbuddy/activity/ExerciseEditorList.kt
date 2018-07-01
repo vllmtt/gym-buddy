@@ -43,7 +43,7 @@ class ExerciseEditorList : AppCompatActivity(), SearchView.OnQueryTextListener, 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_exercise_editor)
+        setContentView(R.layout.activity_exercise_editor_list)
 
         if (savedInstanceState == null) { // TODO null check also to ExerciseChooserDialog
             supportFragmentManager.beginTransaction().add(R.id.exercise_chooser_content_layout, exerciseChooser, "searchableRecyclerViewFragment").commit()
@@ -142,6 +142,17 @@ class ExerciseEditorList : AppCompatActivity(), SearchView.OnQueryTextListener, 
     }
 
     private fun openCardioExerciseEditor(id: Long? = null) {
-        TODO("Not implemented")
+        val request = if (id == null) REQUEST_ADD else REQUEST_EDIT
+        val intent = if (id == null) {
+            Intent(this, CardioExerciseEditor::class.java).apply {
+                putExtra(CardioExerciseEditor.ADD_MODE, true)
+            }
+        } else {
+            Intent(this, CardioExerciseEditor::class.java).apply {
+                putExtra(CardioExerciseEditor.EDIT_MODE, true)
+                putExtra(CardioExerciseEditor.EXERCISE_ID_KEY, id)
+            }
+        }
+        ActivityCompat.startActivityForResult(this, intent, request, null)
     }
 }

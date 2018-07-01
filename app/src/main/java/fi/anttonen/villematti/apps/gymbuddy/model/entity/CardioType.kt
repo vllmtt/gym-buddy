@@ -18,7 +18,7 @@ data class CardioType(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) 
     var usageCount: Long = 0
 
     override fun matches(query: String?): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return if (query.isNullOrEmpty()) true else name.contains(query!!)
     }
 
     override fun title() = name
@@ -30,11 +30,7 @@ data class CardioType(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) 
             else -> "$usageCount times used"
         }
     }
-
-    override fun relevanceCount(): Long {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
+    override fun relevanceCount() = usageCount
     override fun type() = SearchableViewType.CONTENT
 
     override fun toString(): String {
@@ -48,7 +44,7 @@ data class CardioType(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) 
     companion object {
         val DEFAULT_CARDIO_TYPES = mutableListOf<CardioType>().apply {
             val names = arrayOf("Biking", "Running", "Walking")
-            for (i in names.indices) this.add(CardioType(i.toLong(), names[i]))
+            for (name in names) this.add(CardioType(0, name))
         }
 
         fun parse(value: String): CardioType {

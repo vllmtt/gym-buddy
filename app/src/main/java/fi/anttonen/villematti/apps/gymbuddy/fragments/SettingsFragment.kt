@@ -53,7 +53,12 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
     }
 
     private fun openCardioExerciseEditor() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if (context != null) {
+            val intent = Intent(activity, ExerciseEditorList::class.java).apply {
+                putExtra(ExerciseEditorList.CARDIO_EXERCISES, true)
+            }
+            ActivityCompat.startActivity(context!!, intent, null)
+        }
     }
 
     private fun handlePreference(preference: Preference, sharedPreferences: SharedPreferences) {

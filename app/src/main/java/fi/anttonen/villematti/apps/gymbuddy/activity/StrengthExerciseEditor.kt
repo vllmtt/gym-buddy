@@ -60,9 +60,14 @@ class StrengthExerciseEditor : AppCompatActivity(), AdapterView.OnItemSelectedLi
             runOnUiThread {
                 setupSpinner()
                 setupNameTextField()
+                setupTitle()
             }
         }
 
+    }
+
+    private fun setupTitle() {
+        supportActionBar?.title = if (exercise == null) "Add exercise" else exercise?.name
     }
 
     private fun fetchExercise() {
