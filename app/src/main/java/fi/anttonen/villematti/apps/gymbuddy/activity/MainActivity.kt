@@ -6,7 +6,9 @@ package fi.anttonen.villematti.apps.gymbuddy.activity
 
 import android.app.Activity
 import android.arch.lifecycle.ViewModelProviders
+import android.content.BroadcastReceiver
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
@@ -25,6 +27,7 @@ import com.github.sundeepk.compactcalendarview.domain.Event
 import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.R.id.*
 import fi.anttonen.villematti.apps.gymbuddy.adapters.CalendarGymEntriesRecyclerAdapter
+import fi.anttonen.villematti.apps.gymbuddy.misc.ExerciseEditorReceiver
 import fi.anttonen.villematti.apps.gymbuddy.misc.UnitManager
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarEventViewModel
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
@@ -37,7 +40,7 @@ import org.joda.time.format.DateTimeFormat
 import java.util.*
 
 
-class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarViewListener, CalendarGymEntriesRecyclerAdapter.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener {
+class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarViewListener, CalendarGymEntriesRecyclerAdapter.OnItemClickListener, SharedPreferences.OnSharedPreferenceChangeListener, ExerciseEditorReceiver.ExerciseEditListener {
     companion object {
         private const val UPDATE_REQUEST = 1
         private const val ADD_ENTRY = 1
@@ -46,6 +49,8 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
     private lateinit var linearLayoutManager: LinearLayoutManager
     private var adapter: CalendarGymEntriesRecyclerAdapter? = null
     private lateinit var currentlySelectedDate: LocalDate
+
+    private var exerciseChangedReceiver = ExerciseEditorReceiver()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (false) {
@@ -72,6 +77,9 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
 
         linearLayoutManager = LinearLayoutManager(this)
         gymEntriesRecyclerView.layoutManager = linearLayoutManager
+
+        exerciseChangedReceiver.listener = this
+        registerReceiver(exerciseChangedReceiver, IntentFilter("fi.anttonen.villematti.apps.gymbuddy.EXERCISE_CHANGED"))
 
         supportActionBar?.title = getMainTitle(null)
 
@@ -147,6 +155,11 @@ class MainActivity : AppCompatActivity(), CompactCalendarView.CompactCalendarVie
     override fun onDestroy() {
         super.onDestroy()
         PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this)
+        unregisterReceiver(exerciseChangedReceiver)
+    }
+
+    override fun exerciseSettingsChanged() {
+        adapter?.notifyDataSetChanged()
     }
 
     private fun setupSpeedDial() {

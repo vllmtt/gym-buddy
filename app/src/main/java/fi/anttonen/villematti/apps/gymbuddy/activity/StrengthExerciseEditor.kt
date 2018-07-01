@@ -54,7 +54,7 @@ class StrengthExerciseEditor : AppCompatActivity(), AdapterView.OnItemSelectedLi
         intent.getLongExtra(EXERCISE_ID_KEY, -1).apply {
             id = if (this < 0L) null else this
         }
-        
+
         AsyncTask.execute {
             fetchExercise()
             runOnUiThread {
@@ -172,14 +172,17 @@ class StrengthExerciseEditor : AppCompatActivity(), AdapterView.OnItemSelectedLi
         var exercise = exercise
         if (exercise == null) {
             exercise = StrengthExercise(0, name, type)
+            AsyncTask.execute {
+                GymBuddyRoomDataBase.strengthExerciseDao.insertAll(exercise)
+            }
         } else {
             exercise.name = name
             exercise.type = type
+            AsyncTask.execute {
+                GymBuddyRoomDataBase.strengthExerciseDao.updateAll(exercise)
+            }
         }
-
-        AsyncTask.execute {
-            GymBuddyRoomDataBase.strengthExerciseDao.updateAll(exercise)
-        }
+        sendBroadcast(Intent("fi.anttonen.villematti.apps.gymbuddy.EXERCISE_CHANGED"))
 
         return true
     }

@@ -81,11 +81,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.ExerciseEditorList" />
         </activity>
-        <activity android:name=".activity.ExerciseEditorList"
+        <activity
+            android:name=".activity.ExerciseEditorList"
             android:parentActivityName=".activity.SettingsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.SettingsActivity" />
+        </activity>
+        <activity android:name=".activity.CardioExerciseEditor"
+            android:parentActivityName=".activity.ExerciseEditorList">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.ExerciseEditorList" />
         </activity>
     </application>
 
