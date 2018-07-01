@@ -5,6 +5,7 @@
 package fi.anttonen.villematti.apps.gymbuddy.activity
 
 import android.app.Activity
+import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
@@ -77,15 +78,14 @@ class AddCardioEntry : AppCompatActivity(), MoodFragment.MoodFragmentListener, D
     }
 
     private fun setupSpinner() {
-        val adapter = ArrayAdapter<CardioType>(this, android.R.layout.simple_spinner_item, CardioType.DEFAULT_CARDIO_TYPES)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        cardio_type_spinner.adapter = adapter
-        cardio_type_spinner.onItemSelectedListener = this
-
-        cardio_type_spinner.setSelection(0)
-        selectedCardioType = cardio_type_spinner.getItemAtPosition(0) as CardioType?
-
-        Log.i(this.localClassName, selectedCardioType.toString())
+        GymBuddyRoomDataBase.cardioTypeDao.getAll().observe(this, android.arch.lifecycle.Observer { cardioTypes ->
+            val adapter = ArrayAdapter<CardioType>(this, android.R.layout.simple_spinner_item, cardioTypes)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            cardio_type_spinner.adapter = adapter
+            cardio_type_spinner.onItemSelectedListener = this
+            cardio_type_spinner.setSelection(0)
+            selectedCardioType = cardio_type_spinner.getItemAtPosition(0) as CardioType?
+        })
     }
 
     override fun onItemSelected(parent: AdapterView<*>, view: View,
@@ -242,9 +242,11 @@ class AddCardioEntry : AppCompatActivity(), MoodFragment.MoodFragmentListener, D
             entry.mood = mood
             entry.setDistance(distance, true)
             entry.duration = parseDuration()
-            entry.cardioType = selectedCardioType
+            entry.cardioTypeId = selectedCardioType!!.id
+            selectedCardioType!!.usageCount++
             AsyncTask.execute {
                 GymBuddyRoomDataBase.cardioEntryDao.insertAll(entry)
+                GymBuddyRoomDataBase.cardioTypeDao.updateAll(selectedCardioType!!)
             }
             true
         } else {

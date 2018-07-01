@@ -26,8 +26,8 @@ class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
     @ColumnInfo(name = "duration")
     var duration: Duration? = null
 
-    @ColumnInfo(name = "cardio_type")
-    var cardioType: CardioType? = null
+    @ColumnInfo(name = "cardioTypeId")
+    var cardioTypeId: Long? = null
 
     @ColumnInfo(name = "mood")
     var mood: String? = null
@@ -81,7 +81,7 @@ class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
             this.setDistance(entry.getDistance(), false)
             duration = entry.duration
             mood = entry.mood
-            cardioType = entry.cardioType
+            cardioTypeId = entry.cardioTypeId
         }
     }
 
@@ -97,7 +97,7 @@ class CardioEntry(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true) val 
         clone.setDistance(getDistance(), false)
         clone.duration = this.duration
         clone.mood = this.mood
-        clone.cardioType = this.cardioType
+        clone.cardioTypeId = this.cardioTypeId
         return clone
     }
 

@@ -18,6 +18,7 @@ import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.misc.ExerciseSetSummaryView
 import fi.anttonen.villematti.apps.gymbuddy.misc.StringGenerator
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
+import fi.anttonen.villematti.apps.gymbuddy.model.database.GymBuddyRoomDataBase
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.*
 import kotlinx.android.synthetic.main.cardio_entry_row.view.*
 import kotlinx.android.synthetic.main.exercise_set_summary_view.view.*
@@ -74,7 +75,7 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
     /**
      * Gym entry view holder
      */
-    inner class CalendarGymEntryHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener, LoadHistoryTaskCallback, LoadExerciseTaskCallback {
+    inner class CalendarGymEntryHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener, LoadHistoryTaskCallback, LoadExerciseTaskCallback, LoadCardioExerciseTaskCallback {
 
         private var view: View = v
 
@@ -123,13 +124,14 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
         }
 
         private fun bindCardioEntry(cardioEntry: CardioEntry) {
-            val cardioTypeString = cardioEntry.cardioType?.toString()
             val distanceString = cardioEntry.getHumanReadableDistance() ?: "-"
             val durationString = cardioEntry.getHumanReadableDuration() ?: "-"
             val avgSpeedString = cardioEntry.avgSpeedText() ?: "-"
 
-            if (cardioTypeString != null) {
-                view.cardio_entry_type.text = cardioTypeString
+            if (cardioEntry.cardioTypeId == null) {
+                view.cardio_entry_type.text = "Cardio"
+            } else {
+                LoadCardioExerciseTask(cardioEntry, this).execute(cardioEntry.cardioTypeId)
             }
 
             val distanceVisibility = /*if (distanceString == null) View.GONE else*/ View.VISIBLE
@@ -169,7 +171,7 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
         }
 
         /**
-         * LoadHistoryTaskCallback override to get execution back on UI thread when database query has benn done
+         * LoadHistoryTaskCallback override to get execution back on UI thread when database query has been done
          */
         override fun loadHistoryTaskCompleted(gymEntry: WeightEntry, result: List<WeightEntry>?) {
             if (result != null && result.size > 1) {
@@ -222,6 +224,10 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
                 summaryView.set_summary_layout.addView(tv)
             }
         }
+
+        override fun loadCardioExerciseTaskCompleted(entry: CardioEntry, result: CardioType?) {
+            view.cardio_entry_type.text = result?.name
+        }
     }
 
 
@@ -258,6 +264,23 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
 
     interface LoadExerciseTaskCallback {
         fun loadExerciseTaskCompleted(summaryViewTag: Int, sets: List<ExerciseSet>, result: StrengthExercise?)
+    }
+
+    //////////////////////
+
+    class LoadCardioExerciseTask(private val entry: CardioEntry, private val callback: LoadCardioExerciseTaskCallback) : AsyncTask<Long, Int, CardioType>() {
+        override fun doInBackground(vararg id: Long?): CardioType {
+            return GymBuddyRoomDataBase.cardioTypeDao.get(id.first()!!)
+        }
+
+        override fun onPostExecute(result: CardioType?) {
+            super.onPostExecute(result)
+            callback.loadCardioExerciseTaskCompleted(entry, result)
+        }
+    }
+
+    interface LoadCardioExerciseTaskCallback {
+        fun loadCardioExerciseTaskCompleted(entry: CardioEntry, result: CardioType?)
     }
 
     //////////////////////

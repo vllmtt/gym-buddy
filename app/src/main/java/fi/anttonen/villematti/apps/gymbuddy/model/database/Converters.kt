@@ -35,18 +35,6 @@ class Converters {
         return duration?.toString()
     }
 
-    // CardioType
-
-    @TypeConverter
-    fun fromCardioType(value: String): CardioType {
-        return CardioType.parse(value)
-    }
-
-    @TypeConverter
-    fun cardioTypeToString(cardioType: CardioType): String {
-        return cardioType.toDbString()
-    }
-
     // ExerciseEditorList<StrengthExerciseSubCharacteristic>
 
     @TypeConverter

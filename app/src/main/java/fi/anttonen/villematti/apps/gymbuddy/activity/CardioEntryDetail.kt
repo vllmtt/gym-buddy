@@ -24,6 +24,7 @@ import android.widget.ArrayAdapter
 import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.fragments.MoodFragment
 import fi.anttonen.villematti.apps.gymbuddy.model.CalendarGymEntriesViewModel
+import fi.anttonen.villematti.apps.gymbuddy.model.database.GymBuddyRoomDataBase
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioEntry
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.CardioType
 import kotlinx.android.synthetic.main.activity_cardio_entry_detail.*
@@ -47,6 +48,8 @@ class CardioEntryDetail : AppCompatActivity(), MoodFragment.MoodFragmentListener
 
     private lateinit var entry: CardioEntry
     private lateinit var clone: CardioEntry
+
+    private var selectedCardioType: CardioType? = null
 
     private lateinit var calendarGymEntriesViewModel: CalendarGymEntriesViewModel
 
@@ -85,22 +88,31 @@ class CardioEntryDetail : AppCompatActivity(), MoodFragment.MoodFragmentListener
     }
 
     private fun setupSpinner() {
-        val adapter = ArrayAdapter<CardioType>(this, android.R.layout.simple_spinner_item, CardioType.DEFAULT_CARDIO_TYPES)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        cardio_type_spinner.adapter = adapter
-        cardio_type_spinner.onItemSelectedListener = this
+        GymBuddyRoomDataBase.cardioTypeDao.getAll().observe(this, android.arch.lifecycle.Observer { cardioTypes ->
+            val adapter = ArrayAdapter<CardioType>(this, android.R.layout.simple_spinner_item, cardioTypes)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            cardio_type_spinner.adapter = adapter
+            cardio_type_spinner.onItemSelectedListener = this
 
-        val position = adapter.getPosition(clone.cardioType)
-        cardio_type_spinner.setSelection(position)
+            val selection = cardioTypes?.find { it.id == clone.cardioTypeId }!!
+            cardio_type_spinner.setSelection(adapter.getPosition(selection))
+        })
     }
 
     override fun onItemSelected(parent: AdapterView<*>, view: View,
                                 pos: Int, id: Long) {
-        clone.cardioType = parent.getItemAtPosition(pos) as CardioType?
+        val newSelection = parent.getItemAtPosition(pos) as CardioType
+        val oldSelection = selectedCardioType
+
+        newSelection.usageCount++
+        if (oldSelection != null) oldSelection.usageCount--
+        selectedCardioType = newSelection
+
+        clone.cardioTypeId = newSelection.id
     }
 
     override fun onNothingSelected(parent: AdapterView<*>) {
-        clone.cardioType = null
+        clone.cardioTypeId = null
     }
 
     private fun setupTextFields() {
@@ -189,7 +201,7 @@ class CardioEntryDetail : AppCompatActivity(), MoodFragment.MoodFragmentListener
         return distance_main_text_layout.error == null
     }
 
-    private fun validateCardioSelection(): Boolean = clone.cardioType != null
+    private fun validateCardioSelection(): Boolean = clone.cardioTypeId != null
 
     private fun isValid() = validateDurationTextFields() && validateDistanceTextFields() && validateCardioSelection()
 
@@ -245,6 +257,13 @@ class CardioEntryDetail : AppCompatActivity(), MoodFragment.MoodFragmentListener
     private fun delete() {
         AsyncTask.execute {
             calendarGymEntriesViewModel.deleteAll(entry)
+
+            val originalTypeId = entry.cardioTypeId
+            if (originalTypeId != null) {
+                val originalType = GymBuddyRoomDataBase.cardioTypeDao.get(originalTypeId)
+                originalType.usageCount--
+                GymBuddyRoomDataBase.cardioTypeDao.updateAll(originalType)
+            }
         }
     }
 
@@ -260,6 +279,9 @@ class CardioEntryDetail : AppCompatActivity(), MoodFragment.MoodFragmentListener
         entry.updateValuesFrom(clone)
         AsyncTask.execute {
             calendarGymEntriesViewModel.updateAll(entry)
+
+            val type = selectedCardioType
+            if (type != null) GymBuddyRoomDataBase.cardioTypeDao.updateAll(type)
         }
         return true
     }
