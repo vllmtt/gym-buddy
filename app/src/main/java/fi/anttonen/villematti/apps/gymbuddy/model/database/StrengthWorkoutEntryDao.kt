@@ -20,6 +20,9 @@ interface StrengthWorkoutEntryDao {
     @Query("SELECT * FROM strength_workout_entry WHERE strength_workout_entry.date <= :start AND strength_workout_entry.date >= :end ORDER BY strength_workout_entry.date DESC")
     fun getAll(start: LocalDate, end: LocalDate): LiveData<List<StrengthWorkoutEntry>>
 
+    @Query("SELECT * FROM strength_workout_entry")
+    fun getAllNoLive(): List<StrengthWorkoutEntry>
+
     @Query("SELECT * FROM strength_workout_entry WHERE strength_workout_entry.id = :id")
     fun get(id: Long): StrengthWorkoutEntry
 
@@ -34,4 +37,5 @@ interface StrengthWorkoutEntryDao {
 
     @Delete
     fun deleteAll(vararg cardioEntries: StrengthWorkoutEntry)
+
 }

@@ -34,4 +34,7 @@ interface CardioEntryDao {
 
     @Delete
     fun deleteAll(vararg cardioEntries: CardioEntry)
+
+    @Query("DELETE FROM cardio_entry WHERE cardio_entry.cardioTypeId = :id")
+    fun removeIfExerciseIdEquals(id: Long)
 }

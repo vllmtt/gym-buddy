@@ -21,6 +21,7 @@ import fi.anttonen.villematti.apps.gymbuddy.R
 import fi.anttonen.villematti.apps.gymbuddy.model.database.GymBuddyRoomDataBase
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.StrengthExercise
 import fi.anttonen.villematti.apps.gymbuddy.model.entity.StrengthExerciseType
+import fi.anttonen.villematti.apps.gymbuddy.model.entity.StrengthWorkoutEntry
 import kotlinx.android.synthetic.main.activity_strength_exercise_editor.*
 
 class StrengthExerciseEditor : AppCompatActivity(), AdapterView.OnItemSelectedListener {
@@ -151,7 +152,7 @@ class StrengthExerciseEditor : AppCompatActivity(), AdapterView.OnItemSelectedLi
             AlertDialog.Builder(this)
                     .setTitle("Delete?")
                     .setMessage("This exercise will be removed permanently.")
-                    .setPositiveButton(android.R.string.yes) { _, _ -> delete().run { finish() } }
+                    .setPositiveButton(android.R.string.yes) { _, _ -> usageCheck() }
                     .setNegativeButton(android.R.string.no, null).show()
 
             return true
@@ -160,11 +161,59 @@ class StrengthExerciseEditor : AppCompatActivity(), AdapterView.OnItemSelectedLi
         return super.onOptionsItemSelected(item)
     }
 
+    private fun usageCheck() {
+        val exercise = exercise
+        if (exercise != null && exercise.usageCount > 0) {
+            val countString = if (exercise.usageCount == 1L) "1 time" else "${exercise.usageCount} times"
+            AlertDialog.Builder(this)
+                    .setTitle("Delete also workouts?")
+                    .setMessage("This exercise is used $countString in workouts. These exercises will also be deleted.")
+                    .setPositiveButton(android.R.string.yes) { _, _ -> delete() }
+                    .setNegativeButton(android.R.string.no, null).show()
+        } else {
+            delete()
+        }
+    }
+
     private fun delete() {
         val exercise = exercise
         if (exercise != null) {
             AsyncTask.execute {
+                if (exercise.usageCount > 0L) removeUsages(exercise.id)
                 GymBuddyRoomDataBase.strengthExerciseDao.deleteAll(exercise)
+            }
+        }
+        finish()
+    }
+
+    private fun removeUsages(id: Long) {
+        AsyncTask.execute {
+            val workouts = GymBuddyRoomDataBase.strengthWorkoutEntryDao.getAllNoLive()
+            val forUpdate = mutableListOf<StrengthWorkoutEntry>()
+            val forDeletion = mutableListOf<StrengthWorkoutEntry>()
+            for (workout in workouts) {
+                var changed = false
+                val iterator = workout.sets.iterator()
+                while (iterator.hasNext()) {
+                    val set = iterator.next()
+                    if (set.exerciseId == id) {
+                        iterator.remove()
+                        changed = true
+                    }
+                }
+                if (changed) {
+                    if (workout.sets.isEmpty()) {
+                        forDeletion.add(workout)
+                    } else {
+                        forUpdate.add(workout)
+                    }
+                }
+            }
+            if (forUpdate.isNotEmpty()) {
+                GymBuddyRoomDataBase.strengthWorkoutEntryDao.updateAll(*forUpdate.toTypedArray())
+            }
+            if (forDeletion.isNotEmpty()) {
+                GymBuddyRoomDataBase.strengthWorkoutEntryDao.deleteAll(*forDeletion.toTypedArray())
             }
         }
     }

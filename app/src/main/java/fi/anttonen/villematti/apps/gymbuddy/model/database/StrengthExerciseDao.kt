@@ -28,4 +28,5 @@ interface StrengthExerciseDao {
     @Delete
     fun deleteAll(vararg strengthExercises: StrengthExercise)
 
+
 }

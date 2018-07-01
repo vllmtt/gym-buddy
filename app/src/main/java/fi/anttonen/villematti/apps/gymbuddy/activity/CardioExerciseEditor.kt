@@ -123,7 +123,7 @@ class CardioExerciseEditor : AppCompatActivity() {
             AlertDialog.Builder(this)
                     .setTitle("Delete?")
                     .setMessage("This exercise will be removed permanently.")
-                    .setPositiveButton(android.R.string.yes) { _, _ -> delete().run { finish() } }
+                    .setPositiveButton(android.R.string.yes) { _, _ -> usageCheck() }
                     .setNegativeButton(android.R.string.no, null).show()
 
             return true
@@ -132,18 +132,39 @@ class CardioExerciseEditor : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    private fun usageCheck() {
+        val exercise = exercise
+        if (exercise != null && exercise.usageCount > 0) {
+            val countString = if (exercise.usageCount == 1L) "1 time" else "${exercise.usageCount} times"
+            AlertDialog.Builder(this)
+                    .setTitle("Delete also workouts?")
+                    .setMessage("This exercise is used $countString. These workouts will also be deleted.")
+                    .setPositiveButton(android.R.string.yes) { _, _ -> delete() }
+                    .setNegativeButton(android.R.string.no, null).show()
+        } else {
+            delete()
+        }
+    }
+
     private fun delete() {
         val exercise = exercise
         if (exercise != null) {
             AsyncTask.execute {
+                if (exercise.usageCount > 0L) removeUsages(exercise.id)
                 GymBuddyRoomDataBase.cardioTypeDao.deleteAll(exercise)
             }
+        }
+        finish()
+    }
+
+    private fun removeUsages(id: Long) {
+        AsyncTask.execute {
+            GymBuddyRoomDataBase.cardioEntryDao.removeIfExerciseIdEquals(id)
         }
     }
 
     private fun save(): Boolean {
-        val name = name
-        if (name == null) return false
+        val name = name ?: return false
 
         var exercise = exercise
         if (exercise == null) {
