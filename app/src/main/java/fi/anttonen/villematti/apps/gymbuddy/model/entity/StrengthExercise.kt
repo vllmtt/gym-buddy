@@ -45,7 +45,7 @@ class StrengthExercise(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true)
         }
 
         fun strengthExerciseTypeToDbString(strengthExerciseType: StrengthExerciseType): String {
-            return strengthExerciseType.toString()
+            return strengthExerciseType.superToString()
         }
 
         fun parseStrengthExerciseType(value: String): StrengthExerciseType {
@@ -172,6 +172,7 @@ enum class StrengthExerciseType(val description: String) {
     OTHER("Other");
 
     override fun toString() = description
+    fun superToString() = super.toString()
 }
 
 enum class StrengthExerciseMainCharacteristic {
