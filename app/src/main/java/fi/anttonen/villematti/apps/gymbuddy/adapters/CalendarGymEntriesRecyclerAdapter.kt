@@ -111,7 +111,7 @@ class CalendarGymEntriesRecyclerAdapter(var gymEntries: List<GymEntry>?, val vie
 
             val exerciseSequenceMap = workout.getExerciseSequenceMap()
             // TODO cache worth it? If so, must be refactored to higher level than this method
-            val exerciseCache = mutableListOf<StrengthExercise>()
+            //val exerciseCache = mutableListOf<StrengthExercise>()
             for (sequence in exerciseSequenceMap.keys.sorted()) {
                 val summaryView = ExerciseSetSummaryView(view.context)
                 summaryView.tag = sequence

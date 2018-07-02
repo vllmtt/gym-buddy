@@ -164,12 +164,14 @@ class StrengthExercise(@ColumnInfo(name = "id") @PrimaryKey(autoGenerate = true)
 }
 
 enum class StrengthExerciseType(val description: String) {
-    MACHINE("Machine"),
     BARBELL("Barbell"),
-    DUMBBELL("Dumbbell"),
-    CABLE("Cable"),
     BODY_WEIGHT("Body weight"),
-    OTHER("Other")
+    CABLE("Cable"),
+    DUMBBELL("Dumbbell"),
+    MACHINE("Machine"),
+    OTHER("Other");
+
+    override fun toString() = description
 }
 
 enum class StrengthExerciseMainCharacteristic {

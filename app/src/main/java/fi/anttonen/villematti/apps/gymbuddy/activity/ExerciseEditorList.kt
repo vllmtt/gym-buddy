@@ -62,15 +62,16 @@ class ExerciseEditorList : AppCompatActivity(), SearchView.OnQueryTextListener, 
             strengthWorkoutViewModel.getAllExercises(false).observe(this, Observer { exercises ->
                 exerciseChooser.updateViewItems(exercises as List<SearchableView>)
             })
+            supportActionBar?.title = "Strength exercises"
         }
         if (displayCardioExercises) {
             val cardioWorkoutViewModel = ViewModelProviders.of(this).get(CardioWorkoutViewModel::class.java)
             cardioWorkoutViewModel.getAllExercises(false).observe(this, Observer { exercises ->
                 exerciseChooser.updateViewItems(exercises as List<SearchableView>)
             })
+            supportActionBar?.title = "Cardio exercises"
         }
 
-        supportActionBar?.title = "Strength exercises"
     }
 
     fun addButtonClicked(@Suppress("UNUSED_PARAMETER") view: View) {
@@ -113,18 +114,18 @@ class ExerciseEditorList : AppCompatActivity(), SearchView.OnQueryTextListener, 
         }
     }
 
+    /*
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_ADD && resultCode == Activity.RESULT_OK) {
-            // TODO update list
             return
         }
         if (requestCode == REQUEST_EDIT && resultCode == Activity.RESULT_OK) {
-            // TODO update list
             return
         }
 
         super.onActivityResult(requestCode, resultCode, data)
     }
+    */
 
     private fun openStrengthExerciseEditor(id: Long? = null) {
         val request = if (id == null) REQUEST_ADD else REQUEST_EDIT
